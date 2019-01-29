@@ -1,3 +1,9 @@
+_site
+.sass-cache
+.jekyll-metadata
+
+.DS_Store
+
 /.credentials
 /.tmp
 /object_detection
