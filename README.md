@@ -1,4 +1,4 @@
-# tfjs-object-detection-training
+# Object Detection Training
 
 ## Setup
 1. Clone the repo and move inside:
