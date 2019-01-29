@@ -1,8 +1,8 @@
 # Site settings
-title: IBM Core ML Code Pattern
+title: Object Detection Training
 description: >-
-  Watson Visual Recognition & Core ML Code Pattern
-baseurl: "/cloud-annotations" # the subpath of your site, e.g. /blog
+  Create custom object detection models for TensorFlow.js
+baseurl: "/tfjs-object-detection-training" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bourdakos1
 github_username:  bourdakos1
