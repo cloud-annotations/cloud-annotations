@@ -7,7 +7,7 @@ date: 1970-01-01
 
 ## What you will build
 A webapp with real-time object detection that can recognize objects of importance to your business.
-![](https://github.com/bourdakos1/visual-recognition-with-coreml/raw/master/Screenshots/iPhone.png)
+![](https://twitter.com/i/status/1081237906168131584)
 
 ## Prerequisites
 * **Recommended:** A basic understanding of using terminal
