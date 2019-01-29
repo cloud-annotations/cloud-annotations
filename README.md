@@ -36,7 +36,7 @@ python -m bucket.download
 ```
 
 ## Train the Model
-Set your python path:
+Set your python path to point to `slim`:
 ```
 export PYTHONPATH=$PYTHONPATH:`pwd`/slim
 ```
@@ -48,7 +48,7 @@ python -m object_detection.model_main \
     --model_dir=.tmp/checkpoint
 ```
 
-> **Note:** Your model will continue to train endlessly. Stop the script by pressing `control + c`, whenever you are satisfied. 
+> **Note:** Your model will continue to train endlessly. Stop the script by pressing `CTRL + C`, whenever you are satisfied. 
 
 ## Export your Model
 Run the model export script:
