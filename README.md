@@ -1,30 +1,30 @@
 # tfjs-object-detection-training
 
 ## Setup
-Clone the repo and move inside:
+1. Clone the repo and move inside:
 ```
 git clone https://github.com/bourdakos1/tfjs-object-detection-training.git
 cd tfjs-object-detection-training
 ```
 
-Download the TensorFlow Object Detection API:
+2. Download the TensorFlow Object Detection API:
 ```
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
 ```
 
-Install the requirements:
+3. Install the requirements:
 ```
 pip install -r requirements.txt
 ```
 
-Compile the protobufs:
+4. Compile the protobufs:
 ```
 brew install protobuf
 protoc object_detection/protos/*.proto --python_out=.
 ```
 
-Log into your bucket:
+5. Log into your bucket:
 ```
 python -m bucket.login
 ```
