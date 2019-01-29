@@ -30,7 +30,6 @@ python -m bucket.login
 ```
 
 ## Download Training Data
-Run the bucket download script:
 ```
 python -m bucket.download
 ```
@@ -51,18 +50,11 @@ python -m object_detection.model_main \
 > **Note:** Your model will continue to train endlessly. Stop the script by pressing `CTRL + C`, whenever you are satisfied. 
 
 ## Export your Model
-Run the model export script:
 ```
 python -m quick_export_graph
 ```
 
 ## Convert the Exported Model to TensorFlow.js
-Install the TensorFlow.js package:
-```
-pip install tensorflowjs
-```
-
-Run the conversion script:
 ```
 tensorflowjs_converter \
     --input_format=tf_saved_model \
