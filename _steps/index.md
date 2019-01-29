@@ -7,7 +7,7 @@ date: 1970-01-01
 
 ## What you will build
 A webapp with real-time object detection that can recognize objects of importance to your business.
-![](https://twitter.com/i/status/1081237906168131584)
+![](https://pbs.twimg.com/ext_tw_video_thumb/1081237384900067328/pu/img/N6LtMOnFda-2BACG.jpg)
 
 ## Prerequisites
 * **Recommended:** A basic understanding of using terminal
