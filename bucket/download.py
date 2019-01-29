@@ -256,7 +256,7 @@ fill_val_record = val_output_path + '-?????-of-{:05}'.format(val_shards)
 fill_checkpoint = os.path.join(checkpoint_dir, 'model.ckpt')
 
 skeleton_path = os.path.join('bucket', 'pipeline_skeleton.config')
-pipeline_path = 'pipeline.config'
+pipeline_path = os.path.join(output_dir, 'pipeline.config')
 
 try:
     os.remove(pipeline_path)

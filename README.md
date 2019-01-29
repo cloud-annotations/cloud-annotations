@@ -14,6 +14,12 @@ svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_de
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
 ```
 
+Compile the protobufs:
+```
+brew install protobuf
+protoc object_detection/protos/*.proto --python_out=.
+```
+
 Log into your bucket:
 ```
 python -m bucket.login
@@ -24,26 +30,21 @@ Download your training data:
 python -m bucket.download
 ```
 
+Set your python path:
+```
+export PYTHONPATH=$PYTHONPATH:`pwd`/slim
+```
+
 Train the model:
 ```
-brew install protobuf
-
-protoc object_detection/protos/*.proto --python_out=.
-
-export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
-
-python object_detection/model_main.py \
-    --pipeline_config_path=pipeline.config \
-    --model_dir=./tmp/checkpoint
+python -m object_detection.model_main \
+    --pipeline_config_path=.tmp/pipeline.config \
+    --model_dir=.tmp/checkpoint
 ```
 
-Export graph:
+Export the model:
 ```
-python object_detection/export_inference_graph.py \
-    --input_type=image_tensor \
-    --pipeline_config_path=sample_pipeline.config \
-    --trained_checkpoint_prefix=./tmp/checkpoint/model.ckpt-0 \
-    --output_directory=exported_graphs
+python -m quick_export_graph
 ```
 
 Convert the model:
@@ -51,6 +52,6 @@ Convert the model:
 tensorflowjs_converter \
     --input_format=tf_saved_model \
     --output_node_names='num_detections,detection_boxes,detection_scores,detection_classes' \
-    exported_graphs/saved_model \
+    exported_graph/saved_model \
     web_model
 ```

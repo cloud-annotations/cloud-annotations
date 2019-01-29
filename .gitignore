@@ -2,7 +2,7 @@
 /.tmp
 /object_detection
 /slim
-/pipeline.config
+/exported_graph
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
