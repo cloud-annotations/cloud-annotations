@@ -1,0 +1,34 @@
+# Site settings
+title: IBM Core ML Code Pattern
+description: >-
+  Watson Visual Recognition & Core ML Code Pattern
+baseurl: "/cloud-annotations" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+twitter_username: bourdakos1
+github_username:  bourdakos1
+
+# Build settings
+markdown: kramdown
+theme: minima
+
+# Code pattern config
+codepattern_title: "Core ML & Watson Visual Recognition"
+codepattern_url: https://developer.ibm.com/code/patterns/deploy-a-core-ml-model-with-watson-visual-recognition/
+
+# Authors
+authors:
+  - name: Nick Bourdakos
+    twitter: bourdakos1
+    github: bourdakos1
+
+collections:
+  steps:
+    output: true
+    permalink: /:path:output_ext
+
+defaults:
+  - scope:
+      path: ""
+      type: "steps"
+    values:
+      layout: index
