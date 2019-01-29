@@ -1,8 +1,7 @@
 # tfjs-object-detection-training
 
-* Label the images
-
-Clone and change directories into my repo:
+## Setup
+Clone the repo and move inside:
 ```
 git clone https://github.com/bourdakos1/tfjs-object-detection-training.git
 cd tfjs-object-detection-training
@@ -12,6 +11,11 @@ Download the TensorFlow Object Detection API:
 ```
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
+```
+
+Install the requirements:
+```
+pip install -r requirements.txt
 ```
 
 Compile the protobufs:
@@ -25,29 +29,40 @@ Log into your bucket:
 python -m bucket.login
 ```
 
-Download your training data:
+## Download Training Data
+Run the bucket download script:
 ```
 python -m bucket.download
 ```
 
+## Train the Model
 Set your python path:
 ```
 export PYTHONPATH=$PYTHONPATH:`pwd`/slim
 ```
 
-Train the model:
+Run the training script:
 ```
 python -m object_detection.model_main \
     --pipeline_config_path=.tmp/pipeline.config \
     --model_dir=.tmp/checkpoint
 ```
 
-Export the model:
+> **Note:** Your model will continue to train endlessly. Stop the script by pressing `control + c`, whenever you are satisfied. 
+
+## Export your Model
+Run the model export script:
 ```
 python -m quick_export_graph
 ```
 
-Convert the model:
+## Convert the Exported Model to TensorFlow.js
+Install the TensorFlow.js package:
+```
+pip install tensorflowjs
+```
+
+Run the conversion script:
 ```
 tensorflowjs_converter \
     --input_format=tf_saved_model \
