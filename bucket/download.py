@@ -112,7 +112,7 @@ checkpoint_dir = createDir(output_dir, 'checkpoint')
 # Download Data
 ################################################################################
 annotations = cos.Object(credentials_1['bucket'], '_annotations.json').get()['Body'].read()
-annotations = json.loads(annotations)['annotations']
+annotations = json.loads(annotations.decode('utf-8'))['annotations']
 
 labels = list({annotation['label'] for image in annotations.values() for annotation in image})
 
