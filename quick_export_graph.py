@@ -38,7 +38,7 @@ flags.DEFINE_string('trained_checkpoint_path', 'checkpoint',
 flags.DEFINE_string('trained_checkpoint_prefix', None,
                     'Path to trained checkpoint, typically of the form '
                     'path/to/model.ckpt')
-flags.DEFINE_string('output_directory', 'exported_graph', 'Path to write outputs.')
+flags.DEFINE_string('model_dir', 'exported_graph', 'Path to write outputs.')
 flags.DEFINE_string('output_label_path', 'labels.json', 'Path to write outputs.')
 flags.DEFINE_string('config_override', '',
                     'pipeline_pb2.TrainEvalPipelineConfig '
@@ -65,8 +65,8 @@ def main(_):
   with open(FLAGS.output_label_path, 'w') as f:
     json.dump(label_array, f)
 
-  if os.path.exists(FLAGS.output_directory) and os.path.isdir(FLAGS.output_directory):
-    shutil.rmtree(FLAGS.output_directory)
+  if os.path.exists(FLAGS.model_dir) and os.path.isdir(FLAGS.model_dir):
+    shutil.rmtree(FLAGS.model_dir)
   
   if not FLAGS.trained_checkpoint_prefix:
     path = os.path.join(FLAGS.result_base, FLAGS.trained_checkpoint_path)
@@ -81,10 +81,10 @@ def main(_):
 
   exporter.export_inference_graph(
       FLAGS.input_type, pipeline_config, trained_checkpoint_prefix,
-      FLAGS.output_directory, input_shape=input_shape,
+      FLAGS.model_dir, input_shape=input_shape,
       write_inference_graph=FLAGS.write_inference_graph)
   
-  print('Done!\n\nImportant files:\n{}/saved_model\n{}'.format(FLAGS.output_directory, FLAGS.output_label_path))
+  print('Done!\n\nImportant files:\n{}/saved_model\n{}'.format(FLAGS.model_dir, FLAGS.output_label_path))
 
 
 if __name__ == '__main__':
