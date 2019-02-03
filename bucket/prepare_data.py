@@ -192,3 +192,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
                 new_line = new_line.replace('${VAL_RECORD}', fill_val_record)
                 new_line = new_line.replace('${CHECKPOINT}', fill_checkpoint)
                 pipeline.write(new_line)
+
+
+if __name__== "__main__":
+  main()

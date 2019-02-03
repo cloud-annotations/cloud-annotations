@@ -11,7 +11,7 @@ model_definition:
       pip install --user pycocotools;
       export PYTHONPATH=`pwd`/slim &&
       python3 -m bucket.prepare_data &&
-      python3 -m object_detection.model_main --pipeline_config_path=${RESULT_DIR}/pipeline.config --model_dir=${RESULT_DIR}/checkpoint --num_train_steps=10000
+      python3 -m object_detection.model_main --pipeline_config_path=${RESULT_DIR}/pipeline.config --model_dir=${RESULT_DIR}/checkpoint --num_train_steps=10000 &&
       python3 -m quick_export_graph --result_base=${RESULT_DIR} --output_label_path=${RESULT_DIR}/labels.json
     compute_configuration:
       name: k80
