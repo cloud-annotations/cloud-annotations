@@ -87,7 +87,7 @@ def createDir(base, dirName):
 
 output_dir = '.tmp'
 train_dir = createDir(output_dir, 'train')
-result_dir = createDir(output_dir, 'data')
+result_dir = createDir(output_dir, 'result')
 
 
 ################################################################################
