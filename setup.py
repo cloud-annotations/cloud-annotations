@@ -1,10 +1,14 @@
 """Setup script for object_detection and slim"""
 
-from setuptools import setup, find_packages
 import tarfile
 import zipfile
 import shutil
 import os
+
+from setuptools import setup, find_packages
+from subprocess import call
+
+call('protoc object_detection/protos/*.proto --python_out=.', shell=True)
 
 REQUIRED_PACKAGES = ['Pillow>=1.0', 'Matplotlib>=2.1', 'Cython>=0.28.1']
 
