@@ -1,3 +1,10 @@
+.social-media-icon-svg {
+  fill: #1da1f2;
+}
+.social-media-icon-svg:hover {
+  fill: #005fd1;
+}
+
 .titlebar {
   position: fixed;
   left: 0;
