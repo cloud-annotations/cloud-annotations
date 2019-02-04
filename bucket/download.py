@@ -79,6 +79,9 @@ if credentials_1['bucket'] == None:
 # Prepare Output Directories
 ################################################################################
 output_dir = '.tmp'
+if os.path.exists(output_dir) and os.path.isdir(output_dir):
+    shutil.rmtree(output_dir)
+os.makedirs(output_dir)
 
 
 ################################################################################
