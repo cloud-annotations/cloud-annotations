@@ -23,7 +23,7 @@ flags.DEFINE_string('input_shape', None,
                     'dimensions. If not specified, for an `image_tensor, the '
                     'default shape will be partially specified as '
                     '`[None, None, None, 3]`.')
-flags.DEFINE_string('result_base', '.tmp/data',
+flags.DEFINE_string('result_base', '.tmp',
                     'Path to a string_int_label_map_pb2.StringIntLabelMapItem '
                     'file.')
 flags.DEFINE_string('pipeline_config_path', 'pipeline.config',
