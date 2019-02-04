@@ -78,16 +78,7 @@ if credentials_1['bucket'] == None:
 ################################################################################
 # Prepare Output Directories
 ################################################################################
-def createDir(base, dirName):
-    path = os.path.join(base, dirName)
-    if os.path.exists(path) and os.path.isdir(path):
-        shutil.rmtree(path)
-    os.makedirs(path)
-    return path
-
 output_dir = '.tmp'
-train_dir = createDir(output_dir, 'train')
-result_dir = createDir(output_dir, 'result')
 
 
 ################################################################################
@@ -96,14 +87,14 @@ result_dir = createDir(output_dir, 'result')
 annotations = cos.Object(credentials_1['bucket'], '_annotations.json').get()['Body'].read()
 annotations = json.loads(annotations.decode('utf-8'))['annotations']
 
-cos.Object(credentials_1['bucket'], '_annotations.json').download_file(os.path.join(train_dir, '_annotations.json'))
+cos.Object(credentials_1['bucket'], '_annotations.json').download_file(os.path.join(output_dir, '_annotations.json'))
 
 # Download training images.
 image_files = [image for image in annotations.keys()]
 for file in image_files:
-    filename = os.path.join(train_dir, file)
+    filename = os.path.join(output_dir, file)
     print('saving: {}'.format(file))
     print('to: {}'.format(filename))
     cos.Object(credentials_1['bucket'], file).download_file(filename)
 
-prepare_data.main(train_dir, result_dir)
+prepare_data.main(output_dir, output_dir)
