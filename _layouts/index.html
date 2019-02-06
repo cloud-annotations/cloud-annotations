@@ -7,7 +7,7 @@ layout: base
 
 <div class="sidebar">
   <ol class="stepper">
-  {% for item in site.steps %}
+  {% for item in site[page.collection] %}
     {% if item.url == page.url %}
       <li class="stepper-item active" ><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
     {% else %}

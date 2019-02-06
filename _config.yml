@@ -25,10 +25,18 @@ collections:
   steps:
     output: true
     permalink: /:path:output_ext
+  wml:
+    output: true
+    permalink: /wml/:path:output_ext
 
 defaults:
   - scope:
       path: ""
       type: "steps"
+    values:
+      layout: index
+  - scope:
+      path: ""
+      type: "wml"
     values:
       layout: index
