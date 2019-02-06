@@ -96,7 +96,7 @@ metadata = {
     python3 -m object_detection.model_main
       --pipeline_config_path=${RESULT_DIR}/pipeline.config
       --model_dir=${RESULT_DIR}/checkpoint
-      --num_train_steps=""" + args.num_train_steps + """
+      --num_train_steps=""" + str(args.num_train_steps) + """
       --alsologtostderr &&
     python3 -m quick_export_graph
       --result_base=${RESULT_DIR}
