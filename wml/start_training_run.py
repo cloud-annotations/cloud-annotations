@@ -20,6 +20,8 @@ parser.add_argument('--result-bucket-name', type=str)
 parser.add_argument('--result-bucket-endpoint', type=str)
 parser.add_argument('--data-bucket-name', type=str)
 parser.add_argument('--data-bucket-endpoint', type=str)
+parser.add_argument('--gpu', type=str, default='k80')
+parser.add_argument('--num-train-steps', type=int, default=300)
 args = parser.parse_args()
 
 MODEL_ZIP_PATH = 'tf-model.zip'
@@ -94,7 +96,7 @@ metadata = {
     python3 -m object_detection.model_main
       --pipeline_config_path=${RESULT_DIR}/pipeline.config
       --model_dir=${RESULT_DIR}/checkpoint
-      --num_train_steps=300
+      --num_train_steps=""" + args.num_train_steps + """
       --alsologtostderr &&
     python3 -m quick_export_graph
       --result_base=${RESULT_DIR}
@@ -130,7 +132,7 @@ metadata = {
     },
     'type': 's3'
   },
-  client.training.ConfigurationMetaNames.COMPUTE_CONFIGURATION: {'name': 'v100x2'}
+  client.training.ConfigurationMetaNames.COMPUTE_CONFIGURATION: {'name': args.gpu}
 }
 run_details = client.training.run(definition_uid, meta_props=metadata)
 run_uid = client.training.get_run_uid(run_details)
