@@ -9,6 +9,7 @@ _site
 /object_detection
 /slim
 /exported_graph
+/labels.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
