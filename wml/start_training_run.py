@@ -138,7 +138,7 @@ print('run_uid: ', run_uid)
 
 client.training.monitor_logs(run_uid)
 
-model_location = client.training.get_details('model-2x73y589')['entity']['training_results_reference']['location']['model_location']
+model_location = client.training.get_details(run_uid)['entity']['training_results_reference']['location']['model_location']
 
 contents = cos.Bucket(args.result_bucket_name).objects.filter(
   Prefix=os.path.join(model_location, 'model')
