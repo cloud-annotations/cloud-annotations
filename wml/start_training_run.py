@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 import argparse
+import shutil
 
 import ibm_boto3
 from botocore.client import Config
@@ -129,7 +130,7 @@ metadata = {
     },
     'type': 's3'
   },
-  client.training.ConfigurationMetaNames.COMPUTE_CONFIGURATION: {'name': 'k80'}
+  client.training.ConfigurationMetaNames.COMPUTE_CONFIGURATION: {'name': 'v100x2'}
 }
 run_details = client.training.run(definition_uid, meta_props=metadata)
 run_uid = client.training.get_run_uid(run_details)
@@ -137,7 +138,24 @@ print('run_uid: ', run_uid)
 
 client.training.monitor_logs(run_uid)
 
-# stored_model_name = "tf-object-detection_model"
-# stored_model_details = client.repository.store_model(run_uid, stored_model_name)
-# model_uid = client.repository.get_model_uid(stored_model_details)
-# print("model_uid: ", model_uid)
+model_location = client.training.get_details('model-2x73y589')['entity']['training_results_reference']['location']['model_location']
+
+contents = cos.Bucket(args.result_bucket_name).objects.filter(
+  Prefix=os.path.join(model_location, 'model')
+)
+
+if os.path.exists('exported_graph') and os.path.isdir('exported_graph'):
+  shutil.rmtree('exported_graph')
+os.makedirs('exported_graph')
+
+for item in contents:
+  local_path = '/'.join(item.key.split('/')[2:])
+  local_path = os.path.join('exported_graph', local_path)
+  print(local_path)
+  if item.key.endswith('/'):
+    if not os.path.exists(local_path):
+      os.makedirs(local_path)
+  else:
+    cos.Object(args.result_bucket_name, item.key).download_file(local_path)
+
+cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file('labels.json')
