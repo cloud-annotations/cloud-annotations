@@ -17,7 +17,7 @@ from bucket import prepare_data
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--bucket', type=str)
-parser.add_argument('--endpoint', type=str)
+parser.add_argument('--endpoint', type=str, default='https://s3-api.us-geo.objectstorage.softlayer.net')
 args = parser.parse_args()
 
 
@@ -29,7 +29,7 @@ credentials_1 = {
   'iam_url': 'https://iam.ng.bluemix.net/oidc/token',
   'api_key': os.getenv('API_KEY'),
   'resource_instance_id': os.getenv('RESOURCE_INSTANCE_ID'),
-  'url': args.endpoint or 'https://s3-api.us-geo.objectstorage.softlayer.net'
+  'url': args.endpoint
 }
 
 
