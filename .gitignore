@@ -11,6 +11,7 @@ _site
 /exported_graph
 /web_model
 /labels.json
+/tf-model.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
