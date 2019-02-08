@@ -7,6 +7,26 @@
 - [bourdakos1.github.io/tfjs-object-detection-training/wml](https://bourdakos1.github.io/tfjs-object-detection-training/wml/)
 
 ## Quick & Dirty commands
+It's recommended to go through one of the above walkthroughs, but if you already have and just need to remember one of the commands, here they are:
+
+### Project setup
+```
+git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
+cd tfjs-object-detection-training
+```
+
+Download the classification or object detection api:
+Classification |
+------------ |
+`svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification` |
+
+Object Detection |
+------------ |
+```
+svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
+svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
+``` |
+
 ### Classification local
 ```
 git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
