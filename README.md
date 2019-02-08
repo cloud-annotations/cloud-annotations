@@ -16,16 +16,19 @@ cd tfjs-object-detection-training
 ```
 
 Download the classification or object detection api:
+
 Classification |
 ------------ |
-`svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification` |
+```
+svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
+```
 
 Object Detection |
 ------------ |
 ```
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
 svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
-``` |
+```
 
 ### Classification local
 ```
