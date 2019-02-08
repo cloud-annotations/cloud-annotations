@@ -6,15 +6,11 @@
 ### Walkthrough for training on IBM Cloud:
 - [bourdakos1.github.io/tfjs-object-detection-training/wml](https://bourdakos1.github.io/tfjs-object-detection-training/wml/)
 
-### Quick & Dirty commands
+## Quick & Dirty commands
+### Classification local
 ```
 git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
 cd tfjs-object-detection-training
-```
-
-```
-svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
-svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
 ```
 
 ```
@@ -26,7 +22,43 @@ python -m bucket.login
 ```
 
 ```
-pip install -r requirements.txt
+pip install -r requirements_classification.txt
+```
+
+```
+python -m bucket.download
+```
+
+```
+python -m classification.retrain \
+  --image_dir=.tmp/data \
+  --saved_model_dir=exported_graph/saved_model \
+  --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
+  --how_many_training_steps=500 \
+  --output_labels=.tmp/output_labels.txt
+```
+
+```
+python -m scripts.convert --tfjs --tflite --coreml
+```
+
+### Object detection local
+```
+git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
+cd tfjs-object-detection-training
+```
+
+```
+svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
+svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
+```
+
+```
+python -m bucket.login
+```
+
+```
+pip install -r requirements_object_detection.txt
 ```
 
 ```
@@ -47,15 +79,66 @@ python -m scripts.quick_export_graph
 ```
 
 ```
-python -m classification.retrain \
-  --image_dir=.tmp/data \
-  --saved_model_dir=exported_graph/saved_model \
-  --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
-  --how_many_training_steps=500 \
-  --output_labels=.tmp/output_labels.txt
+python -m scripts.convert --tfjs --tflite --coreml
+```
+
+### Classification on IBM Cloud
+```
+git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
+cd tfjs-object-detection-training
+```
+
+```
+svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
+```
+
+```
+python setup_classification.py sdist
+```
+
+```
+python -m wml.login
+```
+
+```
+pip install -r requirements_wml.txt
+```
+
+```
+python -m scripts.start_training_run
 ```
 
 ```
 python -m scripts.convert --tfjs --tflite --coreml
 ```
 
+### Object detection on IBM Cloud
+```
+git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
+cd tfjs-object-detection-training
+```
+
+```
+svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
+svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
+```
+
+```
+python setup_object_detection.py sdist
+```
+
+```
+python -m wml.login
+```
+
+```
+pip install -r requirements_wml.txt
+```
+
+```
+python -m scripts.start_training_run
+```
+
+```
+python -m scripts.convert --tfjs --tflite --coreml
+```
