@@ -27,7 +27,7 @@ try:
 except Exception:
     pass
 
-def main(read_bucket=read_dir, write_bucket=write_dir, image_files_exceptions=[]):
+def main(read_bucket=read_dir, write_bucket=write_dir):
     ############################################################################
     # Prepare Directories
     ############################################################################
@@ -64,7 +64,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir, image_files_exceptions=[]
     ############################################################################
     # Create TF Records
     ############################################################################
-    image_files = [image for image in annotations.keys() if image not in image_files_exceptions]
+    image_files = [image for image in annotations.keys()]
 
     train_shards = 10
     val_shards = 10
@@ -86,6 +86,8 @@ def main(read_bucket=read_dir, write_bucket=write_dir, image_files_exceptions=[]
                 num_shards)
             for idx, example in enumerate(examples):
                 img_path = os.path.join(read_bucket, example)
+                if not os.path.isfile(img_path):
+                    continue                
                 with tf.gfile.GFile(img_path, 'rb') as fid:
                     encoded_jpg = fid.read()
                 encoded_jpg_io = io.BytesIO(encoded_jpg)
