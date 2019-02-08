@@ -10,13 +10,11 @@
 It's recommended to go through one of the above walkthroughs, but if you already have and just need to remember one of the commands, here they are:
 
 ### Project setup
-Clone the repo:
 ```
 git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
 cd tfjs-object-detection-training
 ```
 
-Download the classification or object detection api:
 * classification
   ```
   svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
@@ -27,7 +25,6 @@ Download the classification or object detection api:
   svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
   ```
 
-Log into Watson services and final setup:
 * training locally
   ```
   python -m bucket.login
@@ -36,22 +33,12 @@ Log into Watson services and final setup:
   ```
   python -m wml.login
   ```
-  * classification
-    ```
-    python setup_classification.py sdist
-    ```
-  * object detection
-    ```
-    python setup_object_detection.py sdist
-    ```
 
 ### Training locally
-Download the data:
 ```
 python -m bucket.download
 ```
 
-Train:
 * classification
   ```
   python -m classification.retrain \
@@ -72,13 +59,20 @@ Train:
   ```
 
 ### Training on IBM Cloud
-Train:
+* classification
+  ```
+  python setup_classification.py sdist
+  ```
+* object detection
+  ```
+  python setup_object_detection.py sdist
+  ```
+  
 ```
 python -m scripts.start_training_run
 ```
 
-### Conversion
-Convert to desired format:
+### Convert to desired format
 ```
 python -m scripts.convert --tfjs --tflite --coreml
 ```
