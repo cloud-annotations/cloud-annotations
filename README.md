@@ -6,7 +6,7 @@
 ### Walkthrough for training on IBM Cloud:
 - [bourdakos1.github.io/tfjs-object-detection-training/wml](https://bourdakos1.github.io/tfjs-object-detection-training/wml/)
 
-### Quick and dirty commands
+### Quick & Dirty commands
 ```
 git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
 cd tfjs-object-detection-training
@@ -39,22 +39,20 @@ python -m bucket.download
 
 ```
 export PYTHONPATH=$PYTHONPATH:`pwd`/slim
-```
-
-```
 python -m object_detection.model_main \
   --pipeline_config_path=.tmp/pipeline.config \
   --model_dir=.tmp/checkpoint
+  --num_train_steps=500 &&
+python -m scripts.quick_export_graph
 ```
-
 
 ```
 python -m classification.retrain \
-  --??=??
-```
-
-```
-python -m scripts.quick_export_graph
+  --image_dir=.tmp/data \
+  --saved_model_dir=exported_graph/saved_model \
+  --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
+  --how_many_training_steps=500 \
+  --output_labels=.tmp/output_labels.txt
 ```
 
 ```
