@@ -27,7 +27,7 @@ try:
 except Exception:
     pass
 
-def main(read_bucket=read_dir, write_bucket=write_dir):
+def main(read_bucket=read_dir, write_bucket=write_dir, image_files_exceptions=[]):
     ############################################################################
     # Prepare Directories
     ############################################################################
@@ -64,7 +64,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
     ############################################################################
     # Create TF Records
     ############################################################################
-    image_files = [image for image in annotations.keys()]
+    image_files = [image for image in annotations.keys() if image not in image_files_exceptions]
 
     train_shards = 10
     val_shards = 10
