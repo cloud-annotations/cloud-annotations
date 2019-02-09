@@ -53,5 +53,6 @@ with zipfile.ZipFile('tf-model.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
   tf_model.write('bucket/prepare_data_object_detection.py')
   tf_model.write('bucket/pipeline_skeleton.config')
   tf_model.write('scripts/quick_export_graph.py')
+  tf_model.write('wml/train_command.py')
 
 shutil.rmtree('dist')

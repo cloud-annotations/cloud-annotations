@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import json
 import argparse
 import shutil
 
@@ -16,7 +17,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--ml-endpoint', type=str, default='https://us-south.ml.cloud.ibm.com')
 parser.add_argument('--bucket-endpoint', type=str, default='https://s3-api.us-geo.objectstorage.softlayer.net')
 parser.add_argument('--private-bucket-endpoint', type=str, default='https://s3-api.us-geo.objectstorage.service.networklayer.com')
-parser.add_argument('--type', type=str, default='classification')
 parser.add_argument('--result-bucket-name', type=str)
 parser.add_argument('--result-bucket-endpoint', type=str)
 parser.add_argument('--data-bucket-name', type=str)
@@ -26,33 +26,6 @@ parser.add_argument('--num-train-steps', type=int, default=300)
 args = parser.parse_args()
 
 MODEL_ZIP_PATH = 'tf-model.zip'
-
-if args.type == 'object-detection':
-  execution_command = """
-    pip install --user pycocotools;
-    export PYTHONPATH=`pwd`/slim &&
-    python3 -m bucket.prepare_data &&
-    python3 -m object_detection.model_main
-      --pipeline_config_path=${RESULT_DIR}/pipeline.config
-      --model_dir=${RESULT_DIR}/checkpoint
-      --num_train_steps=""" + str(args.num_train_steps) + """
-      --alsologtostderr &&
-    python3 -m quick_export_graph
-      --result_base=${RESULT_DIR}
-      --output_label_path=${RESULT_DIR}/labels.json
-      --model_dir=${RESULT_DIR}/model
-  """
-else:
-  execution_command = """
-    python3 -m bucket.prepare_data &&
-    python -m classification.retrain \
-      --image_dir=${RESULT_DIR}/data \
-      --saved_model_dir=${RESULT_DIR}/model/saved_model \
-      --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
-      --how_many_training_steps=500 \
-      --output_labels=${RESULT_DIR}/output_labels.txt
-  """
-
 
 ################################################################################
 # Initialize Cloud Object Storage
@@ -116,7 +89,7 @@ metadata = {
   client.repository.DefinitionMetaNames.FRAMEWORK_VERSION: '1.12',
   client.repository.DefinitionMetaNames.RUNTIME_NAME: 'python',
   client.repository.DefinitionMetaNames.RUNTIME_VERSION: '3.5',
-  client.repository.DefinitionMetaNames.EXECUTION_COMMAND: execution_command
+  client.repository.DefinitionMetaNames.EXECUTION_COMMAND: 'python3 -m wml.train_command --num-train-steps={}'.format(args.num_train_steps)
 }
 definition_details = client.repository.store_definition(MODEL_ZIP_PATH, meta_props=metadata)
 definition_uid = client.repository.get_definition_uid(definition_details)
@@ -174,4 +147,16 @@ for item in contents:
   else:
     cos.Object(args.result_bucket_name, item.key).download_file(local_path)
 
-cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file('labels.json')
+try:
+  cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file('labels.json')
+except Exception:
+  pass
+
+try:
+  labels = cos.Object(args.result_bucket_name, os.path.join(model_location, 'output_labels.txt')).get()['Body'].read()
+  labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
+  with open('labels.json', 'w') as f:
+    json.dump(labels, f)
+except Exception as err:
+  pass
+  

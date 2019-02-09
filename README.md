@@ -70,8 +70,7 @@ python -m bucket.download
   ```
   
 ```
-python -m wml.start_training_run \
-  --type={classification | object-detection}
+python -m wml.start_training_run
 ```
 
 ### Convert to desired format

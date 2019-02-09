@@ -28,5 +28,6 @@ with zipfile.ZipFile('tf-model.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
             tf_model.writestr(rel_path, f.read())
   tf_model.write('bucket/__init__.py')
   tf_model.write('bucket/prepare_data_classification.py')
+  tf_model.write('wml/train_command.py')
 
 shutil.rmtree('dist')

@@ -5,15 +5,16 @@ from __future__ import print_function
 import argparse
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--type', type=str, default='classification')
 parser.add_argument('--coreml', action='store_true')
 parser.add_argument('--tflite', action='store_true')
 parser.add_argument('--tfjs', action='store_true')
-parser.add_argument('--input_name', type=str, default='input')
-parser.add_argument('--output_name', type=str, default='final_result')
-parser.add_argument('--tf_model_path', type=str, default='.tmp/model.pb')
-parser.add_argument('--mlmodel_path', type=str, default='.tmp/model.mlmodel')
-parser.add_argument('--tflite_path', type=str, default='.tmp/model.tflite')
-parser.add_argument('--class_labels', type=str, default='.tmp/model.labels')
+parser.add_argument('--input-name', type=str, default='input')
+parser.add_argument('--output-name', type=str, default='final_result')
+parser.add_argument('--tf_model-path', type=str, default='exported_graph/saved_model/saved_model.pb')
+parser.add_argument('--mlmodel-path', type=str, default='model.mlmodel')
+parser.add_argument('--tflite-path', type=str, default='model.tflite')
+parser.add_argument('--class-labels', type=str, default='labels.json')
 args = parser.parse_args()
 
 if args.coreml:
@@ -43,3 +44,23 @@ if args.tflite:
     converter = convert.from_frozen_graph(args.tf_model_path, input_arrays, output_arrays)
     tflite_model = converter.convert()
     open(args.tflite_path, 'wb').write(tflite_model)
+
+if args.tfjs:
+    from tensorflowjs.converters import tf_saved_model_conversion_pb
+
+    tf_saved_model_conversion_pb.convert_tf_saved_model(
+            'exported_graph/saved_model',
+            'Postprocessor/ExpandDims_1,Postprocessor/Slice',
+            'web_model',
+            saved_model_tags='serve',
+            quantization_dtype=None,
+            skip_op_check=False,
+            strip_debug_ops=True)
+
+
+
+    # tensorflowjs_converter \
+    # --input_format=tf_saved_model \
+    # --output_node_names='Postprocessor/ExpandDims_1,Postprocessor/Slice' \
+    # exported_graph/saved_model \
+    # web_model
