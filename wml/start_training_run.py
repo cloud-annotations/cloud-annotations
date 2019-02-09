@@ -157,6 +157,6 @@ try:
   labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
   with open('labels.json', 'w') as f:
     json.dump(labels, f)
-except Exception as err:
+except Exception:
   pass
   
