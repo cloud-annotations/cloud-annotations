@@ -70,10 +70,13 @@ python -m bucket.download
   ```
   
 ```
-python -m wml.start_training_run --type={classification|object-detection}
+python -m wml.start_training_run \
+  --type={classification | object-detection}
 ```
 
 ### Convert to desired format
 ```
-python -m scripts.convert --tfjs --tflite --coreml
+python -m scripts.convert \
+  --type={classification | object-detection} \
+  --tfjs --tflite --coreml
 ```
