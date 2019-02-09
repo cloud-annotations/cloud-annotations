@@ -18,6 +18,7 @@ cd tfjs-object-detection-training
 * classification
   ```
   svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
+  echo > classification/__init__.py
   ```
 * object detection
   ```

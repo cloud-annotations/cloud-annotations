@@ -10,7 +10,7 @@ import ibm_boto3
 from botocore.client import Config
 from watson_machine_learning_client import WatsonMachineLearningAPIClient
 from dotenv import load_dotenv
-load_dotenv('.credentials')
+load_dotenv('.credentials_wml')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--ml-endpoint', type=str, default='https://us-south.ml.cloud.ibm.com')

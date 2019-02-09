@@ -5,6 +5,7 @@ _site
 .DS_Store
 
 /.credentials
+/.credentials_wml
 /.tmp
 /classification
 /object_detection
