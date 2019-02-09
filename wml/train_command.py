@@ -17,14 +17,14 @@ if annotations_type == 'localization':
     pip install --user pycocotools;
     export PYTHONPATH=`pwd`/slim &&
     python3 -m bucket.prepare_data_object_detection &&
-    python3 -m object_detection.model_main
-      --pipeline_config_path=${RESULT_DIR}/pipeline.config
-      --model_dir=${RESULT_DIR}/checkpoint
-      --num_train_steps=""" + str(args.num_train_steps) + """
+    python3 -m object_detection.model_main \
+      --pipeline_config_path=${RESULT_DIR}/pipeline.config \
+      --model_dir=${RESULT_DIR}/checkpoint \
+      --num_train_steps=""" + str(args.num_train_steps) + """ \
       --alsologtostderr &&
-    python3 -m quick_export_graph
-      --result_base=${RESULT_DIR}
-      --output_label_path=${RESULT_DIR}/labels.json
+    python3 -m scripts.quick_export_graph \
+      --result_base=${RESULT_DIR} \
+      --output_label_path=${RESULT_DIR}/labels.json \
       --model_dir=${RESULT_DIR}/model
   """
 else:
@@ -39,4 +39,4 @@ else:
       --output_labels=${RESULT_DIR}/output_labels.txt
   """
 
-  call(execution_command, shell=True)
+call(execution_command, shell=True)
