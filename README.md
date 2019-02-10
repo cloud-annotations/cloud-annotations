@@ -1,5 +1,5 @@
 # Cloud Annotations Training
-![](https://bourdakos1.github.io/tfjs-object-detection-training/assets/main.png)
+![](https://cloud-annotations.github.io/training/assets/main.png)
 
 ## Object detection walkthroughs
 ### [Training a model locally](https://cloud-annotations.github.io/training/object-detection/)
