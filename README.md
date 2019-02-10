@@ -1,4 +1,4 @@
-# Object Detection Training
+# Cloud Annotations Training
 ![](https://bourdakos1.github.io/tfjs-object-detection-training/assets/main.png)
 
 ## Object detection walkthroughs
