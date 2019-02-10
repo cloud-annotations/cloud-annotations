@@ -3,7 +3,7 @@
 
 ## Object detection walkthroughs
 ### [Training a model locally](https://bourdakos1.github.io/tfjs-object-detection-training/)
-### [Training a model on IBM Cloud](https://bourdakos1.github.io/tfjs-object-detection-training/)
+### [Training a model on IBM Cloud](https://bourdakos1.github.io/tfjs-object-detection-training/wml/)
 
 ## Classification walkthroughs
 ### [Training a model locally](https://bourdakos1.github.io/tfjs-object-detection-training/classification/)
