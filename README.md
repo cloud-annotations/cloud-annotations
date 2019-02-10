@@ -2,12 +2,12 @@
 ![](https://bourdakos1.github.io/tfjs-object-detection-training/assets/main.png)
 
 ## Object detection walkthroughs
-### [Training a model locally](https://bourdakos1.github.io/tfjs-object-detection-training/)
-### [Training a model on IBM Cloud](https://bourdakos1.github.io/tfjs-object-detection-training/wml/)
+### [Training a model locally](https://cloud-annotations.github.io/training/object-detection/)
+### [Training a model on IBM Cloud](https://cloud-annotations.github.io/training/object-detection/wml/)
 
 ## Classification walkthroughs
-### [Training a model locally](https://bourdakos1.github.io/tfjs-object-detection-training/classification/)
-### [Training a model on IBM Cloud](https://bourdakos1.github.io/tfjs-object-detection-training/wml_classification/)
+### [Training a model locally](https://cloud-annotations.github.io/training/classification/)
+### [Training a model on IBM Cloud](https://cloud-annotations.github.io/training/classification/wml/)
 
 ## Quick & Dirty commands
 It's recommended to go through one of the above walkthroughs, but if you already have and just need to remember one of the commands, here they are:
