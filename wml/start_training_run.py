@@ -148,14 +148,14 @@ for item in contents:
     cos.Object(args.result_bucket_name, item.key).download_file(local_path)
 
 try:
-  cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file('labels.json')
+  cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file(os.path.join('exported_graph', 'labels.json'))
 except Exception:
   pass
 
 try:
-  labels = cos.Object(args.result_bucket_name, os.path.join(model_location, 'output_labels.txt')).get()['Body'].read()
+  labels = cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.txt')).get()['Body'].read()
   labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
-  with open('labels.json', 'w') as f:
+  with open(os.path.join('exported_graph', 'labels.json'), 'w') as f:
     json.dump(labels, f)
 except Exception:
   pass

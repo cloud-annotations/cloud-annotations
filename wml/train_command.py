@@ -24,7 +24,6 @@ if annotations_type == 'localization':
       --alsologtostderr &&
     python3 -m scripts.quick_export_graph \
       --result_base=${RESULT_DIR} \
-      --output_label_path=${RESULT_DIR}/labels.json \
       --model_dir=${RESULT_DIR}/model
   """
 else:
@@ -36,7 +35,7 @@ else:
       --saved_model_dir=${RESULT_DIR}/model/saved_model \
       --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
       --how_many_training_steps=""" + str(args.num_train_steps) + """ \
-      --output_labels=${RESULT_DIR}/output_labels.txt
+      --output_labels=${RESULT_DIR}/model/labels.txt
   """
 
 call(execution_command, shell=True)

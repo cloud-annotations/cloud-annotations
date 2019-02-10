@@ -60,13 +60,13 @@ def main(_):
   else:
     input_shape = None
 
-  label_map = get_label_map_dict(os.path.join(FLAGS.result_base, FLAGS.label_map_path))
-  label_array = [k for k in sorted(label_map, key=label_map.get)]
-  with open(FLAGS.output_label_path, 'w') as f:
-    json.dump(label_array, f)
-
   if os.path.exists(FLAGS.model_dir) and os.path.isdir(FLAGS.model_dir):
     shutil.rmtree(FLAGS.model_dir)
+
+  label_map = get_label_map_dict(os.path.join(FLAGS.result_base, FLAGS.label_map_path))
+  label_array = [k for k in sorted(label_map, key=label_map.get)]
+  with open(os.path.join(FLAGS.model_dir, FLAGS.output_label_path), 'w') as f:
+    json.dump(label_array, f)
   
   if not FLAGS.trained_checkpoint_prefix:
     path = os.path.join(FLAGS.result_base, FLAGS.trained_checkpoint_path)

@@ -23,7 +23,7 @@ parser.add_argument('--tf-model-name', type=str, default='saved_model.pb')
 parser.add_argument('--mlmodel-path', type=str, default='model_ios/model.mlmodel')
 parser.add_argument('--tflite-path', type=str, default='model_android/model.tflite')
 parser.add_argument('--tfjs-path', type=str, default='model_web')
-parser.add_argument('--class-labels', type=str, default='labels.json')
+parser.add_argument('--class-labels', type=str, default='exported_graph/labels.json')
 args = parser.parse_args()
 
 LOCALIZATION = 'localization'
@@ -131,6 +131,8 @@ def convert_to_tfjs():
 
     output_node_names = ','.join(args.output_names)
 
+    shutil.copy2(args.class_labels, args.tfjs_path)
+    
     convert_tf_saved_model(
             args.tf_model_path,
             output_node_names,
