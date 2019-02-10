@@ -6,10 +6,8 @@
 ### [Training a model on IBM Cloud](https://bourdakos1.github.io/tfjs-object-detection-training/)
 
 ## Classification walkthroughs
-### Training a model locally:
-- [bourdakos1.github.io/tfjs-object-detection-training/classification](https://bourdakos1.github.io/tfjs-object-detection-training/classification/)
-### Training a model on IBM Cloud:
-- [bourdakos1.github.io/tfjs-object-detection-training/wml_classification](https://bourdakos1.github.io/tfjs-object-detection-training/wml_classification/)
+### [Training a model locally](https://bourdakos1.github.io/tfjs-object-detection-training/classification/)
+### [Training a model on IBM Cloud](https://bourdakos1.github.io/tfjs-object-detection-training/wml_classification/)
 
 ## Quick & Dirty commands
 It's recommended to go through one of the above walkthroughs, but if you already have and just need to remember one of the commands, here they are:
