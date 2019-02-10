@@ -29,16 +29,10 @@ cd tfjs-object-detection-training
   svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
   ```
 
-* training locally
-  ```
-  python -m bucket.login
-  ```
-* training on IBM Cloud
-  ```
-  python -m wml.login
-  ```
-
 ### Training locally
+```
+python -m bucket.login
+```
 ```
 python -m bucket.download
 ```
@@ -63,6 +57,9 @@ python -m bucket.download
   ```
 
 ### Training on IBM Cloud
+```
+python -m wml.login
+```
 * classification
   ```
   python setup_classification.py sdist
