@@ -24,9 +24,6 @@ authors:
 collections:
   object_detection:
     output: true
-    permalink: /:path:output_ext
-  object_detection:
-    output: true
     permalink: /object-detection/:path:output_ext
   wml_object_detection:
     output: true
