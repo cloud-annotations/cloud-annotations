@@ -6,6 +6,8 @@ import os
 import shutil
 import argparse
 
+from scripts.types import ModelType
+
 import tensorflow as tf
 
 parser = argparse.ArgumentParser()
@@ -26,11 +28,6 @@ parser.add_argument('--mlmodel-path', type=str, default='model_ios')
 parser.add_argument('--tflite-path', type=str, default='model_android')
 parser.add_argument('--tfjs-path', type=str, default='model_web')
 args = parser.parse_args()
-
-class ModelType:
-    NONE = 0
-    LOCALIZATION = 1
-    CLASSIFICATION = 2
 
 def infer_model_structure():
     if args.input_name and args.output_names:
@@ -68,7 +65,8 @@ def infer_model_structure():
 model_structure = infer_model_structure()
 
 if args.coreml:
-    print('TODO: This feature is not implemented yet.')
+    from scripts.convert_to_core_ml import convert_to_core_ml
+    convert_to_core_ml(args.exported_graph_path, model_structure, args.mlmodel_path)
 
 if args.tflite:
     print('TODO: This feature is not implemented yet.')

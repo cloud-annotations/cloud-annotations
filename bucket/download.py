@@ -99,6 +99,9 @@ for f in image_files:
     filename = os.path.join(output_dir, f)
     print('saving: {}'.format(f))
     print('to: {}'.format(filename))
+    dirname = os.path.dirname(filename)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
     cos.Object(credentials_1['bucket'], f).download_file(filename)
 
 if annotations_type == 'localization':
