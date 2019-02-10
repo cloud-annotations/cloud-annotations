@@ -65,16 +65,23 @@ def infer_model_structure():
                 'type': ModelType.CLASSIFICATION
             }
 
+model_structure = infer_model_structure()
+
 if args.coreml:
     from convert_to_core_ml import convert_to_core_ml
-    convert_to_core_ml()
+    if model_structure['type'] == ModelType.LOCALIZATION:
+        print('TODO: This feature is not implemented yet.')
+    else:
+        convert_to_core_ml()
 
 if args.tflite:
     from convert_to_tflite import convert_to_tflite
-    convert_to_tflite()
+    if model_structure['type'] == ModelType.LOCALIZATION:
+        print('TODO: This feature is not implemented yet.')
+    else:
+        convert_to_core_ml()
 
 if args.tfjs:
     from convert_to_tfjs import convert_to_tfjs
-    model_structure = infer_model_structure()
     output_names = model_structure['output_names']
     convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)

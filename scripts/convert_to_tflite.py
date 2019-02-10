@@ -13,11 +13,6 @@ else:
     convert = tf.lite.TFLiteConverter
 
 def convert_to_tflite():
-    if LOCALIZATION:
-        print('tflite coming soon for object detection')
-        return
-
-
     path = 'model_android'
     if os.path.exists(path) and os.path.isdir(path):
         shutil.rmtree(path)
