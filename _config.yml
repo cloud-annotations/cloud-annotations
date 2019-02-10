@@ -2,7 +2,7 @@
 title: Object Detection Training
 description: >-
   Create custom object detection models for TensorFlow.js
-baseurl: "/tfjs-object-detection-training" # the subpath of your site, e.g. /blog
+baseurl: "/training" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bourdakos1
 github_username:  bourdakos1
@@ -10,10 +10,6 @@ github_username:  bourdakos1
 # Build settings
 markdown: kramdown
 theme: minima
-
-# Code pattern config
-codepattern_title: "Core ML & Watson Visual Recognition"
-codepattern_url: https://developer.ibm.com/code/patterns/deploy-a-core-ml-model-with-watson-visual-recognition/
 
 # Authors
 authors:
