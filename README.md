@@ -39,12 +39,13 @@ python -m bucket.download
 
 * classification
   ```
+  mkdir exported_graph
   python -m classification.retrain \
     --image_dir=.tmp/data \
     --saved_model_dir=exported_graph/saved_model \
     --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
     --how_many_training_steps=500 \
-    --output_labels=.tmp/output_labels.txt
+    --output_labels=exported_graph/labels.txt
   ```
 * object detection
   ```
