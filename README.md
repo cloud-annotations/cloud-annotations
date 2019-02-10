@@ -75,7 +75,5 @@ python -m wml.start_training_run
 
 ### Convert to desired format
 ```
-python -m scripts.convert \
-  --type={classification | object-detection} \
-  --tfjs --tflite --coreml
+python -m scripts.convert --tfjs --tflite --coreml
 ```
