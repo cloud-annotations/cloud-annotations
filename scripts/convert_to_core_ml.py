@@ -1,17 +1,18 @@
 def convert_to_core_ml():
-    import tfcoreml
+    # import tfcoreml
 
-    path = 'model_ios'
-    if os.path.exists(path) and os.path.isdir(path):
-        shutil.rmtree(path)
-    os.makedirs(path)
+    # from tensorflow.python.tools import strip_unused_lib
+    # from tensorflow.python.framework import dtypes
+    # from tensorflow.python.platform import gfile
+
+    # path = 'model_ios'
+    # if os.path.exists(path) and os.path.isdir(path):
+    #     shutil.rmtree(path)
+    # os.makedirs(path)
 
     # image_input_names = '{}:0'.format(args.input_name)
     # output_feature_names = ['{}:0'.format(name) for name in args.output_names]
-    if LOCALIZATION:
-        print('core ml coming soon for object detection')
-        return
-
+ 
         # frozen_model_file = '.tmp/tmp_frozen_graph.pb'
         # with tf.Session(graph=tf.Graph()) as sess:
         #     tf.saved_model.loader.load(sess, [tf.saved_model.tag_constants.SERVING], args.tf_model_path) 

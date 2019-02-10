@@ -68,18 +68,10 @@ def infer_model_structure():
 model_structure = infer_model_structure()
 
 if args.coreml:
-    from convert_to_core_ml import convert_to_core_ml
-    if model_structure['type'] == ModelType.LOCALIZATION:
-        print('TODO: This feature is not implemented yet.')
-    else:
-        convert_to_core_ml()
+    print('TODO: This feature is not implemented yet.')
 
 if args.tflite:
-    from convert_to_tflite import convert_to_tflite
-    if model_structure['type'] == ModelType.LOCALIZATION:
-        print('TODO: This feature is not implemented yet.')
-    else:
-        convert_to_core_ml()
+    print('TODO: This feature is not implemented yet.')
 
 if args.tfjs:
     from convert_to_tfjs import convert_to_tfjs
