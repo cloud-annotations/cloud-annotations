@@ -54,7 +54,7 @@ python -m bucket.download
   export PYTHONPATH=$PYTHONPATH:`pwd`/slim
   python -m object_detection.model_main \
     --pipeline_config_path=.tmp/pipeline.config \
-    --model_dir=.tmp/checkpoint
+    --model_dir=.tmp/checkpoint \
     --num_train_steps=500 &&
   python -m scripts.quick_export_graph
   ```
