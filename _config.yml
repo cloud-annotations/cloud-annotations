@@ -22,21 +22,37 @@ authors:
     github: bourdakos1
 
 collections:
-  steps:
+  object_detection:
     output: true
     permalink: /:path:output_ext
-  wml:
+  wml_object_detection:
     output: true
     permalink: /wml/:path:output_ext
+  classification:
+    output: true
+    permalink: /classification/:path:output_ext
+  wml_classification:
+    output: true
+    permalink: /wml_classification/:path:output_ext
 
 defaults:
   - scope:
       path: ""
-      type: "steps"
+      type: "object_detection"
     values:
       layout: index
   - scope:
       path: ""
-      type: "wml"
+      type: "wml_object_detection"
+    values:
+      layout: index
+  - scope:
+      path: ""
+      type: "classification"
+    values:
+      layout: index
+  - scope:
+      path: ""
+      type: "wml_classification"
     values:
       layout: index
