@@ -42,7 +42,7 @@ python -m bucket.download
   mkdir exported_graph
   python -m classification.retrain \
     --image_dir=.tmp/data \
-    --saved_model_dir=exported_graph/saved_model \
+    --output_graph=exported_graph \
     --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
     --how_many_training_steps=500 \
     --output_labels=exported_graph/labels.txt
