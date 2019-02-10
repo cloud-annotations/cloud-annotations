@@ -23,7 +23,7 @@ def convert_to_tfjs(exported_graph_path, output_names, output_path):
   if not os.path.isfile(json_labels):
     with open(text_labels, 'r') as f:
       labels = f.read()
-    labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
+    labels = list(filter(bool, [s.strip() for s in labels.splitlines()]))
     with open(os.path.join(output_path, 'labels.json'), 'w') as f:
       json.dump(labels, f)
   else:

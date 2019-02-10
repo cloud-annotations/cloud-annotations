@@ -69,7 +69,8 @@ if args.coreml:
     convert_to_core_ml(args.exported_graph_path, model_structure, args.mlmodel_path)
 
 if args.tflite:
-    print('TODO: This feature is not implemented yet.')
+    from scripts.convert_to_tflite import convert_to_tflite
+    convert_to_tflite(args.exported_graph_path, model_structure, args.tflite_path)
 
 if args.tfjs:
     from scripts.convert_to_tfjs import convert_to_tfjs
