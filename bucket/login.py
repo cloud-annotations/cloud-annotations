@@ -7,9 +7,18 @@ if hasattr(__builtins__, 'raw_input'):
 
 import fileinput
 import getpass
+import argparse
 
-RESOURCE_ID = input('Resource Instance ID: ')
-API_KEY = getpass.getpass(prompt='API Key: ')
+parser = argparse.ArgumentParser()
+parser.add_argument('--hide', action='store_true')
+args = parser.parse_args()
+
+if args.hide:
+    RESOURCE_ID = input('Resource Instance ID: ')
+    API_KEY = getpass.getpass(prompt='API Key: ')
+else:
+    RESOURCE_ID = input('Resource Instance ID: ')
+    API_KEY = input('API Key: ')
 
 CREDENTIALS = '.credentials'
 

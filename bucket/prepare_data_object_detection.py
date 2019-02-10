@@ -24,22 +24,22 @@ write_dir = ''
 try:
     read_dir = os.environ['DATA_DIR']
     write_dir = os.environ['RESULT_DIR']
-except:
-    print()
+except Exception:
+    pass
 
 def main(read_bucket=read_dir, write_bucket=write_dir):
     ############################################################################
     # Prepare Directories
     ############################################################################
-    def createDir(base, dirName):
+    def create_dir(base, dirName):
         path = os.path.join(base, dirName)
         if os.path.exists(path) and os.path.isdir(path):
             shutil.rmtree(path)
         os.makedirs(path)
         return path
 
-    data_dir = createDir(write_bucket, 'data')
-    checkpoint_dir = createDir(write_bucket, 'checkpoint')
+    data_dir = create_dir(write_bucket, 'data')
+    checkpoint_dir = create_dir(write_bucket, 'checkpoint')
 
     ############################################################################
     # Create LabelMap Proto

@@ -26,7 +26,7 @@ else:
   ACCESS_KEY_ID = input('access_key_id: ')
   SECRET_ACCESS_KEY = input('secret_access_key: ')
 
-CREDENTIALS = '.credentials'
+CREDENTIALS = '.credentials_wml'
 
 with open(CREDENTIALS, 'w') as file:
   file.write('ML_USERNAME={}\n'.format(ML_USERNAME))

@@ -50,8 +50,11 @@ with zipfile.ZipFile('tf-model.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
           rel_path = os.path.relpath(member.name, 'object_detection-0.1')
           tf_model.writestr(rel_path, f.read())
   tf_model.write('bucket/__init__.py')
-  tf_model.write('bucket/prepare_data.py')
+  tf_model.write('bucket/prepare_data_object_detection.py')
   tf_model.write('bucket/pipeline_skeleton.config')
-  tf_model.write('quick_export_graph.py')
+  tf_model.write('scripts/__init__.py')
+  tf_model.write('scripts/quick_export_graph.py')
+  tf_model.write('wml/__init__.py')
+  tf_model.write('wml/train_command.py')
 
 shutil.rmtree('dist')

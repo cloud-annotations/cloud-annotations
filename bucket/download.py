@@ -13,8 +13,6 @@ from botocore.client import Config
 from dotenv import load_dotenv
 load_dotenv('.credentials')
 
-from bucket import prepare_data
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--bucket', type=str)
 parser.add_argument('--endpoint', type=str, default='https://s3-api.us-geo.objectstorage.softlayer.net')
@@ -88,16 +86,24 @@ os.makedirs(output_dir)
 # Download Data
 ################################################################################
 annotations = cos.Object(credentials_1['bucket'], '_annotations.json').get()['Body'].read()
-annotations = json.loads(annotations.decode('utf-8'))['annotations']
+annotations = json.loads(annotations.decode('utf-8'))
+annotations_type = annotations['type']
+annotations = annotations['annotations']
+
 
 cos.Object(credentials_1['bucket'], '_annotations.json').download_file(os.path.join(output_dir, '_annotations.json'))
 
 # Download training images.
 image_files = [image for image in annotations.keys()]
-for file in image_files:
-    filename = os.path.join(output_dir, file)
-    print('saving: {}'.format(file))
+for f in image_files:
+    filename = os.path.join(output_dir, f)
+    print('saving: {}'.format(f))
     print('to: {}'.format(filename))
-    cos.Object(credentials_1['bucket'], file).download_file(filename)
+    cos.Object(credentials_1['bucket'], f).download_file(filename)
 
-prepare_data.main(output_dir, output_dir)
+if annotations_type == 'localization':
+    from bucket import prepare_data_object_detection
+    prepare_data_object_detection.main(output_dir, output_dir)
+elif annotations_type == 'classification':
+    from bucket import prepare_data_classification
+    prepare_data_classification.main(output_dir, output_dir)

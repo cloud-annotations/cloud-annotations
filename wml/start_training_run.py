@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import json
 import argparse
 import shutil
 
@@ -10,7 +11,7 @@ import ibm_boto3
 from botocore.client import Config
 from watson_machine_learning_client import WatsonMachineLearningAPIClient
 from dotenv import load_dotenv
-load_dotenv('.credentials')
+load_dotenv('.credentials_wml')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--ml-endpoint', type=str, default='https://us-south.ml.cloud.ibm.com')
@@ -25,7 +26,6 @@ parser.add_argument('--num-train-steps', type=int, default=300)
 args = parser.parse_args()
 
 MODEL_ZIP_PATH = 'tf-model.zip'
-
 
 ################################################################################
 # Initialize Cloud Object Storage
@@ -89,20 +89,7 @@ metadata = {
   client.repository.DefinitionMetaNames.FRAMEWORK_VERSION: '1.12',
   client.repository.DefinitionMetaNames.RUNTIME_NAME: 'python',
   client.repository.DefinitionMetaNames.RUNTIME_VERSION: '3.5',
-  client.repository.DefinitionMetaNames.EXECUTION_COMMAND: """
-    pip install --user pycocotools;
-    export PYTHONPATH=`pwd`/slim &&
-    python3 -m bucket.prepare_data &&
-    python3 -m object_detection.model_main
-      --pipeline_config_path=${RESULT_DIR}/pipeline.config
-      --model_dir=${RESULT_DIR}/checkpoint
-      --num_train_steps=""" + str(args.num_train_steps) + """
-      --alsologtostderr &&
-    python3 -m quick_export_graph
-      --result_base=${RESULT_DIR}
-      --output_label_path=${RESULT_DIR}/labels.json
-      --model_dir=${RESULT_DIR}/model
-  """
+  client.repository.DefinitionMetaNames.EXECUTION_COMMAND: 'python3 -m wml.train_command --num-train-steps={}'.format(args.num_train_steps)
 }
 definition_details = client.repository.store_definition(MODEL_ZIP_PATH, meta_props=metadata)
 definition_uid = client.repository.get_definition_uid(definition_details)
@@ -160,4 +147,16 @@ for item in contents:
   else:
     cos.Object(args.result_bucket_name, item.key).download_file(local_path)
 
-cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file('labels.json')
+try:
+  cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file('labels.json')
+except Exception:
+  pass
+
+try:
+  labels = cos.Object(args.result_bucket_name, os.path.join(model_location, 'output_labels.txt')).get()['Body'].read()
+  labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
+  with open('labels.json', 'w') as f:
+    json.dump(labels, f)
+except Exception:
+  pass
+  
