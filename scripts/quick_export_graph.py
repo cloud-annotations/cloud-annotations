@@ -83,8 +83,6 @@ def main(_):
       FLAGS.input_type, pipeline_config, trained_checkpoint_prefix,
       FLAGS.model_dir, input_shape=input_shape,
       write_inference_graph=FLAGS.write_inference_graph)
-  
-  print('Done!\n\nImportant files:\n{}/saved_model\n{}'.format(FLAGS.model_dir, FLAGS.output_label_path))
 
 
 if __name__ == '__main__':

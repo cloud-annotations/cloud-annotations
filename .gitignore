@@ -10,11 +10,13 @@ _site
 /classification
 /object_detection
 /slim
-/exported_graph
-/web_model
+/exported_graph*
+/model_*
 /labels.json
 /tf-model.zip
 /tf-model
+*.mlmodel
+*.tflite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
