@@ -102,7 +102,10 @@ for f in image_files:
     dirname = os.path.dirname(filename)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
-    cos.Object(credentials_1['bucket'], f).download_file(filename)
+    try:
+        cos.Object(credentials_1['bucket'], f).download_file(filename)
+    except Exception, err:
+        print('Error: {}, skipping {}...'.format(err, f))
 
 if annotations_type == 'localization':
     from bucket import prepare_data_object_detection

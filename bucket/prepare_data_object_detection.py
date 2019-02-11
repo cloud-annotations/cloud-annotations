@@ -86,6 +86,8 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
                 num_shards)
             for idx, example in enumerate(examples):
                 img_path = os.path.join(read_bucket, example)
+                if not os.path.isfile(img_path):
+                    continue                
                 with tf.gfile.GFile(img_path, 'rb') as fid:
                     encoded_jpg = fid.read()
                 encoded_jpg_io = io.BytesIO(encoded_jpg)
