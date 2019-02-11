@@ -104,7 +104,7 @@ for f in image_files:
         os.makedirs(dirname)
     try:
         cos.Object(credentials_1['bucket'], f).download_file(filename)
-    except Exception, err:
+    except Exception as err:
         print('Error: {}, skipping {}...'.format(err, f))
 
 if annotations_type == 'localization':
