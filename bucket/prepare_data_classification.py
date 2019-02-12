@@ -47,5 +47,5 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
                 print('Error: {}, skipping {}...'.format(err, f))
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
   main()
