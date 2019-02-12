@@ -14,8 +14,8 @@ It's recommended to go through one of the above walkthroughs, but if you already
 
 ### Project setup
 ```
-git clone https://github.com/bourdakos1/tfjs-object-detection-training.git &&
-cd tfjs-object-detection-training
+git clone https://github.com/cloud-annotations/training.git &&
+cd training
 ```
 
 * classification
