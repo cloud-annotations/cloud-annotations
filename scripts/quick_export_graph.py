@@ -2,12 +2,14 @@ import os
 import re
 import shutil
 import json
+from datetime import datetime
 
 import tensorflow as tf
 from google.protobuf import text_format
 from object_detection import exporter
 from object_detection.protos import pipeline_pb2
 from object_detection.utils.label_map_util import get_label_map_dict
+from object_detection.builders import model_builder
 
 slim = tf.contrib.slim
 flags = tf.app.flags
@@ -47,6 +49,29 @@ flags.DEFINE_boolean('write_inference_graph', False,
                      'If true, writes inference graph to disk.')
 FLAGS = flags.FLAGS
 
+def output_anchors_as_swift(anchors) :
+  with open(os.path.join(FLAGS.model_dir, 'Anchors.swift'), 'w') as anchor_file:
+    anchor_file.write('//\n')
+    anchor_file.write('//\tAnchors.swift\n')
+    anchor_file.write('//\tCloud Annotations\n')
+    anchor_file.write('//\n')
+    anchor_file.write('//\tGenerated on {}.\n'.format(datetime.now().strftime("%m/%d/%y")))
+    anchor_file.write('//\n\n')
+    anchor_file.write('struct Anchors {\n')
+    anchor_file.write('\tstatic let numAnchors = 1917\n')
+    anchor_file.write('\tstatic var ssdAnchors: [[Float32]] {\n')
+    anchor_file.write('\t\tvar arr: [[Float32]] = Array(repeating: Array(repeating: 0.0, count: 4), count: numAnchors)\n')
+    anchor_file.write('\n')
+
+    for idx, anchor in enumerate(anchors):
+      anchor_file.write('\t\tarr[{}] = [ {: .8f}, {: .8f}, {: .8f}, {: .8f} ]\n'.format(
+          idx, anchor[0], anchor[1], anchor[2] ,anchor[3]))
+        
+    anchor_file.write('\n')
+    anchor_file.write('\t\treturn arr\n')
+    anchor_file.write('\t}\n')
+    anchor_file.write('}\n')
+
 def main(_):
   pipeline_config = pipeline_pb2.TrainEvalPipelineConfig()
   with tf.gfile.GFile(os.path.join(FLAGS.result_base, FLAGS.pipeline_config_path), 'r') as f:
@@ -78,6 +103,20 @@ def main(_):
       FLAGS.input_type, pipeline_config, trained_checkpoint_prefix,
       FLAGS.model_dir, input_shape=input_shape,
       write_inference_graph=FLAGS.write_inference_graph)
+
+  tf.reset_default_graph()
+  detection_model = model_builder.build(pipeline_config.model, is_training=False)
+  exporter._build_detection_graph(
+      input_type=FLAGS.input_type,
+      detection_model=detection_model,
+      input_shape=input_shape,
+      output_collection_name='inference_op',
+      graph_hook_fn=None)
+  
+  with tf.Session() as sess:
+    boxes = detection_model.anchors.get()
+    anchors = boxes.eval(session=sess)
+    output_anchors_as_swift(anchors)
 
   label_map = get_label_map_dict(os.path.join(FLAGS.result_base, FLAGS.label_map_path))
   label_array = [k for k in sorted(label_map, key=label_map.get)]
