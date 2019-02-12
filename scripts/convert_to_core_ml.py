@@ -1,6 +1,7 @@
 import os
 import json
 import shutil
+from datetime import datetime
 
 from scripts.types import ModelType
 
@@ -54,6 +55,25 @@ def convert_to_core_ml(exported_graph_path, model_structure, output_path):
                 image_scale=1.0/128.0,
                 input_name_shape_dict=input_tensor_shapes,
                 image_input_names=input_tensor_names)
+
+        json_labels = os.path.join(exported_graph_path, 'labels.json')
+        with open(json_labels) as f:
+            labels = json.load(f)
+            with open(os.path.join(output_path, 'Labels.swift'), 'w') as swift_labels:
+                swift_labels.write('//\n')
+                swift_labels.write('//\tLabels.swift\n')
+                swift_labels.write('//\tCloud Annotations\n')
+                swift_labels.write('//\n')
+                swift_labels.write('//\tGenerated on {}.\n'.format(datetime.now().strftime("%m/%d/%y")))
+                swift_labels.write('//\n\n')
+                swift_labels.write('static let labels = [\n')
+
+                for label in labels:
+                    swift_labels.write('\t"{}"\n'.format(label))
+                swift_labels.write(']\n')
+
+        anchors = os.path.join(exported_graph_path, 'Anchors.swift')
+        shutil.copy2(anchors, output_path)
     else:
         frozen_model_file = '.tmp/tmp_frozen_graph.pb'
         with tf.Session(graph=tf.Graph()) as sess:
