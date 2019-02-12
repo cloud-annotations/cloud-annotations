@@ -9,6 +9,7 @@ from google.protobuf import text_format
 from object_detection import exporter
 from object_detection.protos import pipeline_pb2
 from object_detection.utils.label_map_util import get_label_map_dict
+from object_detection.builders import model_builder
 
 slim = tf.contrib.slim
 flags = tf.app.flags
@@ -104,7 +105,6 @@ def main(_):
       write_inference_graph=FLAGS.write_inference_graph)
 
   tf.reset_default_graph()
-  from object_detection.builders import model_builder
   detection_model = model_builder.build(pipeline_config.model, is_training=False)
   exporter._build_detection_graph(
       input_type=FLAGS.input_type,
