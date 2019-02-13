@@ -153,6 +153,11 @@ except Exception:
   pass
 
 try:
+  cos.Object(args.result_bucket_name, os.path.join(model_location, 'Anchors.swift')).download_file(os.path.join('exported_graph', 'Anchors.swift'))
+except Exception:
+  pass
+
+try:
   labels = cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.txt')).get()['Body'].read()
   labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
   with open(os.path.join('exported_graph', 'labels.json'), 'w') as f:
