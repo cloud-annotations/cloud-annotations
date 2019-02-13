@@ -66,11 +66,18 @@ def convert_to_core_ml(exported_graph_path, model_structure, output_path):
                 swift_labels.write('//\n')
                 swift_labels.write('//\tGenerated on {}.\n'.format(datetime.now().strftime("%m/%d/%y")))
                 swift_labels.write('//\n\n')
-                swift_labels.write('static let labels = [\n')
 
-                for label in labels:
-                    swift_labels.write('\t"{}"\n'.format(label))
-                swift_labels.write(']\n')
+                swift_labels.write('struct Labels {\n')
+                swift_labels.write('\tstatic let names = [\n')
+
+                for i, label in enumerate(labels):
+                    if i < len(labels) - 1:
+                        swift_labels.write('\t\t"{}",\n'.format(label))
+                    else:
+                        swift_labels.write('\t\t"{}"\n'.format(label))
+
+                swift_labels.write('\t]\n')
+                swift_labels.write('}\n')
 
         anchors = os.path.join(exported_graph_path, 'Anchors.swift')
         shutil.copy2(anchors, output_path)
