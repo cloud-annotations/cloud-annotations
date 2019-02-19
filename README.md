@@ -20,18 +20,16 @@ cd training
 
 * classification
   ```
-  svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
-  echo > classification/__init__.py
+  python setup.py classification
   ```
 * object detection
   ```
-  svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
-  svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim
+  python setup.py object_detection
   ```
 
 ### Training locally
 ```
-python -m bucket.login
+python -m local.login
 ```
 ```
 python -m bucket.download
@@ -61,15 +59,6 @@ python -m bucket.download
 ```
 python -m wml.login
 ```
-* classification
-  ```
-  python setup_classification.py sdist
-  ```
-* object detection
-  ```
-  python setup_object_detection.py sdist
-  ```
-  
 ```
 python -m wml.start_training_run
 ```
