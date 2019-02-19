@@ -18,11 +18,6 @@ git clone https://github.com/cloud-annotations/training.git &&
 cd training
 ```
 
-### Training locally
-```
-python -m local.login
-```
-
 * classification
   ```
   python setup.py classification
@@ -32,6 +27,10 @@ python -m local.login
   python setup.py object_detection
   ```
 
+### Training locally
+```
+python -m local.login
+```
 ```
 python -m bucket.download
 ```
@@ -60,15 +59,6 @@ python -m bucket.download
 ```
 python -m wml.login
 ```
-* classification
-  ```
-  python setup.py classification
-  ```
-* object detection
-  ```
-  python setup.py object_detection
-  ```
-  
 ```
 python -m wml.start_training_run
 ```
