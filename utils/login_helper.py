@@ -33,4 +33,4 @@ class LoginHelper:
       except NameError:
         value = input(message)
     
-    self.f.write('{}={}\n'.format(credential.upper(), value))
+    self.f.write('{}={}\n'.format(credential.upper().replace(' ', '_'), value))
