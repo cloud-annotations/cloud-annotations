@@ -23,7 +23,10 @@ parser.add_argument('--data-bucket-name', type=str)
 parser.add_argument('--data-bucket-endpoint', type=str)
 parser.add_argument('--gpu', type=str, default='k80')
 parser.add_argument('--num-train-steps', type=int, default=300)
+parser.add_argument('--steps', type=int, default=None)
 args = parser.parse_args()
+
+args.num_train_steps = args.steps or args.num_train_steps
 
 MODEL_ZIP_PATH = 'tf-model.zip'
 
@@ -149,6 +152,11 @@ for item in contents:
 
 try:
   cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file(os.path.join('exported_graph', 'labels.json'))
+except Exception:
+  pass
+
+try:
+  cos.Object(args.result_bucket_name, os.path.join(model_location, 'Anchors.swift')).download_file(os.path.join('exported_graph', 'Anchors.swift'))
 except Exception:
   pass
 
