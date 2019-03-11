@@ -71,7 +71,7 @@ if args.type == 'all':
   shutil.rmtree('object_detection.egg-info')
   shutil.rmtree('classification.egg-info')
 
-  with zipfile.ZipFile('tf-model.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
+  with zipfile.ZipFile('training.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
     with tarfile.open('dist/slim-0.1.tar.gz') as slim_tar:
         for member in slim_tar.getmembers():
           if member.name.startswith('slim-0.1/slim/'):
