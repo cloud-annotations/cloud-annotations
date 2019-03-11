@@ -24,18 +24,20 @@ if annotations_type == 'localization':
       --alsologtostderr &&
     python3 -m scripts.quick_export_graph \
       --result_base=${RESULT_DIR} \
-      --model_dir=${RESULT_DIR}/model
+      --model_dir=${RESULT_DIR}/model \
+    python3 -m scripts.convert --tfjs --coreml
   """
 else:
   execution_command = """
     pip install --user tensorflow_hub;
     python3 -m bucket.prepare_data_classification &&
-    python -m classification.retrain \
+    python3 -m classification.retrain \
       --image_dir=${RESULT_DIR}/data \
       --saved_model_dir=${RESULT_DIR}/model/saved_model \
       --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
       --how_many_training_steps=""" + str(args.num_train_steps) + """ \
-      --output_labels=${RESULT_DIR}/model/labels.txt
+      --output_labels=${RESULT_DIR}/model/labels.txt \
+    python3 -m scripts.convert --coreml --tflite
   """
 
 call(execution_command, shell=True)
