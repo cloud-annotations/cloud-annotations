@@ -5,11 +5,6 @@ import shutil
 def convert_to_tfjs(exported_graph_path, output_names, output_path):
   from tensorflowjs.converters import convert_tf_saved_model
 
-  import sys
-  print(sys.version)
-  import tensorflow as tf
-  print(tf.__version__)
-
   saved_model_path = os.path.join(exported_graph_path, 'saved_model')
   output_names_str = ','.join(output_names)
 

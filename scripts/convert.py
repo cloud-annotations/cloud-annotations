@@ -76,5 +76,3 @@ if args.tfjs:
     from scripts.convert_to_tfjs import convert_to_tfjs
     output_names = model_structure['output_names']
     convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)
-
-print('Exiting safely')

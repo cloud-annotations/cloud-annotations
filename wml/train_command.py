@@ -32,7 +32,7 @@ if annotations_type == 'localization':
   """
 else:
   execution_command = """
-    pip install --user tensorflow-hub==0.1.1 coremltools==2.0 tfcoreml==0.3.0;
+    pip install --user --no-deps tensorflow-hub==0.1.1 coremltools==2.0 tfcoreml==0.3.0;
     python3 -m bucket.prepare_data_classification &&
     python3 -m classification.retrain \
       --image_dir=${RESULT_DIR}/data \
