@@ -4,6 +4,7 @@
 ## Object detection walkthroughs
 ### [Training a model locally](https://cloud-annotations.github.io/training/object-detection/)
 ### [Training a model on IBM Cloud](https://cloud-annotations.github.io/training/object-detection/wml/)
+### [Training a model on IBM Cloud with CLI](https://cloud-annotations.github.io/training/object-detection/cli/)
 
 ## Classification walkthroughs
 ### [Training a model locally](https://cloud-annotations.github.io/training/classification/)
