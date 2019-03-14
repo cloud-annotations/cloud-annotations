@@ -19,42 +19,17 @@ git clone https://github.com/cloud-annotations/training.git &&
 cd training
 ```
 
-* classification
-  ```
-  python setup.py classification
-  ```
-* object detection
-  ```
-  python setup.py object_detection
-  ```
+```
+python setup.py all
+```
 
 ### Training locally
 ```
 python -m local.login
 ```
 ```
-python -m bucket.download
+python -m local.start_training_run
 ```
-
-* classification
-  ```
-  mkdir exported_graph
-  python -m classification.retrain \
-    --image_dir=.tmp/data \
-    --saved_model_dir=exported_graph/saved_model \
-    --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
-    --how_many_training_steps=500 \
-    --output_labels=exported_graph/labels.txt
-  ```
-* object detection
-  ```
-  export PYTHONPATH=$PYTHONPATH:`pwd`/slim
-  python -m object_detection.model_main \
-    --pipeline_config_path=.tmp/pipeline.config \
-    --model_dir=.tmp/checkpoint \
-    --num_train_steps=500 &&
-  python -m scripts.quick_export_graph
-  ```
 
 ### Training on IBM Cloud
 ```
@@ -62,9 +37,4 @@ python -m wml.login
 ```
 ```
 python -m wml.start_training_run
-```
-
-### Convert to desired format
-```
-python -m scripts.convert --tfjs --tflite --coreml
 ```
