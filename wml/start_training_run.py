@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 args.num_train_steps = args.steps or args.num_train_steps
 
-MODEL_ZIP_PATH = 'tf-model.zip'
+MODEL_ZIP_PATH = 'training.zip'
 
 ################################################################################
 # Initialize Cloud Object Storage
@@ -132,34 +132,27 @@ client.training.monitor_logs(run_uid)
 
 model_location = client.training.get_details(run_uid)['entity']['training_results_reference']['location']['model_location']
 
-contents = cos.Bucket(args.result_bucket_name).objects.filter(
-  Prefix=os.path.join(model_location, 'model')
+model_web = cos.Bucket(args.result_bucket_name).objects.filter(
+  Prefix=os.path.join(model_location, 'model_web')
 )
 
-if os.path.exists('exported_graph') and os.path.isdir('exported_graph'):
-  shutil.rmtree('exported_graph')
-os.makedirs('exported_graph')
+model_ios = cos.Bucket(args.result_bucket_name).objects.filter(
+  Prefix=os.path.join(model_location, 'model_ios')
+)
 
-for item in contents:
-  local_path = '/'.join(item.key.split('/')[2:])
-  local_path = os.path.join('exported_graph', local_path)
-  print(local_path)
-  if item.key.endswith('/'):
-    if not os.path.exists(local_path):
+model_android = cos.Bucket(args.result_bucket_name).objects.filter(
+  Prefix=os.path.join(model_location, 'model_android')
+)
+
+def download_model(files):
+  for item in files:
+    local_path = '/'.join(item.key.split('/')[1:])
+    print(local_path)
+    if item.key.endswith('/') and not os.path.exists(local_path):
       os.makedirs(local_path)
-  else:
-    cos.Object(args.result_bucket_name, item.key).download_file(local_path)
+    else:
+      cos.Object(args.result_bucket_name, item.key).download_file(local_path)
 
-try:
-  cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.json')).download_file(os.path.join('exported_graph', 'labels.json'))
-except Exception:
-  pass
-
-try:
-  labels = cos.Object(args.result_bucket_name, os.path.join(model_location, 'labels.txt')).get()['Body'].read()
-  labels = list(filter(bool, [s.strip() for s in labels.decode('utf-8').splitlines()]))
-  with open(os.path.join('exported_graph', 'labels.json'), 'w') as f:
-    json.dump(labels, f)
-except Exception:
-  pass
-  
+download_model(model_web)
+download_model(model_ios)
+download_model(model_android)
