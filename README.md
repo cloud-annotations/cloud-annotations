@@ -16,7 +16,7 @@ Training a model:
 ```bash
 $ cacli
 ┌─────────────────────────────┐
-│ **C**loud **A**nnotations _CLI_ │
+│ \*\*C\*\*loud **A**nnotations _CLI_ │
 │ version 0.0.1               │
 └─────────────────────────────┘
 
