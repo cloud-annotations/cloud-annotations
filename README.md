@@ -13,8 +13,7 @@ The Cloud Annotations CLI requires you to already have labeled images in the [Cl
 
 - [Training a Model on IBM Cloud](https://cloud-annotations.github.io/training/object-detection/cli/) – How to label and train your own computer vision model.
 
-Cloud Annotations CLI should work on macOS, Windows, and Linux.
-
+Cloud Annotations CLI should work on macOS, Windows, and Linux.<br>
 If something doesn’t work, please [file an issue](https://github.com/cloud-annotations/training/issues/new).
 
 ## Usage
