@@ -1,16 +1,6 @@
 # Cloud Annotations Training
 ![](https://cloud-annotations.github.io/training/object-detection/assets/main.png)
 
-## Object detection walkthroughs
-### [Training a model locally](https://cloud-annotations.github.io/training/object-detection/)
-### [Training a model on IBM Cloud](https://cloud-annotations.github.io/training/object-detection/wml/)
-### [Training a model on IBM Cloud with CLI](https://cloud-annotations.github.io/training/object-detection/cli/)
-
-## Classification walkthroughs
-### [Training a model locally](https://cloud-annotations.github.io/training/classification/)
-### [Training a model on IBM Cloud](https://cloud-annotations.github.io/training/classification/wml/)
-
-
 ## Installation
 
 ```bash
@@ -19,6 +9,7 @@ $ npm install -g cloud-annotations
 
 ## Documentation
 
+Training a model:
 * [Tutorial](https://cloud-annotations.github.io/training/object-detection/cli/)
 
 ## Usage
