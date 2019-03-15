@@ -36,7 +36,7 @@ where <command> is one of:
 cacli <cmd> -h     quick help on <cmd>
 ```
 
-## Building from source
+## (Advanced) Building from source
 ```
 git clone https://github.com/cloud-annotations/training.git &&
 cd training
