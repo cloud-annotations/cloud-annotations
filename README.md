@@ -7,10 +7,14 @@
 $ npm install -g cloud-annotations
 ```
 
-## Documentation
+## Before you begin
 
-Training a model:
-* [Tutorial](https://cloud-annotations.github.io/training/object-detection/cli/)
+The Cloud Annotations CLI requires you to already have labeled images in the Cloud Annotations online tool:
+
+- [Training a Model](https://cloud-annotations.github.io/training/object-detection/cli/) – How to label and train your own computer vision model.
+
+Cloud Annotations CLI should work on macOS, Windows, and Linux.
+If something doesn’t work, please [file an issue](https://github.com/cloud-annotations/training/issues/new).
 
 ## Usage
 ```bash
