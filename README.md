@@ -10,6 +10,27 @@
 ### [Training a model locally](https://cloud-annotations.github.io/training/classification/)
 ### [Training a model on IBM Cloud](https://cloud-annotations.github.io/training/classification/wml/)
 
+
+## Installation
+
+```bash
+$ npm install -g cloud-annotations
+```
+
+## Documentation
+
+* [Tutorial](https://cloud-annotations.github.io/training/object-detection/cli/)
+
+## Usage
+
+```bash
+$ cacli train
+```
+
+## Building from source and training locally
+
+
+
 ## Quick & Dirty commands
 It's recommended to go through one of the above walkthroughs, but if you already have and just need to remember one of the commands, here they are:
 
