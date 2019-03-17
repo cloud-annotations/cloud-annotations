@@ -9,7 +9,7 @@ $ npm install -g cloud-annotations
 
 ## Before you begin
 
-The Cloud Annotations CLI requires you to already have labeled images in the [Cloud Annotations online tool](https://annotations.us-east.containers.appdomain.cloud/). For an in-depth guide on this process, check out the following link:
+The Cloud Annotations CLI requires you to already have labeled images in the [Cloud Annotations online tool](https://annotations.us-east.containers.appdomain.cloud/). For an in-depth guide on this process, check out the following links:
 
 - [Training a Classification Model](https://cloud-annotations.github.io/training/object-detection/cli/) – How to train your own model to label images on IBM Cloud.
 - [Training an Object Detection Model](https://cloud-annotations.github.io/training/object-detection/cli/) – How to train your own model to find objects in an image on IBM Cloud.
