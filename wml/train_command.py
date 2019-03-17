@@ -42,6 +42,7 @@ else:
       --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
       --how_many_training_steps=""" + str(args.num_train_steps) + """ \
       --output_labels=${RESULT_DIR}/model/labels.txt &&
+    echo training success &&
     python3 -m scripts.convert --coreml --tflite \
       --mlmodel-path=${RESULT_DIR}/model_ios \
       --tflite-path=${RESULT_DIR}/model_android \
