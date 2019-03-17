@@ -21,7 +21,9 @@ if annotations_type == 'localization':
       --pipeline_config_path=${RESULT_DIR}/pipeline.config \
       --model_dir=${RESULT_DIR}/checkpoint \
       --num_train_steps=""" + str(args.num_train_steps) + """ \
+      --log_step_count_steps=1 \
       --alsologtostderr &&
+    echo training success &&
     python3 -m scripts.quick_export_graph \
       --result_base=${RESULT_DIR} \
       --model_dir=${RESULT_DIR}/model &&
