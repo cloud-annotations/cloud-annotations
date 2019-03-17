@@ -14,6 +14,7 @@ _site
 /model_*
 /labels.json
 /tf-model.zip
+/training.zip
 /tf-model
 *.mlmodel
 *.tflite

@@ -10,6 +10,26 @@ from setuptools import setup, find_packages
 from setuptools.command.sdist import sdist
 from subprocess import call
 
+
+PULL_OBJECT_DETECTION = """
+  svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
+  svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim &&
+  protoc object_detection/protos/*.proto --python_out=.
+"""
+
+PULL_CLASSIFICATION = """
+  svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
+  echo > classification/__init__.py
+"""
+
+OUTPUT_FILE = 'training.zip'
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('type')
+args = parser.parse_args()
+
+
 class InstallCommand(sdist):
   def initialize_options(self):
     sdist.initialize_options(self)
@@ -21,17 +41,46 @@ class InstallCommand(sdist):
   def run(self):
     sdist.run(self)
 
-parser = argparse.ArgumentParser()
-parser.add_argument('type')
-args = parser.parse_args()
 
-if args.type == 'object_detection':
-  command = """
-    svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection &&
-    svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim &&
-    protoc object_detection/protos/*.proto --python_out=.
-  """
-  call(command, shell=True)
+def move_zip(zip_file, name):
+  with tarfile.open('dist/{}-0.1.tar.gz'.format(name)) as tar:
+    for member in tar.getmembers():
+      if member.name.startswith('{}-0.1/{}/'.format(name, name)) and member.isfile():
+        print('in: {}'.format(member.name))
+        f = tar.extractfile(member)
+        rel_path = os.path.relpath(member.name, '{}-0.1'.format(name))
+        zip_file.writestr(rel_path, f.read())
+
+
+def pack():
+  with zipfile.ZipFile(OUTPUT_FILE, 'w', zipfile.ZIP_DEFLATED) as tf_model:
+    if os.path.isfile('dist/slim-0.1.tar.gz') and os.path.isfile('dist/object_detection-0.1.tar.gz'):
+      move_zip(tf_model, 'slim')
+      move_zip(tf_model, 'object_detection')
+      tf_model.write('bucket/prepare_data_object_detection.py')
+      tf_model.write('bucket/pipeline_skeleton.config')
+      tf_model.write('scripts/quick_export_graph.py')
+      
+    if os.path.isfile('dist/classification-0.1.tar.gz'):
+      move_zip(tf_model, 'classification')
+      tf_model.write('bucket/prepare_data_classification.py')
+
+    tf_model.write('bucket/__init__.py')
+    tf_model.write('wml/__init__.py')
+    tf_model.write('wml/train_command.py')
+    tf_model.write('scripts/__init__.py')
+    tf_model.write('scripts/build_decoder.py')
+    tf_model.write('scripts/build_nms.py')
+    tf_model.write('scripts/convert_ssd_helper.py')
+    tf_model.write('scripts/convert_to_core_ml.py')
+    tf_model.write('scripts/convert_to_tfjs.py')
+    tf_model.write('scripts/convert_to_tflite.py')
+    tf_model.write('scripts/convert.py')
+    tf_model.write('scripts/types.py')
+
+
+def setup_object_detection():
+  call(PULL_OBJECT_DETECTION, shell=True)
   setup(
     name='object_detection',
     version='0.1',
@@ -42,7 +91,6 @@ if args.type == 'object_detection':
       args.type: InstallCommand,
     }
   )
-
   setup(
     name='slim',
     version='0.1',
@@ -53,42 +101,12 @@ if args.type == 'object_detection':
       args.type: InstallCommand,
     }
   )
-
   shutil.rmtree('slim.egg-info')
   shutil.rmtree('object_detection.egg-info')
 
-  with zipfile.ZipFile('tf-model.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
-    with tarfile.open('dist/slim-0.1.tar.gz') as slim_tar:
-        for member in slim_tar.getmembers():
-          if member.name.startswith('slim-0.1/slim/'):
-            if member.isfile():
-              print('in: {}'.format(member.name))
-              f = slim_tar.extractfile(member)
-              rel_path = os.path.relpath(member.name, 'slim-0.1')
-              tf_model.writestr(rel_path, f.read())
-    with tarfile.open('dist/object_detection-0.1.tar.gz') as object_detection_tar:
-      for member in object_detection_tar.getmembers():
-        if member.name.startswith('object_detection-0.1/object_detection/'):
-          if member.isfile():
-            print('in: {}'.format(member.name))
-            f = object_detection_tar.extractfile(member)
-            rel_path = os.path.relpath(member.name, 'object_detection-0.1')
-            tf_model.writestr(rel_path, f.read())
-    tf_model.write('bucket/__init__.py')
-    tf_model.write('bucket/prepare_data_object_detection.py')
-    tf_model.write('bucket/pipeline_skeleton.config')
-    tf_model.write('scripts/__init__.py')
-    tf_model.write('scripts/quick_export_graph.py')
-    tf_model.write('wml/__init__.py')
-    tf_model.write('wml/train_command.py')
 
-
-if args.type == 'classification':
-  command = """
-    svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining classification
-    echo > classification/__init__.py
-  """
-  call(command, shell=True)
+def setup_classification():
+  call(PULL_CLASSIFICATION, shell=True)
   setup(
     name='classification',
     version='0.1',
@@ -99,21 +117,27 @@ if args.type == 'classification':
       args.type: InstallCommand,
     }
   )
-
   shutil.rmtree('classification.egg-info')
 
-  with zipfile.ZipFile('tf-model.zip', 'w', zipfile.ZIP_DEFLATED) as tf_model:
-    with tarfile.open('dist/classification-0.1.tar.gz') as classification_tar:
-        for member in classification_tar.getmembers():
-          if member.name.startswith('classification-0.1/classification/'):
-            if member.isfile():
-              print('in: {}'.format(member.name))
-              f = classification_tar.extractfile(member)
-              rel_path = os.path.relpath(member.name, 'classification-0.1')
-              tf_model.writestr(rel_path, f.read())
-    tf_model.write('bucket/__init__.py')
-    tf_model.write('bucket/prepare_data_classification.py')
-    tf_model.write('wml/__init__.py')
-    tf_model.write('wml/train_command.py')
+
+def setup_all():
+  setup_object_detection()
+  setup_classification()
+
+
+if args.type == 'all':
+  setup_all()
+  pack()
+
+
+if args.type == 'object_detection':
+  setup_object_detection()
+  pack()
+  
+
+if args.type == 'classification':
+  setup_classification()
+  pack()
+  
 
 shutil.rmtree('dist')

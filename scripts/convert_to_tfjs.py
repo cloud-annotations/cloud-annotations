@@ -7,15 +7,18 @@ def convert_to_tfjs(exported_graph_path, output_names, output_path):
 
   saved_model_path = os.path.join(exported_graph_path, 'saved_model')
   output_names_str = ','.join(output_names)
-  
-  convert_tf_saved_model(
-      saved_model_path,
-      output_names_str,
-      output_path,
-      saved_model_tags='serve',
-      quantization_dtype=None,
-      skip_op_check=False,
-      strip_debug_ops=True)
+
+  try:    
+    convert_tf_saved_model(
+        saved_model_path,
+        output_names_str,
+        output_path,
+        saved_model_tags='serve',
+        quantization_dtype=None,
+        skip_op_check=False,
+        strip_debug_ops=True)
+  except Exception as err:
+    print('Error: {}'.format(err))
 
   # Move the labels to the model directory.
   json_labels = os.path.join(exported_graph_path, 'labels.json')

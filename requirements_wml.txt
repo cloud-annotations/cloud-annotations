@@ -1,5 +1,0 @@
-botocore==1.12.26
-ibm-cos-sdk==2.3.2
-python-dotenv==0.10.1
-tensorflowjs==0.6.7
-watson-machine-learning-client==1.0.355
