@@ -21,7 +21,7 @@ If something doesn’t work, please [file an issue](https://github.com/cloud-ann
 $ cacli
 ┌─────────────────────────────┐
 │ (C)loud (A)nnotations (CLI) │
-│ version 1.0.2               │
+│ version 1.0.3               │
 └─────────────────────────────┘
 
 Usage: cacli <command>
@@ -29,7 +29,8 @@ Usage: cacli <command>
 where <command> is one of:
   init         Interactively create a config.yaml file
   train        Start a training run
-  monitor      Monitor the progress of a training run
+  logs         Monitor the logs of a training run
+  progress     Monitor the progress of a training run
   list         List all training runs
   download     Download a trained model
 
