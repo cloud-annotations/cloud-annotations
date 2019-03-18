@@ -37,21 +37,3 @@ where <command> is one of:
 
 cacli <cmd> -h     quick help on <cmd>
 ```
-
-## (Advanced) Building from source
-```
-git clone https://github.com/cloud-annotations/training.git &&
-cd training
-```
-
-```
-python setup.py all
-```
-
-### Training locally
-```
-python -m local.login
-```
-```
-python -m local.start_training_run
-```
