@@ -1,5 +1,5 @@
 const { dim } = require('chalk')
-const { version } = require('./../package.json')
+const { version } = require('./../../package.json')
 
 // TODO: Make this dynamic
 module.exports = options => {
