@@ -1,0 +1,26 @@
+{
+  "name": "cloud-annotations",
+  "version": "1.0.9",
+  "license": "MIT",
+  "scripts": {
+    "build": "cd trainer && python setup.py all",
+    "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
+    "deploy": "echo todo"
+  },
+  "bin": {
+    "cacli": "bin/cacli"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "ansi-escapes": "^4.0.0",
+    "chalk": "^2.4.2",
+    "fs-extra": "^7.0.1",
+    "ibm-cos-sdk": "^1.4.4",
+    "js-yaml": "^3.12.2",
+    "moment": "^2.24.0",
+    "mute-stream": "^0.0.8",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "ws": "^6.2.0"
+  }
+}

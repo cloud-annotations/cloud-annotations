@@ -22,10 +22,10 @@ def optimize_graph(input_path, output_path, input_nodes, output_nodes):
         tf.saved_model.loader.load(sess, [tf.saved_model.tag_constants.SERVING], input_path)
 
     gdef = strip_unused_lib.strip_unused(
-            input_graph_def=graph.as_graph_def(),
-            input_node_names=input_nodes,
-            output_node_names=output_nodes,
-            placeholder_type_enum=dtypes.float32.as_datatype_enum)
+        input_graph_def=graph.as_graph_def(),
+        input_node_names=input_nodes,
+        output_node_names=output_nodes,
+        placeholder_type_enum=dtypes.float32.as_datatype_enum)
     with gfile.GFile(output_path, 'wb') as f:
         f.write(gdef.SerializeToString())
     return graph
@@ -57,16 +57,16 @@ def convert_ssd(exported_graph_path, model_structure, output_path):
 
     # Convert to Core ML model.
     ssd_model = tfcoreml.convert(
-            tf_model_path=frozen_model_path,
-            mlmodel_path=coreml_model_path,
-            input_name_shape_dict={ input_tensor: [1, 300, 300, 3] },
-            image_input_names=input_tensor,
-            output_feature_names=[bbox_output_tensor, class_output_tensor],
-            is_bgr=False,
-            red_bias=-1.0,
-            green_bias=-1.0,
-            blue_bias=-1.0,
-            image_scale=2./255)
+        tf_model_path=frozen_model_path,
+        mlmodel_path=coreml_model_path,
+        input_name_shape_dict={ input_tensor: [1, 300, 300, 3] },
+        image_input_names=input_tensor,
+        output_feature_names=[bbox_output_tensor, class_output_tensor],
+        is_bgr=False,
+        red_bias=-1.0,
+        green_bias=-1.0,
+        blue_bias=-1.0,
+        image_scale=2./255)
 
     spec = ssd_model.get_spec()
 

@@ -50,4 +50,4 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
 
 
 if __name__ == "__main__":
-  main()
+    main()
