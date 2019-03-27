@@ -1,11 +1,11 @@
 {
   "name": "cloud-annotations",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "license": "MIT",
   "scripts": {
     "build": "cd trainer && python setup.py all",
     "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
-    "publish-all": "npm run build && npm --no-git-tag-version version patch && ./publish-trainer.sh $npm_package_version && npm publish"
+    "patch": "npm run build && ./publish-trainer.sh $(npm --no-git-tag-version version patch) && npm publish"
   },
   "bin": {
     "cacli": "bin/cacli"
