@@ -57,19 +57,12 @@ module.exports = async (options, importedConfig) => {
 
   const ws = await wml.createMonitorSocket(ops.model_id)
 
-  ws.on('open', () => {})
-
   const spinner = new Spinner()
-  ws.on('close', () => {
-    spinner.stop()
-    console.log(`${green('success')} Model files saved to bucket.`)
-    console.log('✨ Done.')
-  })
 
   spinner.setMessage('Preparing to train (this may take a while)... ')
   spinner.start()
 
-  const totalStepsRegex = /--num-train-steps=(\d*)/gm
+  const totalStepsRegex = /\.\/start\.sh (\d*)/gm
   const trainingCommand = run.entity.model_definition.execution.command
   const totalSteps = totalStepsRegex.exec(trainingCommand)[1]
   const progressBar = new ProgressBar(totalSteps)
@@ -108,5 +101,14 @@ module.exports = async (options, importedConfig) => {
         spinner.start()
       }
     }
+  })
+
+  await new Promise((resolve, _) => {
+    ws.on('close', () => {
+      spinner.stop()
+      console.log(`${green('success')} Model files saved to bucket.`)
+      console.log('✨ Done.')
+      resolve()
+    })
   })
 }

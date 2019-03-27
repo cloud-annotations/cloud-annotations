@@ -4,7 +4,6 @@ const safeGet = require('./../utils/safeGet')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
 const fs = require('fs')
 
-const LOCAL_DEV_MODE = false
 const DEFAULT_GPU = 'k80'
 const DEFAULT_STEPS = '500'
 
@@ -130,9 +129,6 @@ class WML {
       if (trainingScript) {
         return fs.createReadStream(trainingScript)
       }
-      if (LOCAL_DEV_MODE) {
-        return fs.createReadStream('training.zip')
-      }
       return request(
         'https://github.com/cloud-annotations/training/releases/download/v1.0.4/training.zip'
       )
@@ -157,14 +153,11 @@ class WML {
     if (!this._token) {
       this._token = await this.authenticate()
     }
-    // const command = `python3 -m wml.train_command --num-train-steps=${safeGet(
-    //   () => this._config.trainingParams.steps,
-    //   DEFAULT_STEPS
-    // ) || DEFAULT_STEPS}`
 
+    const steps =
+      safeGet(() => this._config.trainingParams.steps) || DEFAULT_STEPS
     // Try to find the start command (could be `start.sh` or `zipname/start.sh`)
-    const command =
-      'cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh 500'
+    const command = `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh ${steps}`
     const connection = {
       endpoint_url: cosEndpointBuilder(
         this._config.credentials.cos.region,

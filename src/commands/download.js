@@ -5,11 +5,12 @@ const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
 const input = require('./../utils/input')
 const Spinner = require('./../utils/spinner')
+const stringToBool = require('./../utils/stringToBool')
 const progress = require('./../commands/progress')
 const WML = require('./../api/wml')
 const COS = require('ibm-cos-sdk')
 
-const stillRunning = async () => {
+const stillRunning = async (modelId, config) => {
   const shouldMonitor = stringToBool(
     await input(
       `Model is still training, would you like to monitor progress? `,
@@ -18,7 +19,6 @@ const stillRunning = async () => {
   )
 
   if (shouldMonitor) {
-    console.log()
     await progress([modelId], config)
   }
 }
@@ -69,7 +69,7 @@ module.exports = async options => {
   switch (status) {
     case 'pending':
     case 'running':
-      stillRunning()
+      await stillRunning(ops.model_id, config)
       break
     case 'completed':
       break
