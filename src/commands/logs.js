@@ -7,7 +7,7 @@ const COS = require('ibm-cos-sdk')
 module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
-  parser.add([true, 'help', '--help', '-h'])
+  parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   if (ops.help) {

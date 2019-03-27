@@ -7,7 +7,7 @@ const optionsParse = require('./../utils/optionsParse')
 
 module.exports = async options => {
   const parser = optionsParse()
-  parser.add([true, 'help', '--help', '-h'])
+  parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   if (ops.help) {

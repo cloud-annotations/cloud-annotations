@@ -70,7 +70,7 @@ const CONFIG = {
 module.exports = async (options, skipOptionalSteps) => {
   // Parse help options.
   const parser = optionsParse()
-  parser.add([true, 'help', '--help', '-h'])
+  parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   // If help was an option, print usage and exit.

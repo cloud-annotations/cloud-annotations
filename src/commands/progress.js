@@ -25,7 +25,7 @@ const getMatches = (string, regex) => {
 module.exports = async (options, importedConfig) => {
   const parser = optionsParse()
   parser.add('model_id')
-  parser.add([true, 'help', '--help', '-h'])
+  parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   if (ops.help) {

@@ -84,11 +84,12 @@ const validateConfig = async config => {
 
 module.exports = async options => {
   const parser = optionsParse()
-  parser.add([true, 'help', '--help', '-h'])
+  parser.add('training_zip')
+  parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   if (ops.help) {
-    console.log('cacli train')
+    console.log('cacli train [<zip_file>]')
     process.exit()
   }
 
@@ -116,8 +117,8 @@ module.exports = async options => {
   const spinner = new Spinner()
   spinner.setMessage('Starting training run...')
   spinner.start()
-  const trainingRun = WML.trainingRunBuilder(config)
-  const modelId = await trainingRun.start()
+  const wml = new WML(config)
+  const modelId = await wml.startTraining(ops.training_zip)
   spinner.stop()
   console.log(`${green('success')} Training run submitted.`)
   console.log()
