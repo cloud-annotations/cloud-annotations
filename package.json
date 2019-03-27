@@ -5,7 +5,7 @@
   "scripts": {
     "build": "cd trainer && python setup.py all",
     "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
-    "deploy": "echo todo"
+    "publish-all": "npm run build && npm --no-git-tag-version version patch && ./publish-trainer.sh $npm_package_version && npm publish"
   },
   "bin": {
     "cacli": "bin/cacli"

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# exit when any command fails
-set -e
-
 pip install --user --no-deps -r requirements.txt
 
 SCRIPT="python - << EOF
