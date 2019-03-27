@@ -6,7 +6,7 @@ import os
 import shutil
 import argparse
 
-from scripts.types import ModelType
+from convert.types import ModelType
 
 import tensorflow as tf
 
@@ -65,14 +65,14 @@ def infer_model_structure():
 model_structure = infer_model_structure()
 
 if args.coreml:
-    from scripts.convert_to_core_ml import convert_to_core_ml
+    from convert.convert_to_core_ml import convert_to_core_ml
     convert_to_core_ml(args.exported_graph_path, model_structure, args.mlmodel_path)
 
 if args.tflite:
-    from scripts.convert_to_tflite import convert_to_tflite
+    from convert.convert_to_tflite import convert_to_tflite
     convert_to_tflite(args.exported_graph_path, model_structure, args.tflite_path)
 
 if args.tfjs:
-    from scripts.convert_to_tfjs import convert_to_tfjs
+    from convert.convert_to_tfjs import convert_to_tfjs
     output_names = model_structure['output_names']
     convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)

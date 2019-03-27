@@ -163,7 +163,8 @@ class WML {
     // ) || DEFAULT_STEPS}`
 
     // Try to find the start command (could be `start.sh` or `zipname/start.sh`)
-    const command = 'eval "$(find . -name "start.sh" -maxdepth 2 -print -quit)"'
+    const command =
+      'cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh 500'
     const connection = {
       endpoint_url: cosEndpointBuilder(
         this._config.credentials.cos.region,

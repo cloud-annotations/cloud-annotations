@@ -4,7 +4,7 @@ import os
 import json
 import shutil
 
-from scripts.types import ModelType
+from convert.types import ModelType
 
 # TensorFlow 1.9 to TensorFlow 1.11
 if tf.__version__ <= '1.11.0':

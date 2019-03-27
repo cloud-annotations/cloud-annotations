@@ -3,8 +3,8 @@ import json
 import shutil
 from datetime import datetime
 
-from scripts.types import ModelType
-from scripts.convert_ssd_helper import convert_ssd
+from convert.types import ModelType
+from convert.convert_ssd_helper import convert_ssd
 
 import tensorflow as tf
 from tensorflow.python.tools import strip_unused_lib

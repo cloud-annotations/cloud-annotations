@@ -1,5 +1,5 @@
 config.yaml
-training.zip
+model_*
 
 # Logs
 logs

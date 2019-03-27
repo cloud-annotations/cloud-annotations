@@ -11,14 +11,14 @@ from setuptools.command.sdist import sdist
 from subprocess import call
 
 PULL_OBJECT_DETECTION = """
-    svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection src/models/object_detection &&
-    svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim src/models/object_detection/slim &&
-    protoc src/models/object_detection/protos/*.proto --python_out=.
+    svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection &&
+    svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim &&
+    protoc src/object_detection/protos/*.proto --python_out=.
 """
 
 PULL_CLASSIFICATION = """
-    svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining src/models/classification
-    echo > src/models/classification/__init__.py
+    svn export -r 308 https://github.com/tensorflow/hub/trunk/examples/image_retraining src/classification
+    echo > src/classification/__init__.py
 """
 
 OUTPUT_FILE = 'training.zip'

@@ -4,7 +4,8 @@ _site
 
 .DS_Store
 
-/src/models
+/src/classification
+/src/object_detection
 /training.zip
 
 

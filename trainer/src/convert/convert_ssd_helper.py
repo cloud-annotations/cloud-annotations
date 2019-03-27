@@ -1,8 +1,8 @@
 import os
 import json
 
-from scripts.build_nms import build_nms
-from scripts.build_decoder import build_decoder
+from convert.build_nms import build_nms
+from convert.build_decoder import build_decoder
 
 import tfcoreml
 import coremltools

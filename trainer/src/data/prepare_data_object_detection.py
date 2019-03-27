@@ -182,7 +182,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
     fill_val_record = val_output_path + '-?????-of-{:05}'.format(val_shards)
     fill_checkpoint = os.path.join(checkpoint_dir, 'model.ckpt')
 
-    skeleton_path = os.path.join('bucket', 'pipeline_skeleton.config')
+    skeleton_path = 'pipeline_skeleton.config'
     pipeline_path = os.path.join(write_bucket, 'pipeline.config')
 
     with open(skeleton_path, 'r') as skeleton:
