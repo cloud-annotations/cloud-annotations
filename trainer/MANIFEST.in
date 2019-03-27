@@ -1,0 +1,3 @@
+include src/requirements.txt
+include src/start.sh
+include src/pipeline_skeleton.config
