@@ -2,6 +2,7 @@ const request = require('request-promise-native')
 const WebSocket = require('ws')
 const safeGet = require('./../utils/safeGet')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
+const { version } = require('./../../package.json')
 const fs = require('fs')
 
 const DEFAULT_GPU = 'k80'
@@ -130,7 +131,7 @@ class WML {
         return fs.createReadStream(trainingScript)
       }
       return request(
-        'https://github.com/cloud-annotations/training/releases/download/v1.0.4/training.zip'
+        `https://github.com/cloud-annotations/training/releases/download/v${version}/training.zip`
       )
     })()
 
