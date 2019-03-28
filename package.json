@@ -17,6 +17,7 @@
     "fs-extra": "^7.0.1",
     "ibm-cos-sdk": "^1.4.4",
     "js-yaml": "^3.12.2",
+    "klaw-sync": "^6.0.0",
     "moment": "^2.24.0",
     "mute-stream": "^0.0.8",
     "request": "^2.88.0",

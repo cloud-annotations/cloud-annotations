@@ -6,7 +6,7 @@ const list = require('./commands/list')
 const logs = require('./commands/logs')
 const progress = require('./commands/progress')
 const download = require('./commands/download')
-const bootstrap = require('./commands/download')
+const bootstrap = require('./commands/bootstrap')
 const dump = require('./commands/dump')
 
 module.exports = () => {
