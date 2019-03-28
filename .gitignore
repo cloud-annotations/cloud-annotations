@@ -1,5 +1,6 @@
 config.yaml
 model_*
+exported_buckets
 
 # Logs
 logs
