@@ -70,6 +70,7 @@ const CONFIG = {
 module.exports = async (options, skipOptionalSteps) => {
   // Parse help options.
   const parser = optionsParse()
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -79,8 +80,10 @@ module.exports = async (options, skipOptionalSteps) => {
     process.exit()
   }
 
+  const configPath = ops.config || 'config.yaml'
+
   // Load config if one exists.
-  const old = safeGet(() => yaml.safeLoad(fs.readFileSync('config.yaml')))
+  const old = safeGet(() => yaml.safeLoad(fs.readFileSync(configPath)))
 
   if (!skipOptionalSteps) {
     console.log(
@@ -192,7 +195,7 @@ module.exports = async (options, skipOptionalSteps) => {
     )
   }
 
-  if (buckets) {
+  if (buckets && buckets.length > 0) {
     console.log(bold('Buckets'))
     const training = safeGet(() => old.buckets.training)
     const i = Math.max(0, buckets.indexOf(training))
@@ -296,13 +299,13 @@ module.exports = async (options, skipOptionalSteps) => {
   }
 
   // Write to yaml
-  console.log(`About to write to ${process.cwd()}/config.yaml:`)
+  console.log(`About to write to ${process.cwd()}/${configPath}`)
   console.log()
   const yamlFile = yaml.safeDump(CONFIG)
   console.log(yamlFile)
   const save = stringToBool(await input('Is this ok? ', DEFAULT_SAVE))
   if (save) {
-    fs.writeFile('config.yaml', yamlFile, () => {})
+    fs.writeFile(configPath, yamlFile, () => {})
   }
   return CONFIG
 }

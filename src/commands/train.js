@@ -85,6 +85,7 @@ const validateConfig = async config => {
 module.exports = async options => {
   const parser = optionsParse()
   parser.add('training_zip')
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -95,20 +96,30 @@ module.exports = async options => {
 
   const config = await (async () => {
     try {
-      const config = yaml.safeLoad(fs.readFileSync('config.yaml'))
-      console.log(dim('(Using settings from config.yaml)'))
+      const config = yaml.safeLoad(fs.readFileSync(ops.config))
+      console.log(dim(`(Using settings from ${ops.config})`))
       return config
     } catch {
       console.log(
-        'No config.yaml found, so we will ask you a bunch of questions instead.'
+        `No ${
+          ops.config
+        } found, so we will ask you a bunch of questions instead.`
       )
       console.log(
-        'Your answers can optionally be saved in a config.yaml file for later use.'
+        `Your answers can optionally be saved in a ${
+          ops.config
+        } file for later use.`
       )
       console.log()
-      const config = await init([], true)
-      console.log()
-      return config
+      if (ops.config) {
+        const config = await init(['--config', ops.config], true)
+        console.log()
+        return config
+      } else {
+        const config = await init([], true)
+        console.log()
+        return config
+      }
     }
   })()
 

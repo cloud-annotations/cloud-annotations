@@ -7,6 +7,7 @@ const optionsParse = require('./../utils/optionsParse')
 
 module.exports = async options => {
   const parser = optionsParse()
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -15,7 +16,7 @@ module.exports = async options => {
     process.exit()
   }
 
-  const config = loadConfig()
+  const config = loadConfig(ops.config)
   const wml = new WML(config)
   const runs = await wml.listTrainingRuns()
 

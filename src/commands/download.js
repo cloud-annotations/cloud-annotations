@@ -30,23 +30,23 @@ const downloadDir = async (cos, bucket, prefix, path) => {
     .then(data =>
       data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
     )
-  files.forEach(file => {
+  const promises = files.map(file => {
     const outputPath = './' + file.replace(`${prefix}/`, '')
-    cos
+    return cos
       .getObject({
         Bucket: bucket,
         Key: file
       })
       .promise()
-      .then(data => {
-        fs.outputFile(outputPath, data.Body)
-      })
+      .then(data => fs.outputFile(outputPath, data.Body))
   })
+  await Promise.all(promises)
 }
 
 module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -55,7 +55,7 @@ module.exports = async options => {
     process.exit()
   }
 
-  const config = loadConfig()
+  const config = loadConfig(ops.config)
 
   if (!ops.model_id) {
     console.log('No Model ID provided')
