@@ -7,6 +7,7 @@ const Spinner = require('./../utils/spinner')
 const picker = require('./../utils/picker')
 const fs = require('fs-extra')
 
+// TODO: Account for buckets with more than 1000 files.
 const downloadBucket = async (cos, bucket, path) => {
   const files = await cos
     .listObjectsV2({ Bucket: bucket })
