@@ -1,6 +1,6 @@
 {
   "name": "cloud-annotations",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "license": "MIT",
   "scripts": {
     "build": "cd trainer && python setup.py all",
