@@ -46,6 +46,7 @@ const downloadDir = async (cos, bucket, prefix, path) => {
 module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -54,7 +55,7 @@ module.exports = async options => {
     process.exit()
   }
 
-  const config = loadConfig()
+  const config = loadConfig(ops.config)
 
   if (!ops.model_id) {
     console.log('No Model ID provided')

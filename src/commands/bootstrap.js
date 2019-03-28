@@ -57,6 +57,7 @@ module.exports = async options => {
   // Parse help options.
   const parser = optionsParse()
   parser.add('path')
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -66,7 +67,7 @@ module.exports = async options => {
     process.exit()
   }
 
-  const config = loadConfig()
+  const config = loadConfig(ops.config)
 
   const spinner = new Spinner()
   spinner.setMessage('Authenticating...')

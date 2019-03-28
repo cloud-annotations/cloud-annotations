@@ -25,6 +25,7 @@ const getMatches = (string, regex) => {
 module.exports = async (options, importedConfig) => {
   const parser = optionsParse()
   parser.add('model_id')
+  parser.add(['--config', '-c'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -33,7 +34,7 @@ module.exports = async (options, importedConfig) => {
     process.exit()
   }
 
-  const config = importedConfig || loadConfig()
+  const config = importedConfig || loadConfig(ops.config)
 
   if (!ops.model_id) {
     console.log('No Model ID provided')
