@@ -1,4 +1,5 @@
-# Cloud Annotations CLI [![NPM Version](https://img.shields.io/npm/v/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations) [![NPM Downloads](https://img.shields.io/npm/dm/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations)
+# Cloud Annotations CLI
+[![NPM Version](https://img.shields.io/npm/v/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations) [![NPM Downloads](https://img.shields.io/npm/dm/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations)
 
 
 ![](https://cloud-annotations.github.io/training/object-detection/assets/main.png)
