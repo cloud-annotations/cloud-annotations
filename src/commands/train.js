@@ -94,21 +94,19 @@ module.exports = async options => {
     process.exit()
   }
 
+  const configPath = ops.config || 'config.yaml'
+
   const config = await (async () => {
     try {
-      const config = yaml.safeLoad(fs.readFileSync(ops.config))
-      console.log(dim(`(Using settings from ${ops.config})`))
+      const config = yaml.safeLoad(fs.readFileSync(configPath))
+      console.log(dim(`(Using settings from ${configPath})`))
       return config
     } catch {
       console.log(
-        `No ${
-          ops.config
-        } found, so we will ask you a bunch of questions instead.`
+        `No ${configPath} found, so we will ask you a bunch of questions instead.`
       )
       console.log(
-        `Your answers can optionally be saved in a ${
-          ops.config
-        } file for later use.`
+        `Your answers can optionally be saved in a ${configPath} file for later use.`
       )
       console.log()
       if (ops.config) {
