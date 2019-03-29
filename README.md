@@ -1,4 +1,4 @@
-# Cloud Annotations CLI
+# Cloud Annotations
 [![NPM Version](https://img.shields.io/npm/v/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations) [![NPM Downloads](https://img.shields.io/npm/dm/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations)
 
 
