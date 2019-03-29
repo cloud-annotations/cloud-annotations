@@ -7,7 +7,7 @@ GH_OWNER="cloud-annotations"
 REPO="training"
 GH_REPO="$GH_API/repos/$GH_OWNER/$REPO/releases?access_token=$GH_ACCESS_TOKEN"
 
-RELEASE_JSON=$(printf '{"tag_name": "v%s"}' "$1")
+RELEASE_JSON=$(printf '{"tag_name": "%s"}' "$1")
 echo "Creating a release with info: $RELEASE_JSON."
 
 release_id="$(curl --data "$RELEASE_JSON" $GH_REPO | python -c "import sys, json; print json.load(sys.stdin)['id']")"
