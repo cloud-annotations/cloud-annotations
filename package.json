@@ -1,16 +1,29 @@
 {
   "name": "cloud-annotations",
-  "version": "1.0.11",
+  "description": "Easy training for classification and object detection",
+  "version": "1.0.12",
   "license": "MIT",
+  "repository": "cloud-annotations/training",
+  "author": "Nick Bourdakos <bourdakos1@gmail.com>",
   "scripts": {
+    "test": "nyc mocha tests",
+    "coveralls": "npm run test -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
     "build": "cd trainer && python setup.py all",
     "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
-    "patch": "./publish-trainer.sh $(npm --no-git-tag-version version patch) && npm publish"
+    "patch": "./publish-trainer.sh $(npm --no-git-tag-version version patch) && yarn publish"
   },
   "bin": {
     "cacli": "bin/cacli"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "coveralls": "^3.0.3",
+    "mocha": "^6.0.2",
+    "mocha-lcov-reporter": "^1.3.0",
+    "nyc": "^13.3.0",
+    "rewire": "^4.0.1",
+    "robotjs": "^0.5.1",
+    "sinon": "^7.3.1"
+  },
   "dependencies": {
     "ansi-escapes": "^4.0.0",
     "chalk": "^2.4.2",

@@ -1,11 +1,11 @@
 module.exports = () => {
-  const args = process.argv.slice(2, process.argv.length)
   var commands = {}
   return {
-    add: function(command, fn) {
+    add: (command, fn) => {
       commands[command] = fn
     },
-    parse: function() {
+    parse: () => {
+      const args = process.argv.slice(2, process.argv.length)
       if (!args[0] || args[0].startsWith('-')) {
         commands['']()
       } else if (commands[args[0]]) {

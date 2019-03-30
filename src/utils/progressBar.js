@@ -1,8 +1,27 @@
-const cursorToStart = require('./../utils/cursorToStart')
-const clearLine = require('./../utils/clearLine')
+const { cursorTo, eraseLine } = require('ansi-escapes')
+
 const bar = ['#', '-']
 
 const MAX_RATE_BUFFER = 20
+
+const getRateInfo = (rate, total, current) => {
+  let unit = ''
+  let eta = '???'
+  if (rate > 0) {
+    unit = 'sec'
+    eta = (1 / rate) * (total - current)
+    if (eta >= 60) {
+      unit = 'mins'
+      eta = eta / 60
+      if (eta >= 60) {
+        unit = 'hrs'
+        eta = eta / 60
+      }
+    }
+    eta = Math.round(eta)
+  }
+  return [unit, eta]
+}
 
 module.exports = class ProgressBar {
   constructor(total) {
@@ -14,8 +33,8 @@ module.exports = class ProgressBar {
 
   stop() {
     this.started = false
-    clearLine()
-    cursorToStart()
+    process.stdout.write(eraseLine)
+    process.stdout.write(cursorTo(0))
   }
 
   applyRateInfo(rate) {
@@ -40,22 +59,7 @@ module.exports = class ProgressBar {
 
     const rate = this.getAvgRate()
 
-    let unit = ''
-    let eta = '???'
-
-    if (rate > 0) {
-      unit = 'sec'
-      eta = (1 / rate) * (this.total - this.current)
-      if (eta >= 60) {
-        unit = 'mins'
-        eta = eta / 60
-        if (eta >= 60) {
-          unit = 'hrs'
-          eta = eta / 60
-        }
-      }
-      eta = Math.round(eta)
-    }
+    const [unit, eta] = getRateInfo(rate, this.total, this.current)
 
     const percent = Math.min(Math.max(this.current / this.total), 1)
     const progress = ` ${this.current}/${this.total} | ETA: ${eta} ${unit}`
@@ -66,8 +70,8 @@ module.exports = class ProgressBar {
     const filled = bar[0].repeat(filledLength)
     const empty = bar[1].repeat(width - filledLength)
 
-    clearLine()
-    cursorToStart()
+    process.stdout.write(eraseLine)
+    process.stdout.write(cursorTo(0))
     process.stdout.write(`[${filled}${empty}]${progress}`)
   }
 }

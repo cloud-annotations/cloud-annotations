@@ -50,7 +50,7 @@ module.exports = async (prompt, items, delegate = {}) => {
   delegate.windowSize = Math.min(delegate.windowSize, items.length)
 
   console.log(prompt)
-  process.on('exit', handleExit)
+  process.on('SIGTERM', handleExit)
 
   const input = process.stdin
   const output = new MuteStream()
@@ -84,6 +84,6 @@ module.exports = async (prompt, items, delegate = {}) => {
   rl.close()
   process.stdout.write(eraseLines(delegate.windowSize + 1))
   process.stdout.write(cursorShow)
-  process.removeListener('exit', handleExit)
+  process.removeListener('SIGTERM', handleExit)
   return items[answer]
 }

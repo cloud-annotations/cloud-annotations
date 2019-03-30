@@ -1,5 +1,4 @@
-const cursorToStart = require('./../utils/cursorToStart')
-const clearLine = require('./../utils/clearLine')
+const { cursorTo, eraseLine } = require('ansi-escapes')
 
 const spinner = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'.split('')
 
@@ -25,8 +24,8 @@ module.exports = class Spinner {
       clearTimeout(this.id)
       this.id = null
     }
-    clearLine()
-    cursorToStart()
+    process.stdout.write(eraseLine)
+    process.stdout.write(cursorTo(0))
   }
 
   render() {
@@ -35,8 +34,8 @@ module.exports = class Spinner {
     }
     const line = `${spinner[this.current]} ${this.message}`
 
-    clearLine()
-    cursorToStart()
+    process.stdout.write(eraseLine)
+    process.stdout.write(cursorTo(0))
     process.stdout.write(line)
 
     this.current = ++this.current % spinner.length
