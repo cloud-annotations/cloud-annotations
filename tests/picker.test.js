@@ -1,5 +1,5 @@
 const assert = require('assert')
-const robot = require('robotjs')
+const stdin = require('mock-stdin').stdin
 const rewire = require('rewire')
 const sinon = require('sinon')
 const picker = rewire('./../src/utils/picker')
@@ -9,11 +9,24 @@ describe('picker', () => {
   const shortList = ['item 1', 'item 2', 'item 3']
   const longList = ['item 1', 'item 2', 'item 3', 'item 4', 'item 5', 'item 6']
 
+  const keys = {
+    up: '\x1B\x5B\x41',
+    down: '\x1B\x5B\x42',
+    enter: '\x0D',
+    space: '\x20'
+  }
+
+  let io = null
+  beforeEach(() => (io = stdin()))
+  afterEach(() => io.restore())
+
   it('short non-zero default index', () => {
     const promise = picker(prompt, shortList, { default: 1 }).then(res => {
       assert.equal(res, shortList[1])
     })
-    robot.keyTap('enter')
+    process.nextTick(() => {
+      io.send(keys.enter)
+    })
     return promise
   })
 
@@ -21,9 +34,10 @@ describe('picker', () => {
     const promise = picker(prompt, shortList).then(res => {
       assert.equal(res, shortList[0])
     })
-
-    robot.keyTap('up')
-    robot.keyTap('enter')
+    process.nextTick(() => {
+      io.send(keys.up)
+      io.send(keys.enter)
+    })
     return promise
   })
 
@@ -31,13 +45,14 @@ describe('picker', () => {
     const promise = picker(prompt, shortList).then(res => {
       assert.equal(res, shortList[shortList.length - 1])
     })
-
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('enter')
+    process.nextTick(() => {
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.enter)
+    })
     return promise
   })
 
@@ -48,7 +63,9 @@ describe('picker', () => {
     }).then(res => {
       assert.equal(res, longList[5])
     })
-    robot.keyTap('enter')
+    process.nextTick(() => {
+      io.send(keys.enter)
+    })
     return promise
   })
 
@@ -56,9 +73,10 @@ describe('picker', () => {
     const promise = picker(prompt, longList, { windowSize: 4 }).then(res => {
       assert.equal(res, longList[0])
     })
-
-    robot.keyTap('up')
-    robot.keyTap('enter')
+    process.nextTick(() => {
+      io.send(keys.up)
+      io.send(keys.enter)
+    })
     return promise
   })
 
@@ -66,16 +84,28 @@ describe('picker', () => {
     const promise = picker(prompt, longList).then(res => {
       assert.equal(res, longList[longList.length - 1])
     })
+    process.nextTick(() => {
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.down)
+      io.send(keys.enter)
+    })
+    return promise
+  })
 
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('down')
-    robot.keyTap('enter')
+  it('random key presses', () => {
+    const promise = picker(prompt, longList).then(res => {
+      assert.equal(res, longList[0])
+    })
+    process.nextTick(() => {
+      io.send('random keys')
+      io.send(keys.enter)
+    })
     return promise
   })
 
@@ -89,7 +119,7 @@ describe('picker', () => {
       assert.equal(exitSpy.called, true)
       done()
     })
-    robot.keyTap('c', 'control')
+
     process.kill(process.pid, 'SIGTERM')
   })
 })

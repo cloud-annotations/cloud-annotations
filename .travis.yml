@@ -1,6 +1,6 @@
 language: node_js
 os: osx
 node_js:
-- "v10.15.0"
+- "stable"
 after_success:
 - npm run coveralls
