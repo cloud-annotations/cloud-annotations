@@ -1,6 +1,6 @@
 const assert = require('assert')
 const rewire = require('rewire')
-const ProgressBar = rewire('./../src/utils/progressBar')
+const ProgressBar = rewire('./../../src/utils/progressBar')
 
 describe('progress bar', () => {
   it('fills', () => {

@@ -1,5 +1,5 @@
 const assert = require('assert')
-const stringToBool = require('./../src/utils/stringToBool')
+const stringToBool = require('./../../src/utils/stringToBool')
 
 describe('stringToBool', () => {
   it('yes is yes', () => {

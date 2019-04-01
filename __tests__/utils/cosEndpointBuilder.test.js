@@ -1,5 +1,5 @@
 const assert = require('assert')
-const cosEndpointBuilder = require('./../src/utils/cosEndpointBuilder')
+const cosEndpointBuilder = require('./../../src/utils/cosEndpointBuilder')
 
 describe('cosEndpointBuilder', () => {
   it('us-geo local', () => {

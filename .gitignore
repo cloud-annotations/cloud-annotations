@@ -1,4 +1,4 @@
-config*.yaml
+/config*.yaml
 model_*
 exported_buckets
 

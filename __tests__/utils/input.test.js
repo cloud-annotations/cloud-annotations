@@ -1,6 +1,6 @@
 const assert = require('assert')
 const stdin = require('mock-stdin').stdin
-const input = require('./../src/utils/input')
+const input = require('./../../src/utils/input')
 
 describe('input', () => {
   const userInput = 'Hello'

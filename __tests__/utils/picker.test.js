@@ -2,7 +2,7 @@ const assert = require('assert')
 const stdin = require('mock-stdin').stdin
 const rewire = require('rewire')
 const sinon = require('sinon')
-const picker = rewire('./../src/utils/picker')
+const picker = rewire('./../../src/utils/picker')
 
 describe('picker', () => {
   const prompt = 'pick an item: '

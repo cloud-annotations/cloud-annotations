@@ -1,6 +1,6 @@
 const sinon = require('sinon')
 const assert = require('assert')
-const argParse = require('./../src/utils/argParse')
+const argParse = require('./../../src/utils/argParse')
 
 describe('argParse', () => {
   const spy1 = sinon.spy()

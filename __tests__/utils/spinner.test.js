@@ -1,4 +1,4 @@
-const Spinner = require('./../src/utils/spinner')
+const Spinner = require('./../../src/utils/spinner')
 
 describe('spinner', () => {
   it('stop immediate', () => {

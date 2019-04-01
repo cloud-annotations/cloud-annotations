@@ -6,7 +6,7 @@
   "repository": "cloud-annotations/training",
   "author": "Nick Bourdakos <bourdakos1@gmail.com>",
   "scripts": {
-    "test": "nyc mocha __tests__",
+    "test": "nyc mocha __tests__/**/*.test.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "cd trainer && python setup.py all",
     "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
@@ -35,5 +35,11 @@
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "ws": "^6.2.0"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/**/*.js"
+    ]
   }
 }
