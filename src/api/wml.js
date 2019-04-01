@@ -1,21 +1,42 @@
+const fs = require('fs')
 const request = require('request-promise-native')
-const WebSocket = require('ws')
+const api = require('./api')
 const safeGet = require('./../utils/safeGet')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
 const { version } = require('./../../package.json')
-const fs = require('fs')
 
 const DEFAULT_GPU = 'k80'
 const DEFAULT_STEPS = '500'
+const DEFAULT_TRAINING_DEFINITION = {
+  framework: {
+    name: 'tensorflow',
+    version: '1.12',
+    runtimes: [
+      {
+        name: 'python',
+        version: '3.6'
+      }
+    ]
+  }
+}
 
 class WML {
   constructor(config) {
+    const { url, username, password } = config.credentials.wml
+    const { cos } = config.credentials
+    const { name, buckets, trainingParams } = config
     this._token = undefined
-    this._config = config
+    this._url = url
+    this._username = username
+    this._password = password
+    this._name = name
+    this._buckets = buckets
+    this._trainingParams = trainingParams
+    this._cos = cos
   }
 
-  static trainingRunBuilder(config) {
-    return new WML(config)
+  async authenticate() {
+    return api.authenticate(this._url, this._username, this._password)
   }
 
   async startTraining(trainingScript) {
@@ -25,100 +46,34 @@ class WML {
     return trainingRun.metadata.guid
   }
 
-  // Deprecated.
-  async start() {
-    const trainingDefinition = await this.createTrainingDefinition()
-    await this.addTrainingScript(trainingDefinition)
-    const trainingRun = await this.startTrainingRun(trainingDefinition)
-    return trainingRun.metadata.guid
-  }
-
-  async authenticate() {
-    return request({
-      method: 'GET',
-      json: true,
-      url: `${this._config.credentials.wml.url}/v3/identity/token`,
-      auth: {
-        user: this._config.credentials.wml.username,
-        pass: this._config.credentials.wml.password
-      }
-    }).then(body => {
-      return body.token
-    })
-  }
-
-  async createMonitorSocket(model_id) {
+  async createMonitorSocket(modelId) {
     if (!this._token) {
       this._token = await this.authenticate()
     }
-    const url =
-      this._config.credentials.wml.url.replace('https', 'wss') +
-      '/v3/models/' +
-      model_id +
-      '/monitor'
-    return new WebSocket(url, {
-      headers: {
-        Authorization: `bearer ${this._token}`
-      }
-    })
+    return api.socket(this._url, this._token, modelId)
   }
 
-  async getTrainingRun(model_id) {
+  async getTrainingRun(modelId) {
     if (!this._token) {
       this._token = await this.authenticate()
     }
-    return request({
-      method: 'get',
-      json: true,
-      url: `${this._config.credentials.wml.url}/v3/models/${model_id}`,
-      auth: {
-        bearer: this._token
-      }
-    })
+    return api.getModel(this._url, this._token, modelId)
   }
 
   async listTrainingRuns() {
     if (!this._token) {
       this._token = await this.authenticate()
     }
-    return request({
-      method: 'get',
-      json: true,
-      url: `${this._config.credentials.wml.url}/v3/models`,
-      auth: {
-        bearer: this._token
-      }
-    })
+    return api.getModels(this._url, this._token)
   }
 
   async createTrainingDefinition() {
     if (!this._token) {
       this._token = await this.authenticate()
     }
-    const trainingDefinition = {
-      name: this._config.name,
-      framework: {
-        name: 'tensorflow',
-        version: '1.12',
-        runtimes: [
-          {
-            name: 'python',
-            version: '3.6'
-          }
-        ]
-      }
-    }
-    return request({
-      method: 'POST',
-      json: true,
-      url: `${
-        this._config.credentials.wml.url
-      }/v3/ml_assets/training_definitions`,
-      auth: {
-        bearer: this._token
-      },
-      body: trainingDefinition
-    })
+    const trainingDefinition = { ...DEFAULT_TRAINING_DEFINITION }
+    trainingDefinition.name = this._name
+    return postTrainingDefinition(this._url, this._token, trainingDefinition)
   }
 
   async addTrainingScript(trainingDefinition, trainingScript) {
@@ -135,19 +90,7 @@ class WML {
       )
     })()
 
-    return trainingZip.pipe(
-      request({
-        method: 'PUT',
-        json: true,
-        url: trainingDefinition.entity.training_definition_version.content_url,
-        auth: {
-          bearer: this._token
-        },
-        headers: {
-          'content-type': 'application/octet-stream'
-        }
-      })
-    )
+    return putTrainingDefinition(trainingDefinition, this._token, trainingZip)
   }
 
   async startTrainingRun(trainingDefinition) {
@@ -155,17 +98,14 @@ class WML {
       this._token = await this.authenticate()
     }
 
-    const steps =
-      safeGet(() => this._config.trainingParams.steps) || DEFAULT_STEPS
+    const steps = safeGet(() => this._trainingParams.steps) || DEFAULT_STEPS
+    const gpu = safeGet(() => this._trainingParams.gpu) || DEFAULT_GPU
     // Try to find the start command (could be `start.sh` or `zipname/start.sh`)
     const command = `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh ${steps}`
     const connection = {
-      endpoint_url: cosEndpointBuilder(
-        this._config.credentials.cos.region,
-        false
-      ),
-      access_key_id: this._config.credentials.cos.access_key_id,
-      secret_access_key: this._config.credentials.cos.secret_access_key
+      endpoint_url: cosEndpointBuilder(this._cos.region, false),
+      access_key_id: this._cos.access_key_id,
+      secret_access_key: this._cos.secret_access_key
     }
     const trainingRun = {
       model_definition: {
@@ -173,40 +113,26 @@ class WML {
           name: trainingDefinition.entity.framework.name,
           version: trainingDefinition.entity.framework.version
         },
-        name: this._config.name,
+        name: this._name,
         author: {},
         definition_href: trainingDefinition.metadata.url,
         execution: {
           command: command,
-          compute_configuration: {
-            name:
-              safeGet(() => this._config.trainingParams.gpu, DEFAULT_GPU) ||
-              DEFAULT_GPU
-          }
+          compute_configuration: { name: gpu }
         }
       },
       training_data_reference: {
         connection: connection,
-        source: { bucket: this._config.buckets.training },
+        source: { bucket: this._buckets.training },
         type: 's3'
       },
       training_results_reference: {
         connection: connection,
-        target: {
-          bucket: this._config.buckets.output || this._config.buckets.training
-        },
+        target: { bucket: this._buckets.output || this._buckets.training },
         type: 's3'
       }
     }
-    return request({
-      method: 'POST',
-      json: true,
-      url: `${this._config.credentials.wml.url}/v3/models`,
-      auth: {
-        bearer: this._token
-      },
-      body: trainingRun
-    })
+    return postModel(this._url, this._token, trainingRun)
   }
 }
 

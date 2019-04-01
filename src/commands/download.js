@@ -52,7 +52,7 @@ module.exports = async options => {
 
   if (ops.help) {
     console.log('cacli download <model_id>')
-    process.exit()
+    return process.exit()
   }
 
   const config = loadConfig(ops.config)
@@ -60,7 +60,7 @@ module.exports = async options => {
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli download <model_id>')
-    process.exit(1)
+    return process.exit(1)
   }
 
   const run = await new WML(config).getTrainingRun(ops.model_id)
@@ -77,7 +77,7 @@ module.exports = async options => {
     case 'failed':
     case 'canceled':
       console.log('Training was canceled or failed.')
-      process.exit()
+      return process.exit()
   }
 
   const spinner = new Spinner()

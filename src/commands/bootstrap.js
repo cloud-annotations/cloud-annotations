@@ -64,7 +64,7 @@ module.exports = async options => {
   // If help was an option, print usage and exit.
   if (ops.help) {
     console.log('cacli bootstrap <path>')
-    process.exit()
+    return process.exit()
   }
 
   const config = loadConfig(ops.config)
@@ -86,13 +86,13 @@ module.exports = async options => {
             'error'
           )} The provided Cloud Object Storage \`access_key_id\` is invalid.`
         )
-        process.exit(1)
+        return process.exit(1)
       case 'CredentialsError':
         // CredentialsError - Missing credentials in config
         console.error(
           `${red('error')} No Cloud Object Storage credentials were provided.`
         )
-        process.exit(1)
+        return process.exit(1)
       case 'SignatureDoesNotMatch':
         // SignatureDoesNotMatch - The request signature we calculated does not match the signature you provided. Check your AWS Secret Access Key and signing method. For more information, see REST Authentication and SOAP Authentication for details.
         console.error(
@@ -100,7 +100,7 @@ module.exports = async options => {
             'error'
           )} The provided Cloud Object Storage \`secret_access_key\` is invalid.`
         )
-        process.exit(1)
+        return process.exit(1)
       case 'UnknownEndpoint':
         // UnknownEndpoint - Inaccessible host: `s3-api.XXX.objectstorage.softlayer.net'. This service may not be available in the `us-east-1' region.
         console.error(
@@ -108,10 +108,10 @@ module.exports = async options => {
             'error'
           )} The provided Cloud Object Storage \`region\` is invalid.`
         )
-        process.exit(1)
+        return process.exit(1)
       default:
         console.error(`${red('error')} ${e.code} - ${e.message}`)
-        process.exit(1)
+        return process.exit(1)
     }
   }
 

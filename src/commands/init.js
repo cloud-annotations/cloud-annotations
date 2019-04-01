@@ -2,7 +2,7 @@ const { dim, bold, yellow } = require('chalk')
 const input = require('./../utils/input')
 const safeGet = require('./../utils/safeGet')
 const yaml = require('js-yaml')
-const fs = require('fs')
+const fs = require('fs-extra')
 const COS = require('ibm-cos-sdk')
 const WML = require('./../api/wml')
 const stringToBool = require('./../utils/stringToBool')
@@ -77,7 +77,7 @@ module.exports = async (options, skipOptionalSteps) => {
   // If help was an option, print usage and exit.
   if (ops.help) {
     console.log('cacli init')
-    process.exit()
+    return process.exit()
   }
 
   const configPath = ops.config || 'config.yaml'
@@ -305,7 +305,7 @@ module.exports = async (options, skipOptionalSteps) => {
   console.log(yamlFile)
   const save = stringToBool(await input('Is this ok? ', DEFAULT_SAVE))
   if (save) {
-    fs.writeFile(configPath, yamlFile, () => {})
+    fs.outputFile(configPath, yamlFile, () => {})
   }
   return CONFIG
 }
