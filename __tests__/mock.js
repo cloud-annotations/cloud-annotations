@@ -4,6 +4,7 @@ const badAuth = require('./fixtures/bad-auth.json')
 const goodAuth = require('./fixtures/good-auth.json')
 const getModels = require('./fixtures/get-models.json')
 const getModel = require('./fixtures/get-model-completed.json')
+const getModelRunning = require('./fixtures/get-model-running.json')
 
 const validUsername = 'username'
 const validPassword = 'password'
@@ -31,13 +32,46 @@ module.exports.wml = sinon => {
 
   sinon.stub(api, 'socket').callsFake((url, token, modelId) => {
     return new Promise((resolve, _) => {
-      resolve('x')
+      resolve({
+        on: (key, fn) => {
+          if (key === 'message') {
+            const res1 = {
+              status: {
+                message: 'i am a message'
+              }
+            }
+            const res2 = {}
+            const res3 = {
+              status: {}
+            }
+            const res4 = {
+              status: {
+                message: ''
+              }
+            }
+            fn(JSON.stringify(res1))
+            fn(JSON.stringify(res2))
+            fn(JSON.stringify(res3))
+            fn(JSON.stringify(res4))
+            fn(JSON.stringify(res1))
+          }
+          if (key === 'open') {
+            fn()
+          }
+          if (key === 'close') {
+            fn()
+          }
+        }
+      })
     })
   })
 
   sinon.stub(api, 'getModel').callsFake((url, token, modelId) => {
     return new Promise((resolve, _) => {
-      resolve(getModel)
+      if (modelId === 'model-completed') {
+        return resolve(getModel)
+      }
+      return resolve(getModelRunning)
     })
   })
 
@@ -157,6 +191,9 @@ module.exports.cos = sinon => {
       getObject: options => ({
         promise: () =>
           new Promise((resolve, _) => {
+            if (options.Key.includes('learner-1/training-log.txt')) {
+              return resolve({ Body: 'TODO: this is a a big log output.' })
+            }
             // {
             //   Bucket: bucket,
             //   Key: file

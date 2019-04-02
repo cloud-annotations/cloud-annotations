@@ -101,9 +101,7 @@ module.exports = async options => {
     if (status) {
       const { message } = status
       if (message) {
-        if (message.length > 0) {
-          console.log(message)
-        }
+        console.log(message)
       }
     }
   })
