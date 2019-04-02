@@ -11,7 +11,7 @@
       "name": "pepsi-coke-mountain-dew",
       "definition_href": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/e29ed237-4324-4740-b85d-c9a1e3eae2f1",
       "execution": {
-        "command": "eval \"$(find . -name \"start.sh\" -maxdepth 2 -print -quit)\"",
+        "command": "cd \"$(dirname \"$(find . -name \"start.sh\" -maxdepth 2 | head -1)\")\" && ./start.sh 50",
         "compute_configuration": { "name": "k80" }
       }
     },

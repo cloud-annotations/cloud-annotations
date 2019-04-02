@@ -30,6 +30,25 @@ module.exports.wml = sinon => {
     })
   })
 
+  // cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh 50
+  //INFO:tensorflow:loss = 16.405922, step = 2 (1.722 sec)
+  // INFO:tensorflow:global_step/sec: 0.676177
+  // INFO:tensorflow:global_step/sec: 0.676177
+  // INFO:tensorflow:loss = 15.320669, step = 3 (1.479 sec)
+  // INFO:tensorflow:loss = 15.320669, step = 3 (1.479 sec)
+  // INFO:tensorflow:global_step/sec: 0.7627
+  // INFO:tensorflow:global_step/sec: 0.7627
+  // INFO:tensorflow:loss = 14.487283, step = 4 (1.311 sec)
+  // INFO:tensorflow:loss = 14.487283, step = 4 (1.311 sec)
+  // INFO:tensorflow:global_step/sec: 0.730708
+  // INFO:tensorflow:global_step/sec: 0.730708
+  // INFO:tensorflow:loss = 13.580031, step = 5 (1.368 sec)
+  // INFO:tensorflow:loss = 13.580031, step = 5 (1.368 sec)
+  // INFO:tensorflow:global_step/sec: 0.769618
+  // INFO:tensorflow:global_step/sec: 0.769618
+  // INFO:tensorflow:loss = 12.474336, step = 6 (1.299 sec)
+  // INFO:tensorflow:loss = 12.474336, step = 6 (1.299 sec)
+
   sinon.stub(api, 'socket').callsFake((url, token, modelId) => {
     return new Promise((resolve, _) => {
       resolve({
@@ -49,11 +68,58 @@ module.exports.wml = sinon => {
                 message: ''
               }
             }
+            const real1 = {
+              status: {
+                message:
+                  'INFO:tensorflow:loss = 16.405922, step = 20 (1.722 sec)'
+              }
+            }
+            const real2 = {
+              status: {
+                message: 'INFO:tensorflow:global_step/sec: 0.676177'
+              }
+            }
+            const real3 = {
+              status: {
+                message:
+                  'INFO:tensorflow:loss = 15.320669, step = 40 (1.479 sec)'
+              }
+            }
+            const real4 = {
+              status: {
+                message:
+                  'INFO:tensorflow:loss = 15.320669, step = 40 (1.479 sec)'
+              }
+            }
+            const real5 = {
+              status: {
+                message: 'INFO:tensorflow:global_step/sec: 0.132456'
+              }
+            }
+            const real6 = {
+              status: {
+                message:
+                  'INFO:tensorflow:loss = 15.320669, step = 50 (1.479 sec)'
+              }
+            }
+            const real7 = {
+              status: {
+                message: 'training success'
+              }
+            }
+
             fn(JSON.stringify(res1))
             fn(JSON.stringify(res2))
             fn(JSON.stringify(res3))
             fn(JSON.stringify(res4))
             fn(JSON.stringify(res1))
+            fn(JSON.stringify(real1))
+            fn(JSON.stringify(real2))
+            fn(JSON.stringify(real3))
+            fn(JSON.stringify(real4))
+            fn(JSON.stringify(real5))
+            fn(JSON.stringify(real6))
+            fn(JSON.stringify(real7))
           }
           if (key === 'open') {
             fn()
@@ -192,7 +258,7 @@ module.exports.cos = sinon => {
         promise: () =>
           new Promise((resolve, _) => {
             if (options.Key.includes('learner-1/training-log.txt')) {
-              return resolve({ Body: 'TODO: this is a a big log output.' })
+              return resolve({ Body: 'this is a a big log output.' })
             }
             // {
             //   Bucket: bucket,
