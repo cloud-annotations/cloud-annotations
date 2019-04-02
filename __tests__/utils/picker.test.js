@@ -4,6 +4,11 @@ const rewire = require('rewire')
 const sinon = require('sinon')
 const picker = rewire('./../../src/utils/picker')
 
+const wait = () =>
+  new Promise((resolve, _) => {
+    process.nextTick(resolve)
+  })
+
 describe('picker', () => {
   const prompt = 'pick an item: '
   const shortList = ['item 1', 'item 2', 'item 3']
@@ -20,92 +25,92 @@ describe('picker', () => {
   beforeEach(() => (io = stdin()))
   afterEach(() => io.restore())
 
-  it('short non-zero default index', () => {
+  it('short non-zero default index', async () => {
     const promise = picker(prompt, shortList, { default: 1 }).then(res => {
       assert.equal(res, shortList[1])
     })
-    process.nextTick(() => {
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('short negative index', () => {
+  it('short negative index', async () => {
     const promise = picker(prompt, shortList).then(res => {
       assert.equal(res, shortList[0])
     })
-    process.nextTick(() => {
-      io.send(keys.up)
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.up)
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('short overflow index', () => {
+  it('short overflow index', async () => {
     const promise = picker(prompt, shortList).then(res => {
       assert.equal(res, shortList[shortList.length - 1])
     })
-    process.nextTick(() => {
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('long non-zero default index', () => {
+  it('long non-zero default index', async () => {
     const promise = picker(prompt, longList, {
       default: 5,
       windowSize: 4
     }).then(res => {
       assert.equal(res, longList[5])
     })
-    process.nextTick(() => {
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('long negative index', () => {
+  it('long negative index', async () => {
     const promise = picker(prompt, longList, { windowSize: 4 }).then(res => {
       assert.equal(res, longList[0])
     })
-    process.nextTick(() => {
-      io.send(keys.up)
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.up)
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('long overflow index', () => {
+  it('long overflow index', async () => {
     const promise = picker(prompt, longList).then(res => {
       assert.equal(res, longList[longList.length - 1])
     })
-    process.nextTick(() => {
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.down)
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.down)
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('random key presses', () => {
+  it('random key presses', async () => {
     const promise = picker(prompt, longList).then(res => {
       assert.equal(res, longList[0])
     })
-    process.nextTick(() => {
-      io.send('random keys')
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send('random keys')
+    io.send(keys.enter)
+
     return promise
   })
 

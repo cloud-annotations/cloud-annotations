@@ -71,7 +71,10 @@ class WML {
     if (!this._token) {
       this._token = await this.authenticate()
     }
-    const trainingDefinition = { ...DEFAULT_TRAINING_DEFINITION }
+    // Deep copy.
+    const trainingDefinition = JSON.parse(
+      JSON.stringify(DEFAULT_TRAINING_DEFINITION)
+    )
     trainingDefinition.name = this._name
     return postTrainingDefinition(this._url, this._token, trainingDefinition)
   }

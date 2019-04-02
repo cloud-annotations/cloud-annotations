@@ -2,6 +2,11 @@ const assert = require('assert')
 const stdin = require('mock-stdin').stdin
 const input = require('./../../src/utils/input')
 
+const wait = () =>
+  new Promise((resolve, _) => {
+    process.nextTick(resolve)
+  })
+
 describe('input', () => {
   const userInput = 'Hello'
   const defaultResponce = 'default'
@@ -18,46 +23,46 @@ describe('input', () => {
   beforeEach(() => (io = stdin()))
   afterEach(() => io.restore())
 
-  it('no default + user input', () => {
+  it('no default + user input', async () => {
     const promise = input(prompt).then(res => {
       assert.equal(res, userInput)
     })
 
-    process.nextTick(() => {
-      io.send(userInput)
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(userInput)
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('no default + no user input', () => {
+  it('no default + no user input', async () => {
     const promise = input(prompt).then(res => {
       assert.equal(res, '')
     })
-    process.nextTick(() => {
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('default + user input', () => {
+  it('default + user input', async () => {
     const promise = input(prompt, defaultResponce).then(res => {
       assert.equal(res, userInput)
     })
-    process.nextTick(() => {
-      io.send(userInput)
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(userInput)
+    io.send(keys.enter)
+
     return promise
   })
 
-  it('default + no user input', () => {
+  it('default + no user input', async () => {
     const promise = input(prompt, defaultResponce).then(res => {
       assert.equal(res, defaultResponce)
     })
-    process.nextTick(() => {
-      io.send(keys.enter)
-    })
+    await wait()
+    io.send(keys.enter)
+
     return promise
   })
 })
