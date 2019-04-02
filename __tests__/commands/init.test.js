@@ -1,10 +1,9 @@
 const assert = require('assert')
 const sinon = require('sinon')
-const rewire = require('rewire')
 const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
 const COS = require('ibm-cos-sdk')
-const init = rewire('./../../src/commands/init')
+const init = require('./../../src/commands/init')
 const api = require('./../../src/api/api')
 
 const wait = () =>
