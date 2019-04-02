@@ -331,7 +331,7 @@ describe('init', () => {
   it('invalid region', async () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
-        name: 'bucket',
+        name: 'out-of-region',
         credentials: {
           wml: {
             instance_id: '',
