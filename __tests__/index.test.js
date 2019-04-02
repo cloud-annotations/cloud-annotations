@@ -1,5 +1,6 @@
 const mock = require('./mock')
 const sinon = require('sinon')
+const index = require('./../src/index')
 
 beforeEach(() => {
   mock.wml(sinon)
@@ -8,4 +9,10 @@ beforeEach(() => {
 
 afterEach(() => {
   sinon.restore()
+})
+
+describe('index', () => {
+  it('works', () => {
+    index()
+  })
 })
