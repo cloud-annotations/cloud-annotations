@@ -2,10 +2,10 @@ name: fake-config
 credentials:
   wml:
     instance_id: ''
-    username: ''
-    password: ''
-    url: ''
+    username: 'username'
+    password: 'password'
+    url: 'url'
   cos:
-    access_key_id: ''
-    secret_access_key: ''
+    access_key_id: 'access_key_id'
+    secret_access_key: 'secret_access_key'
     region: us-geo

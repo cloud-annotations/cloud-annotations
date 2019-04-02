@@ -1,0 +1,15 @@
+{
+  "name": "RequestError",
+  "message": "Error: Invalid URI \"/v3/identity/token\"",
+  "cause": {},
+  "error": {},
+  "options": {
+    "method": "GET",
+    "json": true,
+    "url": "/v3/identity/token",
+    "auth": { "user": "", "pass": "" },
+    "simple": true,
+    "resolveWithFullResponse": false,
+    "transform2xxOnly": false
+  }
+}

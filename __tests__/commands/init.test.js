@@ -2,9 +2,138 @@ const assert = require('assert')
 const sinon = require('sinon')
 const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
-const COS = require('ibm-cos-sdk')
 const init = require('./../../src/commands/init')
-const api = require('./../../src/api/api')
+
+const allBlank = {
+  instance_id: '',
+  username: '',
+  password: '',
+  url: '',
+  access_key_id: '',
+  secret_access_key: '',
+  region: '',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const credentials = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'secret_access_key',
+  region: '',
+  training_bucket: '',
+  use_output: '',
+  output_bucket: '',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const overrides = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'secret_access_key',
+  region: '',
+  training_bucket: '',
+  use_output: 'no',
+  gpu: 'v100',
+  steps: '6000',
+  name: '',
+  save: 'no'
+}
+
+const invalidAccessKeyId = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'fake',
+  secret_access_key: 'secret_access_key',
+  region: '',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const signatureDoesNotMatch = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'fake',
+  region: '',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const unknownEndpoint = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'secret_access_key',
+  region: 'fake',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const unknownError = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'secret_access_key',
+  region: 'random-error',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const invalidRegion = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'secret_access_key',
+  region: '',
+  training_bucket: '\x1B\x5B\x42',
+  use_output: '',
+  output_bucket: '\x1B\x5B\x42\x1B\x5B\x42',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
+const skippedSteps = {
+  instance_id: '',
+  username: '',
+  password: '',
+  url: '',
+  access_key_id: '',
+  secret_access_key: '',
+  region: '',
+  save: ''
+}
 
 const wait = () =>
   new Promise((resolve, _) => {
@@ -13,10 +142,6 @@ const wait = () =>
 
 describe('init', () => {
   const tmpConfig = '__tests__/.tmp/config.yaml'
-
-  const keys = {
-    enter: '\x0D'
-  }
 
   let io = null
   beforeEach(() => {
@@ -30,7 +155,7 @@ describe('init', () => {
     fs.removeSync('__tests__/.tmp/')
   })
 
-  it('dry run', async () => {
+  it('outputs proper config with all blank fields', async () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
@@ -43,200 +168,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-    // instance_id:
-    await wait()
-    io.send(keys.enter)
-
-    // username:
-    await wait()
-    io.send(keys.enter)
-
-    // password:
-    await wait()
-    io.send(keys.enter)
-
-    // url:
-    await wait()
-    io.send(keys.enter)
-
-    // access_key_id:
-    await wait()
-    io.send(keys.enter)
-
-    // secret_access_key:
-    await wait()
-    io.send(keys.enter)
-
-    // region: (us-geo)
-    await wait()
-    io.send(keys.enter)
-
-    // gpu: (k80)
-    await wait()
-    io.send(keys.enter)
-
-    // steps: (500)
-    await wait()
-    io.send(keys.enter)
-
-    // project name: (untitled-project)
-    await wait()
-    io.send(keys.enter)
-
-    // Is this ok? (yes)
-    await wait()
-    io.send(keys.enter)
-
+    await runWith(allBlank)
     return promise
   })
 
-  const runWithCredentials = async () => {
-    // instance_id:
-    await wait()
-    io.send(keys.enter)
-
-    // username:
-    await wait()
-    io.send('username')
-    io.send(keys.enter)
-
-    // password:
-    await wait()
-    io.send('password')
-    io.send(keys.enter)
-
-    // url:
-    await wait()
-    io.send('url')
-    io.send(keys.enter)
-
-    // access_key_id:
-    await wait()
-    io.send('access_key_id')
-    io.send(keys.enter)
-
-    // secret_access_key:
-    await wait()
-    io.send('secret_access_key')
-    io.send(keys.enter)
-
-    // region: (us-geo)
-    await wait()
-    io.send(keys.enter)
-
-    // training data bucket:
-    await wait()
-    io.send(keys.enter)
-
-    // Would you like to store output in a separate bucket? (yes)
-    await wait()
-    io.send(keys.enter)
-
-    // output bucket:
-    await wait()
-    io.send(keys.enter)
-
-    // gpu: (k80)
-    await wait()
-    io.send(keys.enter)
-
-    // steps: (500)
-    await wait()
-    io.send(keys.enter)
-
-    // project name: (bucket)
-    await wait()
-    io.send(keys.enter)
-
-    // Is this ok? (yes)
-    await wait()
-    io.send(keys.enter)
-  }
-
-  const runWithCredentialsAlt = async () => {
-    // instance_id:
-    await wait()
-    io.send(keys.enter)
-
-    // username:
-    await wait()
-    io.send('username')
-    io.send(keys.enter)
-
-    // password:
-    await wait()
-    io.send('password')
-    io.send(keys.enter)
-
-    // url:
-    await wait()
-    io.send('url')
-    io.send(keys.enter)
-
-    // access_key_id:
-    await wait()
-    io.send('access_key_id')
-    io.send(keys.enter)
-
-    // secret_access_key:
-    await wait()
-    io.send('secret_access_key')
-    io.send(keys.enter)
-
-    // region: (us-geo)
-    await wait()
-    io.send(keys.enter)
-
-    // training data bucket:
-    await wait()
-    io.send(keys.enter)
-
-    // Would you like to store output in a separate bucket? (yes)
-    await wait()
-    io.send('no')
-    io.send(keys.enter)
-
-    // gpu: (k80)
-    await wait()
-    io.send('v100')
-    io.send(keys.enter)
-
-    // steps: (500)
-    await wait()
-    io.send('6000')
-    io.send(keys.enter)
-
-    // project name: (bucket)
-    await wait()
-    io.send(keys.enter)
-
-    // Is this ok? (yes)
-    await wait()
-    io.send('no')
-    io.send(keys.enter)
-  }
-
-  it('fake credentials', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => ({
-        promise: () =>
-          new Promise((resolve, _) => {
-            return resolve({
-              Buckets: [
-                { Name: 'bucket' },
-                { Name: 'bucket' },
-                { Name: 'bucket' }
-              ]
-            })
-          })
-      })
-    })
-
+  it('outputs proper config with credentials', async () => {
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'bucket',
         credentials: {
@@ -257,33 +194,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentials()
-
+    await runWith(credentials)
     return promise
   })
 
-  it('alternate answers', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => ({
-        promise: () =>
-          new Promise((resolve, _) => {
-            return resolve({
-              Buckets: [
-                { Name: 'bucket' },
-                { Name: 'bucket' },
-                { Name: 'bucket' }
-              ]
-            })
-          })
-      })
-    })
-
+  it('outputs proper config with default overrides', async () => {
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'bucket',
         credentials: {
@@ -304,26 +220,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentialsAlt()
-
+    await runWith(overrides)
     return promise
   })
 
   it('InvalidAccessKeyId', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => {
-        const error = new Error()
-        error.code = 'InvalidAccessKeyId'
-        throw error
-      }
-    })
-
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'untitled-project',
         credentials: {
@@ -334,7 +236,7 @@ describe('init', () => {
             url: 'url'
           },
           cos: {
-            access_key_id: 'access_key_id',
+            access_key_id: 'fake',
             secret_access_key: 'secret_access_key',
             region: 'us-geo'
           }
@@ -344,66 +246,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentials()
-
-    return promise
-  })
-
-  it('CredentialsError', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => {
-        const error = new Error()
-        error.code = 'CredentialsError'
-        throw error
-      }
-    })
-
-    const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
-      const expected = {
-        name: 'untitled-project',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'us-geo'
-          }
-        },
-        buckets: { training: '' },
-        trainingParams: { gpu: 'k80', steps: '500' }
-      }
-      assert.deepEqual(config, expected)
-    })
-
-    await runWithCredentials()
-
+    await runWith(invalidAccessKeyId)
     return promise
   })
 
   it('SignatureDoesNotMatch', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => {
-        const error = new Error()
-        error.code = 'SignatureDoesNotMatch'
-        throw error
-      }
-    })
-
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'untitled-project',
         credentials: {
@@ -415,7 +263,7 @@ describe('init', () => {
           },
           cos: {
             access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
+            secret_access_key: 'fake',
             region: 'us-geo'
           }
         },
@@ -424,26 +272,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentials()
-
+    await runWith(signatureDoesNotMatch)
     return promise
   })
 
   it('UnknownEndpoint', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => {
-        const error = new Error()
-        error.code = 'UnknownEndpoint'
-        throw error
-      }
-    })
-
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'untitled-project',
         credentials: {
@@ -456,7 +290,7 @@ describe('init', () => {
           cos: {
             access_key_id: 'access_key_id',
             secret_access_key: 'secret_access_key',
-            region: 'us-geo'
+            region: 'fake'
           }
         },
         buckets: { training: '' },
@@ -464,26 +298,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentials()
-
+    await runWith(unknownEndpoint)
     return promise
   })
 
   it('UnknownError', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => {
-        const error = new Error()
-        error.code = 'FakeError'
-        throw error
-      }
-    })
-
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'untitled-project',
         credentials: {
@@ -496,7 +316,7 @@ describe('init', () => {
           cos: {
             access_key_id: 'access_key_id',
             secret_access_key: 'secret_access_key',
-            region: 'us-geo'
+            region: 'random-error'
           }
         },
         buckets: { training: '' },
@@ -504,92 +324,12 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentials()
-
-    return promise
-  })
-
-  it('valid region', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => ({
-        promise: () =>
-          new Promise((resolve, _) => {
-            return resolve({
-              Buckets: [
-                { Name: 'bucket' },
-                { Name: 'bucket' },
-                { Name: 'bucket' }
-              ]
-            })
-          })
-      }),
-      getBucketLocation: () => ({
-        promise: () =>
-          new Promise((resolve, _) => {
-            return resolve({ LocationConstraint: 'fake-location' })
-          })
-      })
-    })
-
-    const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
-      const expected = {
-        name: 'bucket',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'us-geo'
-          }
-        },
-        buckets: { training: 'bucket', output: 'bucket' },
-        trainingParams: { gpu: 'k80', steps: '500' }
-      }
-      assert.deepEqual(config, expected)
-    })
-
-    await runWithCredentials()
-
+    await runWith(unknownError)
     return promise
   })
 
   it('invalid region', async () => {
-    sinon.stub(api, 'authenticate').returns('fake_token')
-
-    sinon.stub(COS, 'S3').returns({
-      listBuckets: () => ({
-        promise: () =>
-          new Promise((resolve, _) => {
-            return resolve({
-              Buckets: [
-                { Name: 'bucket' },
-                { Name: 'bucket' },
-                { Name: 'bucket' }
-              ]
-            })
-          })
-      }),
-      getBucketLocation: () => ({
-        promise: () =>
-          new Promise((resolve, _) => {
-            return resolve({})
-          })
-      })
-    })
-
     const promise = init(['--config', tmpConfig]).then(config => {
-      api.authenticate.restore()
-      COS.S3.restore()
       const expected = {
         name: 'bucket',
         credentials: {
@@ -605,21 +345,13 @@ describe('init', () => {
             region: 'us-geo'
           }
         },
-        buckets: { training: 'bucket', output: 'bucket' },
+        buckets: { training: 'out-of-region', output: 'random-error' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
       assert.deepEqual(config, expected)
     })
-
-    await runWithCredentials()
-
+    await runWith(invalidRegion)
     return promise
-  })
-
-  it('displays help', async () => {
-    sinon.stub(process, 'exit')
-    await init(['--help'])
-    process.exit.restore()
   })
 
   it('skip steps', async () => {
@@ -635,38 +367,85 @@ describe('init', () => {
       }
       assert.deepEqual(config, expected)
     })
-    // instance_id:
-    await wait()
-    io.send(keys.enter)
-
-    // username:
-    await wait()
-    io.send(keys.enter)
-
-    // password:
-    await wait()
-    io.send(keys.enter)
-
-    // url:
-    await wait()
-    io.send(keys.enter)
-
-    // access_key_id:
-    await wait()
-    io.send(keys.enter)
-
-    // secret_access_key:
-    await wait()
-    io.send(keys.enter)
-
-    // region: (us-geo)
-    await wait()
-    io.send(keys.enter)
-
-    // Is this ok? (yes)
-    await wait()
-    io.send(keys.enter)
-
+    await runWith(skippedSteps)
     return promise
   })
+
+  it('displays help', async () => {
+    sinon.stub(process, 'exit')
+    await init(['--help'])
+    process.exit.restore()
+  })
+
+  const runWith = async run => {
+    const keys = { enter: '\x0D' }
+
+    await wait()
+    io.send(run.instance_id)
+    io.send(keys.enter)
+
+    await wait()
+    io.send(run.username)
+    io.send(keys.enter)
+
+    await wait()
+    io.send(run.password)
+    io.send(keys.enter)
+
+    await wait()
+    io.send(run.url)
+    io.send(keys.enter)
+
+    await wait()
+    io.send(run.access_key_id)
+    io.send(keys.enter)
+
+    await wait()
+    io.send(run.secret_access_key)
+    io.send(keys.enter)
+
+    await wait()
+    io.send(run.region)
+    io.send(keys.enter)
+
+    if (run.hasOwnProperty('training_bucket')) {
+      await wait()
+      io.send(run.training_bucket)
+      io.send(keys.enter)
+    }
+
+    if (run.hasOwnProperty('use_output')) {
+      await wait()
+      io.send(run.use_output)
+      io.send(keys.enter)
+    }
+
+    if (run.hasOwnProperty('output_bucket')) {
+      await wait()
+      io.send(run.output_bucket)
+      io.send(keys.enter)
+    }
+
+    if (run.hasOwnProperty('gpu')) {
+      await wait()
+      io.send(run.gpu)
+      io.send(keys.enter)
+    }
+
+    if (run.hasOwnProperty('steps')) {
+      await wait()
+      io.send(run.steps)
+      io.send(keys.enter)
+    }
+
+    if (run.hasOwnProperty('name')) {
+      await wait()
+      io.send(run.name)
+      io.send(keys.enter)
+    }
+
+    await wait()
+    io.send(run.save)
+    io.send(keys.enter)
+  }
 })

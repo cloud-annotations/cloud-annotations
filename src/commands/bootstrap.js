@@ -1,4 +1,4 @@
-const { dim, green, red } = require('chalk')
+const { green, red } = require('chalk')
 const loadConfig = require('./../utils/loadConfig')
 const COS = require('ibm-cos-sdk')
 const optionsParse = require('./../utils/optionsParse')
