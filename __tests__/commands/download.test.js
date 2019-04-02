@@ -1,10 +1,10 @@
 const sinon = require('sinon')
-const logs = require('./../../src/commands/logs')
+const download = require('./../../src/commands/download')
 
-describe('logs', () => {
+describe('download', () => {
   it('displays help', async () => {
     sinon.stub(process, 'exit')
-    await logs(['--help'])
+    await download(['--help'])
     process.exit.restore()
   })
 })
