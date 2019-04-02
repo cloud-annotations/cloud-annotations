@@ -11,6 +11,6 @@ module.exports = (configPath = 'config.yaml') => {
     console.log(
       `No ${configPath} found, try running \`cacli init\` to generate one.`
     )
-    process.exit(1)
+    return process.exit(1)
   }
 }

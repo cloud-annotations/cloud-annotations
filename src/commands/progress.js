@@ -31,7 +31,7 @@ module.exports = async (options, importedConfig) => {
 
   if (ops.help) {
     console.log('cacli progress <model_id>')
-    process.exit()
+    return process.exit()
   }
 
   const config = importedConfig || loadConfig(ops.config)
@@ -39,7 +39,7 @@ module.exports = async (options, importedConfig) => {
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli progress <model_id>')
-    process.exit(1)
+    return process.exit(1)
   }
 
   const wml = new WML(config)
@@ -53,7 +53,7 @@ module.exports = async (options, importedConfig) => {
     case 'failed':
     case 'canceled':
       console.log('✨ Done.')
-      process.exit()
+      return process.exit()
   }
 
   const ws = await wml.createMonitorSocket(ops.model_id)

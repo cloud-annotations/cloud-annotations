@@ -2,7 +2,7 @@ const { dim, bold, yellow } = require('chalk')
 const input = require('./../utils/input')
 const safeGet = require('./../utils/safeGet')
 const yaml = require('js-yaml')
-const fs = require('fs')
+const fs = require('fs-extra')
 const COS = require('ibm-cos-sdk')
 const WML = require('./../api/wml')
 const stringToBool = require('./../utils/stringToBool')
@@ -74,13 +74,13 @@ module.exports = async (options, skipOptionalSteps) => {
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
+  const configPath = ops.config || 'config.yaml'
+
   // If help was an option, print usage and exit.
   if (ops.help) {
     console.log('cacli init')
-    process.exit()
+    return process.exit()
   }
-
-  const configPath = ops.config || 'config.yaml'
 
   // Load config if one exists.
   const old = safeGet(() => yaml.safeLoad(fs.readFileSync(configPath)))
@@ -97,16 +97,19 @@ module.exports = async (options, skipOptionalSteps) => {
     console.log()
   }
 
+  // Deep copy.
+  const config = JSON.parse(JSON.stringify(CONFIG))
+
   // Watson Machine Learning Credentials
   console.log(bold('Watson Machine Learning Credentials'))
   const instance_id = safeGet(() => old.credentials.wml.instance_id)
-  CONFIG.credentials.wml.instance_id = await input('instance_id: ', instance_id)
+  config.credentials.wml.instance_id = await input('instance_id: ', instance_id)
   const username = safeGet(() => old.credentials.wml.username)
-  CONFIG.credentials.wml.username = await input('username: ', username)
+  config.credentials.wml.username = await input('username: ', username)
   const password = safeGet(() => old.credentials.wml.password)
-  CONFIG.credentials.wml.password = await input('password: ', password)
+  config.credentials.wml.password = await input('password: ', password)
   const url = safeGet(() => old.credentials.wml.url)
-  CONFIG.credentials.wml.url = await input('url: ', url)
+  config.credentials.wml.url = await input('url: ', url)
   console.log()
 
   const spinner = new Spinner()
@@ -114,7 +117,7 @@ module.exports = async (options, skipOptionalSteps) => {
   spinner.start()
 
   try {
-    await new WML(CONFIG).authenticate()
+    await new WML(config).authenticate()
     spinner.stop()
   } catch (e) {
     spinner.stop()
@@ -128,17 +131,17 @@ module.exports = async (options, skipOptionalSteps) => {
   // Cloud Object Storage Credentials
   console.log(bold('Cloud Object Storage Credentials'))
   const access_key_id = safeGet(() => old.credentials.cos.access_key_id)
-  CONFIG.credentials.cos.access_key_id = await input(
+  config.credentials.cos.access_key_id = await input(
     'access_key_id: ',
     access_key_id
   )
   const secret_access_key = safeGet(() => old.credentials.cos.secret_access_key)
-  CONFIG.credentials.cos.secret_access_key = await input(
+  config.credentials.cos.secret_access_key = await input(
     'secret_access_key: ',
     secret_access_key
   )
   const region = safeGet(() => old.credentials.cos.region, DEFAULT_REGION)
-  CONFIG.credentials.cos.region = await input('region: ', region)
+  config.credentials.cos.region = await input('region: ', region)
   console.log()
 
   // Buckets
@@ -147,7 +150,7 @@ module.exports = async (options, skipOptionalSteps) => {
 
   let buckets
   try {
-    buckets = await listBuckets(CONFIG.credentials.cos)
+    buckets = await listBuckets(config.credentials.cos)
     spinner.stop()
   } catch (e) {
     spinner.stop()
@@ -199,14 +202,14 @@ module.exports = async (options, skipOptionalSteps) => {
     console.log(bold('Buckets'))
     const training = safeGet(() => old.buckets.training)
     const i = Math.max(0, buckets.indexOf(training))
-    CONFIG.buckets.training = await picker(
+    config.buckets.training = await picker(
       `training data bucket: ${dim('(Use arrow keys)')}`,
       buckets,
       {
         default: i
       }
     )
-    console.log(`training data bucket: ${CONFIG.buckets.training}`)
+    console.log(`training data bucket: ${config.buckets.training}`)
     console.log()
 
     const use_output = stringToBool(
@@ -223,14 +226,14 @@ module.exports = async (options, skipOptionalSteps) => {
         process.stdout.write(eraseLines(2))
         const output = safeGet(() => old.buckets.output)
         const i = Math.max(0, buckets.indexOf(output))
-        CONFIG.buckets.output = await picker(
+        config.buckets.output = await picker(
           `output bucket: ${dim('(Use arrow keys)')}`,
           buckets,
           {
             default: i
           }
         )
-        console.log(`output bucket: ${CONFIG.buckets.output}`)
+        console.log(`output bucket: ${config.buckets.output}`)
         console.log()
       }
     })()
@@ -240,18 +243,18 @@ module.exports = async (options, skipOptionalSteps) => {
   spinner.start()
 
   let validTraining = true
-  if (CONFIG.buckets.training) {
+  if (config.buckets.training) {
     validTraining = await checkRegion(
-      CONFIG.credentials.cos,
-      CONFIG.buckets.training
+      config.credentials.cos,
+      config.buckets.training
     )
   }
 
   let validOutput = true
-  if (CONFIG.buckets.output) {
+  if (config.buckets.output) {
     validOutput = await checkRegion(
-      CONFIG.credentials.cos,
-      CONFIG.buckets.output
+      config.credentials.cos,
+      config.buckets.output
     )
   }
 
@@ -262,14 +265,14 @@ module.exports = async (options, skipOptionalSteps) => {
       `${yellow(
         'warning'
       )} The selected training bucket is not in the region \`${
-        CONFIG.credentials.cos.region
+        config.credentials.cos.region
       }\`.`
     )
   }
   if (!validOutput) {
     console.warn(
       `${yellow('warning')} The selected output bucket is not in the region \`${
-        CONFIG.credentials.cos.region
+        config.credentials.cos.region
       }\`.`
     )
   }
@@ -281,31 +284,31 @@ module.exports = async (options, skipOptionalSteps) => {
   if (!skipOptionalSteps) {
     console.log(bold('Training Params'))
     // Default can end up being '', which won't through a safeGet error.
-    const gpu = safeGet(() => old.trainingParams.gpu, DEFAULT_GPU)
-    CONFIG.trainingParams.gpu = await input('gpu: ', gpu || DEFAULT_GPU)
-    const steps = safeGet(() => old.trainingParams.steps, DEFAULT_STEPS)
-    CONFIG.trainingParams.steps = await input('steps: ', steps || DEFAULT_STEPS)
+    const gpu = safeGet(() => old.trainingParams.gpu)
+    config.trainingParams.gpu = await input('gpu: ', gpu || DEFAULT_GPU)
+    const steps = safeGet(() => old.trainingParams.steps)
+    config.trainingParams.steps = await input('steps: ', steps || DEFAULT_STEPS)
     console.log()
   }
 
-  const defaultProjectName = CONFIG.buckets.training || DEFAULT_NAME
+  const defaultProjectName = config.buckets.training || DEFAULT_NAME
 
   // Project name
   if (!skipOptionalSteps) {
-    CONFIG.name = await input('project name: ', defaultProjectName)
+    config.name = await input('project name: ', defaultProjectName)
     console.log()
   } else {
-    CONFIG.name = defaultProjectName
+    config.name = defaultProjectName
   }
 
   // Write to yaml
   console.log(`About to write to ${process.cwd()}/${configPath}`)
   console.log()
-  const yamlFile = yaml.safeDump(CONFIG)
+  const yamlFile = yaml.safeDump(config)
   console.log(yamlFile)
   const save = stringToBool(await input('Is this ok? ', DEFAULT_SAVE))
   if (save) {
-    fs.writeFile(configPath, yamlFile, () => {})
+    fs.outputFile(configPath, yamlFile, () => {})
   }
-  return CONFIG
+  return config
 }

@@ -77,7 +77,7 @@ const validateConfig = async config => {
   }
 
   if (errors) {
-    process.exit(1)
+    return process.exit(1)
   }
   spinner.stop()
 }
@@ -91,7 +91,7 @@ module.exports = async options => {
 
   if (ops.help) {
     console.log('cacli train [<zip_file>]')
-    process.exit()
+    return process.exit()
   }
 
   const configPath = ops.config || 'config.yaml'

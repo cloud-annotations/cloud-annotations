@@ -1,6 +1,7 @@
 /config*.yaml
 model_*
 exported_buckets
+.tmp
 
 # Logs
 logs

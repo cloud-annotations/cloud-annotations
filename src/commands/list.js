@@ -13,7 +13,7 @@ module.exports = async options => {
 
   if (ops.help) {
     console.log('cacli list')
-    process.exit()
+    return process.exit()
   }
 
   const config = loadConfig(ops.config)

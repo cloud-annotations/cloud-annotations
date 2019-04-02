@@ -13,7 +13,7 @@ module.exports = async options => {
 
   if (ops.help) {
     console.log('cacli logs <model_id>')
-    process.exit()
+    return process.exit()
   }
 
   const config = loadConfig(ops.config)
@@ -21,7 +21,7 @@ module.exports = async options => {
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli logs <model_id>')
-    process.exit(1)
+    return process.exit(1)
   }
 
   const wml = new WML(config)

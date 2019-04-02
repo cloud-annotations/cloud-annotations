@@ -2,7 +2,7 @@ const { dim } = require('chalk')
 const { version } = require('./../../package.json')
 
 // TODO: Make this dynamic
-module.exports = options => {
+module.exports = () => {
   const title = `C${dim('loud')} A${dim('nnotations')} CLI`
   console.log(`┌───────────────────────┐
 │ ${title} │
