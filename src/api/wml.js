@@ -76,7 +76,11 @@ class WML {
       JSON.stringify(DEFAULT_TRAINING_DEFINITION)
     )
     trainingDefinition.name = this._name
-    return postTrainingDefinition(this._url, this._token, trainingDefinition)
+    return api.postTrainingDefinition(
+      this._url,
+      this._token,
+      trainingDefinition
+    )
   }
 
   async addTrainingScript(trainingDefinition, trainingScript) {
@@ -93,7 +97,11 @@ class WML {
       )
     })()
 
-    return putTrainingDefinition(trainingDefinition, this._token, trainingZip)
+    return api.putTrainingDefinition(
+      trainingDefinition.entity.training_definition_version.content_url,
+      this._token,
+      trainingZip
+    )
   }
 
   async startTrainingRun(trainingDefinition) {
@@ -135,7 +143,7 @@ class WML {
         type: 's3'
       }
     }
-    return postModel(this._url, this._token, trainingRun)
+    return api.postModel(this._url, this._token, trainingRun)
   }
 }
 

@@ -1,8 +1,9 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const sinon = require('sinon')
 const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
 const init = require('./../../src/commands/init')
+const wait = require('./../wait')
 
 const allBlank = {
   instance_id: '',
@@ -134,11 +135,6 @@ const skippedSteps = {
   region: '',
   save: ''
 }
-
-const wait = () =>
-  new Promise((resolve, _) => {
-    process.nextTick(resolve)
-  })
 
 describe('init', () => {
   const tmpConfig = '__tests__/.tmp/config.yaml'

@@ -77,7 +77,7 @@ const validateConfig = async config => {
   }
 
   if (errors) {
-    return process.exit(1)
+    throw Error()
   }
   spinner.stop()
 }
@@ -121,7 +121,11 @@ module.exports = async options => {
     }
   })()
 
-  await validateConfig(config)
+  try {
+    await validateConfig(config)
+  } catch {
+    return process.exit(1)
+  }
 
   const spinner = new Spinner()
   spinner.setMessage('Starting training run...')

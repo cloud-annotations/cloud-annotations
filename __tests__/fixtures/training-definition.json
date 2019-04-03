@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "guid": "065fb5b9-5018-462d-a3cc-fbf4e1340141",
+    "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/065fb5b9-5018-462d-a3cc-fbf4e1340141",
+    "created_at": "2019-04-03T14:39:22.427Z"
+  },
+  "entity": {
+    "name": "def-test",
+    "framework": {
+      "name": "tensorflow",
+      "version": "1.12",
+      "runtimes": [{ "name": "python", "version": "3.6" }]
+    },
+    "training_definition_version": {
+      "guid": "6e7dc315-31e1-47cf-a8f2-ac6e68b5a996",
+      "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/065fb5b9-5018-462d-a3cc-fbf4e1340141/versions/6e7dc315-31e1-47cf-a8f2-ac6e68b5a996",
+      "content_url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/065fb5b9-5018-462d-a3cc-fbf4e1340141/versions/6e7dc315-31e1-47cf-a8f2-ac6e68b5a996/content",
+      "content_status": { "state": "no_content" }
+    }
+  }
+}

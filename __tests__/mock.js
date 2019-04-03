@@ -5,6 +5,9 @@ const goodAuth = require('./fixtures/good-auth.json')
 const getModels = require('./fixtures/get-models.json')
 const getModel = require('./fixtures/get-model-completed.json')
 const getModelRunning = require('./fixtures/get-model-running.json')
+const postTrainingDefinition = require('./fixtures/training-definition.json')
+const putTrainingDefinition = require('./fixtures/put-training-definition.json')
+const postModel = require('./fixtures/post-model.json')
 
 const validUsername = 'username'
 const validPassword = 'password'
@@ -29,25 +32,6 @@ module.exports.wml = sinon => {
       resolve(goodAuth)
     })
   })
-
-  // cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh 50
-  //INFO:tensorflow:loss = 16.405922, step = 2 (1.722 sec)
-  // INFO:tensorflow:global_step/sec: 0.676177
-  // INFO:tensorflow:global_step/sec: 0.676177
-  // INFO:tensorflow:loss = 15.320669, step = 3 (1.479 sec)
-  // INFO:tensorflow:loss = 15.320669, step = 3 (1.479 sec)
-  // INFO:tensorflow:global_step/sec: 0.7627
-  // INFO:tensorflow:global_step/sec: 0.7627
-  // INFO:tensorflow:loss = 14.487283, step = 4 (1.311 sec)
-  // INFO:tensorflow:loss = 14.487283, step = 4 (1.311 sec)
-  // INFO:tensorflow:global_step/sec: 0.730708
-  // INFO:tensorflow:global_step/sec: 0.730708
-  // INFO:tensorflow:loss = 13.580031, step = 5 (1.368 sec)
-  // INFO:tensorflow:loss = 13.580031, step = 5 (1.368 sec)
-  // INFO:tensorflow:global_step/sec: 0.769618
-  // INFO:tensorflow:global_step/sec: 0.769618
-  // INFO:tensorflow:loss = 12.474336, step = 6 (1.299 sec)
-  // INFO:tensorflow:loss = 12.474336, step = 6 (1.299 sec)
 
   sinon.stub(api, 'socket').callsFake((url, token, modelId) => {
     return new Promise((resolve, _) => {
@@ -149,7 +133,7 @@ module.exports.wml = sinon => {
 
   sinon.stub(api, 'postModel').callsFake((url, token, trainingRun) => {
     return new Promise((resolve, _) => {
-      resolve('x')
+      resolve(postModel)
     })
   })
 
@@ -157,15 +141,15 @@ module.exports.wml = sinon => {
     .stub(api, 'postTrainingDefinition')
     .callsFake((url, token, trainingDefinition) => {
       return new Promise((resolve, _) => {
-        resolve('x')
+        resolve(postTrainingDefinition)
       })
     })
 
   sinon
     .stub(api, 'putTrainingDefinition')
-    .callsFake((trainingDefinition, token, trainingZip) => {
+    .callsFake((url, token, trainingZip) => {
       return new Promise((resolve, _) => {
-        resolve('x')
+        resolve(putTrainingDefinition)
       })
     })
 }

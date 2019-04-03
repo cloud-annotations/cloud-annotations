@@ -1,4 +1,4 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const stringToBool = require('./../../src/utils/stringToBool')
 
 describe('stringToBool', () => {

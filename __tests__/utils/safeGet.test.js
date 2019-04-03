@@ -1,4 +1,4 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const safeGet = require('./../../src/utils/safeGet')
 
 describe('safeGet', () => {
@@ -8,7 +8,7 @@ describe('safeGet', () => {
 
   it('safely gets from a undefined object', () => {
     const fakeParam = safeGet(() => nullObject.fakeParam)
-    assert.equal(fakeParam, null)
+    assert.equal(fakeParam, undefined)
   })
 
   it('safely gets from a undefined object with default', () => {

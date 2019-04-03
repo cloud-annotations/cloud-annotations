@@ -1,4 +1,4 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const optionsParse = require('./../../src/utils/optionsParse')
 
 describe('optionsParse', () => {

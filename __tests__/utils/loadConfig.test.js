@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const assert = require('assert')
+const assert = require('assert').strict
 const loadConfig = require('./../../src/utils/loadConfig')
 
 describe('loadConfig', () => {

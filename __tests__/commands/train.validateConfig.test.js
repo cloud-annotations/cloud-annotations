@@ -1,5 +1,4 @@
-const assert = require('assert')
-const sinon = require('sinon')
+const assert = require('assert').strict
 const rewire = require('rewire')
 const train = rewire('./../../src/commands/train')
 
@@ -60,23 +59,26 @@ describe('train validateConfig', () => {
   }
 
   it('finishes safely with good credentials', async () => {
-    sinon.stub(process, 'exit')
-    await train.__get__('validateConfig')(realCredentials)
-    assert(!process.exit.called)
-    process.exit.restore()
+    try {
+      await train.__get__('validateConfig')(realCredentials)
+    } catch {
+      assert(false)
+    }
   })
 
   it('exits with no credentials', async () => {
-    sinon.stub(process, 'exit')
-    await train.__get__('validateConfig')(empty)
-    assert(process.exit.called)
-    process.exit.restore()
+    try {
+      await train.__get__('validateConfig')(empty)
+    } catch {
+      assert(true)
+    }
   })
 
   it('exits with wrong region', async () => {
-    sinon.stub(process, 'exit')
-    await train.__get__('validateConfig')(invalidRegion)
-    assert(process.exit.called)
-    process.exit.restore()
+    try {
+      await train.__get__('validateConfig')(invalidRegion)
+    } catch {
+      assert(true)
+    }
   })
 })
