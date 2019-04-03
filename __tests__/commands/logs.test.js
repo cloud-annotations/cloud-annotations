@@ -13,12 +13,10 @@ describe('logs', () => {
   it('displays usage', async () => {
     sinon.stub(process, 'exit')
     await logs([])
-    process.exit.restore()
   })
 
   it('displays help', async () => {
     sinon.stub(process, 'exit')
     await logs(['--help'])
-    process.exit.restore()
   })
 })

@@ -370,7 +370,6 @@ describe('init', () => {
   it('displays help', async () => {
     sinon.stub(process, 'exit')
     await init(['--help'])
-    process.exit.restore()
   })
 
   const runWith = async run => {

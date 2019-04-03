@@ -5,7 +5,6 @@ describe('progress', () => {
   it('gets progress from bucket', async () => {
     sinon.stub(process, 'exit')
     await progress(['model-completed', '--config', '__tests__/config.yaml'])
-    process.exit.restore()
   })
 
   it('gets streamed progress', async () => {
@@ -15,12 +14,10 @@ describe('progress', () => {
   it('displays usage', async () => {
     sinon.stub(process, 'exit')
     await progress([])
-    process.exit.restore()
   })
 
   it('displays help', async () => {
     sinon.stub(process, 'exit')
     await progress(['--help'])
-    process.exit.restore()
   })
 })

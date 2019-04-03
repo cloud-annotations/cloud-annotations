@@ -9,6 +9,5 @@ describe('list', () => {
   it('displays help', async () => {
     sinon.stub(process, 'exit')
     await list(['--help'])
-    process.exit.restore()
   })
 })
