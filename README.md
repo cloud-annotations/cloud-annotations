@@ -1,8 +1,8 @@
 # Cloud Annotations
 [![NPM Version](https://img.shields.io/npm/v/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations)
 [![NPM Downloads](https://img.shields.io/npm/dm/cloud-annotations.svg)](https://npmjs.org/package/cloud-annotations)
-[![Build Status](https://travis-ci.org/cloud-annotations/training.svg?branch=master)](https://travis-ci.org/cloud-annotations/training)
-[![Coverage Status](https://coveralls.io/repos/github/cloud-annotations/training/badge.svg?branch=master)](https://coveralls.io/github/cloud-annotations/training?branch=master)
+[![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
+[![Coverage Status](https://img.shields.io/coveralls/cloud-annotations/training/master.svg)](https://coveralls.io/github/cloud-annotations/training?branch=master)
 
 
 ![](https://cloud-annotations.github.io/training/object-detection/assets/main.png)
