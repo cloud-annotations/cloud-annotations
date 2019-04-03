@@ -26,6 +26,19 @@ describe('train', () => {
     return promise
   })
 
+  it('trains with a zip', async () => {
+    const promise = train([
+      '__tests__/fake.zip',
+      '--config',
+      '__tests__/config.yaml'
+    ])
+    await wait()
+    await wait()
+    io.send('no')
+    io.send(keys.enter)
+    return promise
+  })
+
   it('watches progress', async () => {
     const promise = train(['--config', '__tests__/config.yaml'])
     // Need to wait twice for some reason...
