@@ -5,6 +5,10 @@ const goodAuth = require('./fixtures/good-auth.json')
 const getModels = require('./fixtures/get-models.json')
 const getModel = require('./fixtures/get-model-completed.json')
 const getModelRunning = require('./fixtures/get-model-running.json')
+const getModelPending = require('./fixtures/get-model-pending.json')
+const getModelError = require('./fixtures/get-model-error.json')
+const getModelCanceled = require('./fixtures/get-model-canceled.json')
+const getModelFailed = require('./fixtures/get-model-failed.json')
 const postTrainingDefinition = require('./fixtures/training-definition.json')
 const putTrainingDefinition = require('./fixtures/put-training-definition.json')
 const postModel = require('./fixtures/post-model.json')
@@ -121,6 +125,18 @@ module.exports.wml = sinon => {
       if (modelId === 'model-completed') {
         return resolve(getModel)
       }
+      if (modelId === 'model-error') {
+        return resolve(getModelError)
+      }
+      if (modelId === 'model-failed') {
+        return resolve(getModelFailed)
+      }
+      if (modelId === 'model-canceled') {
+        return resolve(getModelCanceled)
+      }
+      if (modelId === 'model-pending') {
+        return resolve(getModelPending)
+      }
       return resolve(getModelRunning)
     })
   })
@@ -211,7 +227,14 @@ module.exports.cos = sinon => {
           new Promise((resolve, _) => {
             // { Bucket: bucket, Prefix: `${prefix}/${path}` }
             // { Bucket: bucket }
-            resolve('x')
+            resolve({
+              Contents: [
+                { Key: 'dir/object.jpg' },
+                { Key: 'dir/dir/' },
+                { Key: 'dir/object/' },
+                { Key: 'dir/object/object2.jpg' }
+              ]
+            })
           })
       }),
       getBucketLocation: options => ({
