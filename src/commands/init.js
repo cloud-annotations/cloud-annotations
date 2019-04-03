@@ -8,6 +8,7 @@ const WML = require('./../api/wml')
 const stringToBool = require('./../utils/stringToBool')
 const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
+const cosHandleErrors = require('./../utils/cosHandleErrors')
 const Spinner = require('./../utils/spinner')
 const picker = require('./../utils/picker')
 const { eraseLines } = require('ansi-escapes')
@@ -154,48 +155,7 @@ module.exports = async (options, skipOptionalSteps) => {
     spinner.stop()
   } catch (e) {
     spinner.stop()
-    switch (e.code) {
-      case 'InvalidAccessKeyId':
-        // InvalidAccessKeyId - The AWS Access Key ID you provided does not exist in our records.
-        console.warn(
-          `${yellow(
-            'warning'
-          )} The provided Cloud Object Storage \`access_key_id\` is invalid.`
-        )
-        break
-      case 'CredentialsError':
-        // CredentialsError - Missing credentials in config
-        console.warn(
-          `${yellow(
-            'warning'
-          )} No Cloud Object Storage credentials were provided.`
-        )
-        break
-      case 'SignatureDoesNotMatch':
-        // SignatureDoesNotMatch - The request signature we calculated does not match the signature you provided. Check your AWS Secret Access Key and signing method. For more information, see REST Authentication and SOAP Authentication for details.
-        console.warn(
-          `${yellow(
-            'warning'
-          )} The provided Cloud Object Storage \`secret_access_key\` is invalid.`
-        )
-        break
-      case 'UnknownEndpoint':
-        // UnknownEndpoint - Inaccessible host: `s3-api.XXX.objectstorage.softlayer.net'. This service may not be available in the `us-east-1' region.
-        console.warn(
-          `${yellow(
-            'warning'
-          )} The provided Cloud Object Storage \`region\` is invalid.`
-        )
-        break
-      default:
-        console.warn(`${yellow('warning')} ${e.code} - ${e.message}`)
-        break
-    }
-    console.warn(
-      `${yellow(
-        'warning'
-      )} Skipping bucket selection due to invalid authentication.\n`
-    )
+    cosHandleErrors(e, yellow('warning'))
   }
 
   if (buckets && buckets.length > 0) {
