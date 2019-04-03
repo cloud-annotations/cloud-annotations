@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const assert = require('assert')
+const assert = require('assert').strict
 const argParse = require('./../../src/utils/argParse')
 
 describe('argParse', () => {

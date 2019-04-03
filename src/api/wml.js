@@ -36,7 +36,13 @@ class WML {
   }
 
   async authenticate() {
-    return api.authenticate(this._url, this._username, this._password)
+    if (!this._token) {
+      this._token = await api.authenticate(
+        this._url,
+        this._username,
+        this._password
+      )
+    }
   }
 
   async startTraining(trainingScript) {
@@ -47,42 +53,36 @@ class WML {
   }
 
   async createMonitorSocket(modelId) {
-    if (!this._token) {
-      this._token = await this.authenticate()
-    }
+    await this.authenticate()
     return api.socket(this._url, this._token, modelId)
   }
 
   async getTrainingRun(modelId) {
-    if (!this._token) {
-      this._token = await this.authenticate()
-    }
+    await this.authenticate()
     return api.getModel(this._url, this._token, modelId)
   }
 
   async listTrainingRuns() {
-    if (!this._token) {
-      this._token = await this.authenticate()
-    }
+    await this.authenticate()
     return api.getModels(this._url, this._token)
   }
 
   async createTrainingDefinition() {
-    if (!this._token) {
-      this._token = await this.authenticate()
-    }
+    await this.authenticate()
     // Deep copy.
     const trainingDefinition = JSON.parse(
       JSON.stringify(DEFAULT_TRAINING_DEFINITION)
     )
     trainingDefinition.name = this._name
-    return postTrainingDefinition(this._url, this._token, trainingDefinition)
+    return api.postTrainingDefinition(
+      this._url,
+      this._token,
+      trainingDefinition
+    )
   }
 
   async addTrainingScript(trainingDefinition, trainingScript) {
-    if (!this._token) {
-      this._token = await this.authenticate()
-    }
+    await this.authenticate()
 
     const trainingZip = (() => {
       if (trainingScript) {
@@ -93,13 +93,15 @@ class WML {
       )
     })()
 
-    return putTrainingDefinition(trainingDefinition, this._token, trainingZip)
+    return api.putTrainingDefinition(
+      trainingDefinition.entity.training_definition_version.content_url,
+      this._token,
+      trainingZip
+    )
   }
 
   async startTrainingRun(trainingDefinition) {
-    if (!this._token) {
-      this._token = await this.authenticate()
-    }
+    await this.authenticate()
 
     const steps = safeGet(() => this._trainingParams.steps) || DEFAULT_STEPS
     const gpu = safeGet(() => this._trainingParams.gpu) || DEFAULT_GPU
@@ -135,7 +137,7 @@ class WML {
         type: 's3'
       }
     }
-    return postModel(this._url, this._token, trainingRun)
+    return api.postModel(this._url, this._token, trainingRun)
   }
 }
 

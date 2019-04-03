@@ -1,4 +1,4 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const chalk = require('chalk')
 const stringLength = require('./../../src/utils/stringLength')
 

@@ -1,4 +1,4 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const cosEndpointBuilder = require('./../../src/utils/cosEndpointBuilder')
 
 describe('cosEndpointBuilder', () => {

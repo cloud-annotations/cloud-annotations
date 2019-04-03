@@ -10,9 +10,6 @@ const getMatches = (string, regex) => {
   let m
   const matches = {}
   while ((m = regex.exec(string)) !== null) {
-    if (m.index === regex.lastIndex) {
-      regex.lastIndex++
-    }
     m.forEach((match, groupIndex) => {
       const group = matches[groupIndex] || []
       group.push(match)

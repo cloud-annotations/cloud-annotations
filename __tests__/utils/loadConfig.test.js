@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const assert = require('assert')
+const assert = require('assert').strict
 const loadConfig = require('./../../src/utils/loadConfig')
 
 describe('loadConfig', () => {
@@ -8,7 +8,6 @@ describe('loadConfig', () => {
     // so this will try to exit in travis ci so we stub process.exit.
     sinon.stub(process, 'exit')
     await loadConfig()
-    process.exit.restore()
   })
 
   it('loads config', async () => {
@@ -20,6 +19,5 @@ describe('loadConfig', () => {
     sinon.stub(process, 'exit')
     await loadConfig('__tests__/does-not-exist.yaml')
     assert(process.exit.called)
-    process.exit.restore()
   })
 })

@@ -1,7 +1,11 @@
 const stringLength = require('./stringLength')
 
 module.exports = class Table {
-  constructor({ columnBuffer, width, maxWidth }) {
+  constructor({
+    columnBuffer = 0,
+    width = 80,
+    maxWidth = Number.MAX_SAFE_INTEGER
+  }) {
     this._columnBuffer = columnBuffer
     this._width = Math.min(width, maxWidth)
     this._table = ''

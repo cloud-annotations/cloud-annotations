@@ -50,16 +50,12 @@ module.exports.postTrainingDefinition = (url, token, trainingDefinition) =>
     body: trainingDefinition
   })
 
-module.exports.putTrainingDefinition = (
-  trainingDefinition,
-  token,
-  trainingZip
-) =>
+module.exports.putTrainingDefinition = (url, token, trainingZip) =>
   trainingZip.pipe(
     request({
       method: 'PUT',
       json: true,
-      url: trainingDefinition.entity.training_definition_version.content_url,
+      url: url,
       auth: { bearer: token },
       headers: { 'content-type': 'application/octet-stream' }
     })

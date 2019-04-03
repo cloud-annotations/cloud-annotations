@@ -1,13 +1,9 @@
-const assert = require('assert')
+const assert = require('assert').strict
 const stdin = require('mock-stdin').stdin
 const rewire = require('rewire')
 const sinon = require('sinon')
 const picker = rewire('./../../src/utils/picker')
-
-const wait = () =>
-  new Promise((resolve, _) => {
-    process.nextTick(resolve)
-  })
+const wait = require('./../wait')
 
 describe('picker', () => {
   const prompt = 'pick an item: '
