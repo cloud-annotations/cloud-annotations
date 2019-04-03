@@ -40,6 +40,9 @@
     "all": true,
     "include": [
       "src/**/*.js"
+    ],
+    "exclude": [
+      "src/api/api.js"
     ]
   }
 }
