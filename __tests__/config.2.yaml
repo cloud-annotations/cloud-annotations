@@ -1,0 +1,13 @@
+name: fake-config
+credentials:
+  wml:
+    instance_id: ''
+    username: ''
+    password: ''
+    url: ''
+  cos:
+    access_key_id: ''
+    secret_access_key: ''
+    region: empty
+buckets:
+  training: ''

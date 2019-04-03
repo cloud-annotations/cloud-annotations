@@ -68,6 +68,12 @@ module.exports = async options => {
     return process.exit()
   }
 
+  if (!ops.path) {
+    console.log('No path provided')
+    console.log('Usage: cacli bootstrap <path>')
+    return process.exit(1)
+  }
+
   const config = loadConfig(ops.config)
 
   const spinner = new Spinner()

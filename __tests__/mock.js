@@ -192,6 +192,11 @@ module.exports.cos = sinon => {
               error.code = 'FakeError'
               throw error
             }
+            if (endpoint.includes('empty')) {
+              return resolve({
+                Buckets: []
+              })
+            }
             if (!endpoint.includes(validRegion)) {
               const error = new Error()
               error.code = 'UnknownEndpoint'

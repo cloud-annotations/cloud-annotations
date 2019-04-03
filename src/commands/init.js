@@ -156,9 +156,18 @@ module.exports = async (options, skipOptionalSteps) => {
   } catch (e) {
     spinner.stop()
     cosHandleErrors(e, yellow('warning'))
+    console.warn(
+      `${yellow(
+        'warning'
+      )} Skipping bucket selection due to invalid authentication.\n`
+    )
   }
 
-  if (buckets && buckets.length > 0) {
+  if (buckets && buckets.length === 0) {
+    console.error(
+      `${yellow('warning')} Skipping bucket selection because no buckets exist.`
+    )
+  } else if (buckets) {
     console.log(bold('Buckets'))
     const training = safeGet(() => old.buckets.training)
     const i = Math.max(0, buckets.indexOf(training))

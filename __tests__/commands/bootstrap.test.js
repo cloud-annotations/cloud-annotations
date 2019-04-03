@@ -34,6 +34,11 @@ describe('bootstrap', () => {
     return promise
   })
 
+  it('displays usage', async () => {
+    sinon.stub(process, 'exit')
+    await bootstrap([])
+  })
+
   it('displays help', async () => {
     sinon.stub(process, 'exit')
     await bootstrap(['--help'])

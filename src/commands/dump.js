@@ -58,14 +58,12 @@ async function checkRegion(
   }
   const cos = new COS.S3(config)
   try {
-    const region = await cos
+    // only returns if bucket is in region.
+    await cos
       .getBucketLocation({ Bucket: bucket })
       .promise()
       .then(data => data.LocationConstraint)
-    if (region) {
-      return true
-    }
-    return false
+    return true
   } catch {
     return false
   }
@@ -100,37 +98,41 @@ module.exports = async options => {
     return process.exit(1)
   }
 
-  if (buckets) {
-    const bucket = await picker(
-      `Choose a bucket to export: ${dim('(Use arrow keys)')}`,
-      buckets
-    )
-
-    spinner.setMessage(`Checking bucket...`)
-
-    if (!(await checkRegion(config.credentials.cos, bucket))) {
-      spinner.stop()
-      console.error(
-        `${red('error')} The selected bucket is not in the region \`${
-          config.credentials.cos.region
-        }\`.`
-      )
-      return process.exit(1)
-    }
-
-    spinner.stop()
-
-    spinner.setMessage(`Exporting ${bucket}...`)
-    spinner.start()
-    const { region, access_key_id, secret_access_key } = config.credentials.cos
-    const cosConfig = {
-      endpoint: cosEndpointBuilder(region, true),
-      accessKeyId: access_key_id,
-      secretAccessKey: secret_access_key
-    }
-    const cos = new COS.S3(cosConfig)
-    await downloadBucket(cos, bucket, 'exported_buckets')
-    spinner.stop()
-    console.log(`${green('success')} Export complete.`)
+  console.log(buckets)
+  if (buckets.length === 0) {
+    console.error(`${red('error')} No buckets available.`)
+    return process.exit(1)
   }
+
+  const bucket = await picker(
+    `Choose a bucket to export: ${dim('(Use arrow keys)')}`,
+    buckets
+  )
+
+  spinner.setMessage(`Checking bucket...`)
+
+  if (!(await checkRegion(config.credentials.cos, bucket))) {
+    spinner.stop()
+    console.error(
+      `${red('error')} The selected bucket is not in the region \`${
+        config.credentials.cos.region
+      }\`.`
+    )
+    return process.exit(1)
+  }
+
+  spinner.stop()
+
+  spinner.setMessage(`Exporting ${bucket}...`)
+  spinner.start()
+  const { region, access_key_id, secret_access_key } = config.credentials.cos
+  const cosConfig = {
+    endpoint: cosEndpointBuilder(region, true),
+    accessKeyId: access_key_id,
+    secretAccessKey: secret_access_key
+  }
+  const cos = new COS.S3(cosConfig)
+  await downloadBucket(cos, bucket, 'exported_buckets')
+  spinner.stop()
+  console.log(`${green('success')} Export complete.`)
 }

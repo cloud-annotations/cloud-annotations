@@ -125,6 +125,20 @@ const invalidRegion = {
   save: ''
 }
 
+const noBuckets = {
+  instance_id: '',
+  username: 'username',
+  password: 'password',
+  url: 'url',
+  access_key_id: 'access_key_id',
+  secret_access_key: 'secret_access_key',
+  region: 'empty',
+  gpu: '',
+  steps: '',
+  name: '',
+  save: ''
+}
+
 const skippedSteps = {
   instance_id: '',
   username: '',
@@ -347,6 +361,32 @@ describe('init', () => {
       assert.deepEqual(config, expected)
     })
     await runWith(invalidRegion)
+    return promise
+  })
+
+  it('no buckets', async () => {
+    const promise = init(['--config', tmpConfig]).then(config => {
+      const expected = {
+        name: 'untitled-project',
+        credentials: {
+          wml: {
+            instance_id: '',
+            username: 'username',
+            password: 'password',
+            url: 'url'
+          },
+          cos: {
+            access_key_id: 'access_key_id',
+            secret_access_key: 'secret_access_key',
+            region: 'empty'
+          }
+        },
+        buckets: { training: '' },
+        trainingParams: { gpu: 'k80', steps: '500' }
+      }
+      assert.deepEqual(config, expected)
+    })
+    await runWith(noBuckets)
     return promise
   })
 
