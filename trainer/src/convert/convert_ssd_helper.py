@@ -3,6 +3,7 @@ import json
 
 from convert.build_nms import build_nms
 from convert.build_decoder import build_decoder
+from convert.build_decoder import get_anchors
 
 import tfcoreml
 import coremltools
@@ -29,6 +30,48 @@ def optimize_graph(input_path, output_path, input_nodes, output_nodes):
     with gfile.GFile(output_path, 'wb') as f:
         f.write(gdef.SerializeToString())
     return graph
+
+
+def convert_ssd_tflite(exported_graph_path, model_structure, output_path):
+    num_anchors = 1917
+
+    saved_model_path = os.path.join(exported_graph_path, 'saved_model')
+    tflite_model_path = os.path.join(output_path, 'model.tflite')
+
+    # Strip the model down to something usable by Core ML.
+    # Instead of `concat_1`, use `Postprocessor/convert_scores`, because it
+    # applies the sigmoid to the class scores.
+    frozen_model_path = '.tmp/tmp_frozen_graph.pb'
+    input_node = 'Preprocessor/sub'
+    bbox_output_node = 'concat'
+    class_output_node = 'Postprocessor/convert_scores'    
+    graph = optimize_graph(saved_model_path, frozen_model_path, [input_node], [bbox_output_node, class_output_node])
+
+    # Convert to tflite model.
+    input_arrays = [input_node]
+    output_arrays = [bbox_output_node, class_output_node]
+
+    if tf.__version__ <= '1.11.0':
+        from tensorflow.contrib.lite.python.lite import TocoConverter as convert
+    elif tf.__version__ <= '1.12.0':
+        convert = tf.contrib.lite.TFLiteConverter
+    else:
+        convert = tf.lite.TFLiteConverter
+
+    converter = convert.from_frozen_graph(
+        frozen_model_path,
+        input_arrays=input_arrays,
+        output_arrays=output_arrays,
+        input_shapes={'Preprocessor/sub': [1, 300, 300, 3]})
+    # converter.allow_custom_ops = True
+    tflite_model = converter.convert()
+    with open(tflite_model_path, 'wb') as f:
+        f.write(tflite_model)
+
+    anchors = get_anchors(graph)
+    anchors = np.swapaxes(anchors, 0, 1)
+    with open(os.path.join(output_path, 'anchors.json'), 'w') as f:
+        json.dump(anchors.tolist(), f)
 
 
 def convert_ssd(exported_graph_path, model_structure, output_path):

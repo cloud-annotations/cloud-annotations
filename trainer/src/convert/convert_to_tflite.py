@@ -5,6 +5,7 @@ import json
 import shutil
 
 from convert.types import ModelType
+from convert.convert_ssd_helper import convert_ssd_tflite
 
 # TensorFlow 1.9 to TensorFlow 1.11
 if tf.__version__ <= '1.11.0':
@@ -20,24 +21,7 @@ def convert_to_tflite(exported_graph_path, model_structure, output_path):
             shutil.rmtree(output_path)
         os.makedirs(output_path)
 
-        input_arrays = ['normalized_input_image_tensor']
-        output_arrays = [
-            'TFLite_Detection_PostProcess',
-            'TFLite_Detection_PostProcess:1',
-            'TFLite_Detection_PostProcess:2',
-            'TFLite_Detection_PostProcess:3'
-        ]
-
-        frozen_graph_path = os.path.join(exported_graph_path, 'tflite', 'tflite_graph.pb')
-        converter = convert.from_frozen_graph(
-            frozen_graph_path,
-            input_arrays=input_arrays,
-            output_arrays=output_arrays,
-            input_shapes={'normalized_input_image_tensor': [1, 300, 300, 3]})
-        converter.allow_custom_ops = True
-        tflite_model = converter.convert()
-        with open(os.path.join(output_path, 'model.tflite'), 'wb') as f:
-            f.write(tflite_model)
+        convert_ssd_tflite(exported_graph_path, model_structure, output_path)
 
         # Move the labels to the model directory.
         json_labels = os.path.join(exported_graph_path, 'labels.json')

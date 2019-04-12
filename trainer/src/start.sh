@@ -17,7 +17,6 @@ if [ $TYPE = "localization" ]; then
 PIPELINE_CONFIG_PATH=${RESULT_DIR}/pipeline.config
 OUTPUT_DIRECTORY=${RESULT_DIR}/model
 OUTPUT_LABEL_PATH=${OUTPUT_DIRECTORY}/labels.json
-OUTPUT_DIRECTORY_TFLITE=${OUTPUT_DIRECTORY}/tflite
 CHECKPOINT_PATH=${RESULT_DIR}/checkpoint
 LABEL_MAP_PATH=${RESULT_DIR}/data/label_map.pbtxt
 
@@ -37,10 +36,6 @@ python -m object_detection.export_inference_graph \
   --pipeline_config_path=$PIPELINE_CONFIG_PATH \
   --trained_checkpoint_prefix=$TRAINED_CHECKPOINT_PREFIX \
   --output_directory=$OUTPUT_DIRECTORY
-python -m object_detection.export_tflite_ssd_graph \
-  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
-  --trained_checkpoint_prefix=$TRAINED_CHECKPOINT_PREFIX \
-  --output_directory=$OUTPUT_DIRECTORY_TFLITE
 
 python -m export_labels \
   --label_map_path=$LABEL_MAP_PATH \
