@@ -1,9 +1,13 @@
 {
   "name": "cloud-annotations",
   "description": "Easy training for classification and object detection",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "license": "MIT",
-  "repository": "cloud-annotations/training",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloud-annotations/training.git"
+  },
+  "homepage": "https://github.com/cloud-annotations/training",
   "author": "Nick Bourdakos <bourdakos1@gmail.com>",
   "scripts": {
     "test": "nyc mocha \"__tests__/**/*.test.js\"",
@@ -12,6 +16,7 @@
     "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
     "patch": "./publish-trainer.sh $(npm --no-git-tag-version version patch) && yarn publish"
   },
+  "main": "src/api/wml.js",
   "bin": {
     "cacli": "bin/cacli"
   },

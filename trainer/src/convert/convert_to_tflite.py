@@ -5,6 +5,7 @@ import json
 import shutil
 
 from convert.types import ModelType
+from convert.convert_ssd_helper import convert_ssd_tflite
 
 # TensorFlow 1.9 to TensorFlow 1.11
 if tf.__version__ <= '1.11.0':
@@ -16,7 +17,15 @@ else:
 
 def convert_to_tflite(exported_graph_path, model_structure, output_path):
     if model_structure['type'] == ModelType.LOCALIZATION:
-        print('TODO: This feature is not implemented yet.')
+        if os.path.exists(output_path) and os.path.isdir(output_path):
+            shutil.rmtree(output_path)
+        os.makedirs(output_path)
+
+        convert_ssd_tflite(exported_graph_path, model_structure, output_path)
+
+        # Move the labels to the model directory.
+        json_labels = os.path.join(exported_graph_path, 'labels.json')
+        shutil.copy2(json_labels, output_path)
     else:
         if os.path.exists(output_path) and os.path.isdir(output_path):
             shutil.rmtree(output_path)
@@ -27,9 +36,9 @@ def convert_to_tflite(exported_graph_path, model_structure, output_path):
 
         saved_model_path = os.path.join(exported_graph_path, 'saved_model')
         converter = convert.from_saved_model(
-                saved_model_path,
-                input_arrays=input_arrays,
-                output_arrays=output_arrays)
+            saved_model_path,
+            input_arrays=input_arrays,
+            output_arrays=output_arrays)
         tflite_model = converter.convert()
         with open(os.path.join(output_path, 'model.tflite'), 'wb') as f:
             f.write(tflite_model)
