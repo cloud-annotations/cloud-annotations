@@ -16,18 +16,6 @@ else:
 
 def convert_to_tflite(exported_graph_path, model_structure, output_path):
     if model_structure['type'] == ModelType.LOCALIZATION:
-        # print('TODO: This feature is not implemented yet.')
-        # bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
-        # --input_file=$OUTPUT_DIR/tflite_graph.pb \
-        # --output_file=$OUTPUT_DIR/detect.tflite \
-        # --input_shapes=1,300,300,3 \
-        # --input_arrays=normalized_input_image_tensor \
-        # --output_arrays='TFLite_Detection_PostProcess','TFLite_Detection_PostProcess:1','TFLite_Detection_PostProcess:2','TFLite_Detection_PostProcess:3'  \
-        # --inference_type=QUANTIZED_UINT8 \
-        # --mean_values=128 \
-        # --std_values=128 \
-        # --change_concat_input_ranges=false \
-        # --allow_custom_ops
         if os.path.exists(output_path) and os.path.isdir(output_path):
             shutil.rmtree(output_path)
         os.makedirs(output_path)
@@ -42,10 +30,10 @@ def convert_to_tflite(exported_graph_path, model_structure, output_path):
 
         frozen_graph_path = os.path.join(exported_graph_path, 'tflite', 'tflite_graph.pb')
         converter = convert.from_frozen_graph(
-                frozen_graph_path,
-                input_arrays=input_arrays,
-                output_arrays=output_arrays,
-                input_shapes={'normalized_input_image_tensor': [1,300,300,3]})
+            frozen_graph_path,
+            input_arrays=input_arrays,
+            output_arrays=output_arrays,
+            input_shapes={'normalized_input_image_tensor': [1, 300, 300, 3]})
         converter.allow_custom_ops = True
         tflite_model = converter.convert()
         with open(os.path.join(output_path, 'model.tflite'), 'wb') as f:
@@ -64,9 +52,9 @@ def convert_to_tflite(exported_graph_path, model_structure, output_path):
 
         saved_model_path = os.path.join(exported_graph_path, 'saved_model')
         converter = convert.from_saved_model(
-                saved_model_path,
-                input_arrays=input_arrays,
-                output_arrays=output_arrays)
+            saved_model_path,
+            input_arrays=input_arrays,
+            output_arrays=output_arrays)
         tflite_model = converter.convert()
         with open(os.path.join(output_path, 'model.tflite'), 'wb') as f:
             f.write(tflite_model)
