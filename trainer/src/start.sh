@@ -14,15 +14,37 @@ EOF"
 TYPE=$(eval "$SCRIPT")
 
 if [ $TYPE = "localization" ]; then
+PIPELINE_CONFIG_PATH=${RESULT_DIR}/pipeline.config
+OUTPUT_DIRECTORY=${RESULT_DIR}/model
+OUTPUT_LABEL_PATH=${OUTPUT_DIRECTORY}/labels.json
+OUTPUT_DIRECTORY_TFLITE=${OUTPUT_DIRECTORY}/tflite
+CHECKPOINT_PATH=${RESULT_DIR}/checkpoint
+LABEL_MAP_PATH=${RESULT_DIR}/data/label_map.pbtxt
+
 export PYTHONPATH=${PWD}/object_detection/slim
 python -m data.prepare_data_object_detection
 python -m object_detection.model_main \
-  --pipeline_config_path=${RESULT_DIR}/pipeline.config \
-  --model_dir=${RESULT_DIR}/checkpoint \
+  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
+  --model_dir=$CHECKPOINT_PATH \
   --num_train_steps=$1 \
   --log_step_count_steps=1 \
   --alsologtostderr
-python -m quick_export_graph --result_base=${RESULT_DIR} --model_dir=${RESULT_DIR}/model
+
+TRAINED_CHECKPOINT_PREFIX=$(python -m get_latest_checkpoint \
+  --checkpoint_path=$CHECKPOINT_PATH)
+
+python -m object_detection.export_inference_graph \
+  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
+  --trained_checkpoint_prefix=$TRAINED_CHECKPOINT_PREFIX \
+  --output_directory=$OUTPUT_DIRECTORY
+python -m object_detection.export_tflite_ssd_graph \
+  --pipeline_config_path=$PIPELINE_CONFIG_PATH \
+  --trained_checkpoint_prefix=$TRAINED_CHECKPOINT_PREFIX \
+  --output_directory=$OUTPUT_DIRECTORY_TFLITE
+
+python -m export_labels \
+  --label_map_path=$LABEL_MAP_PATH \
+  --output_label_path=$OUTPUT_LABEL_PATH
 else
 python -m data.prepare_data_classification
 python -m classification.retrain \
@@ -38,4 +60,4 @@ python -m convert.convert --tfjs --coreml --tflite \
   --tfjs-path=${RESULT_DIR}/model_web \
   --mlmodel-path=${RESULT_DIR}/model_ios \
   --tflite-path=${RESULT_DIR}/model_android \
-  --exported-graph-path=${RESULT_DIR}/model
+  --exported-graph-path=$OUTPUT_DIRECTORY
