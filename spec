@@ -40,6 +40,7 @@ cacli train [<training-zip>]
             [--steps <steps>]
             [--python <version>]
             [(--tensorflow | --keras | --...) <version>]
+            [--local | --docker]
 
 cacli list
 

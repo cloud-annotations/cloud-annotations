@@ -1,7 +1,7 @@
 {
   "name": "cloud-annotations",
   "description": "Easy training for classification and object detection",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "license": "MIT",
   "repository": {
     "type": "git",
