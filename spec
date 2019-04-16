@@ -48,6 +48,12 @@ cacli progress <model-id>
 
 cacli logs <model-id>
 
+cacli cancel <model-id>
+
+cacli info <model-id>
+
+cacli deploy <model-id>
+
 cacli download <model-id> [<output-path>] [--file <file-or-dir>]
 
 cacli bootstrap <path> [--bucket <bucket>]
@@ -55,7 +61,3 @@ cacli bootstrap <path> [--bucket <bucket>]
 cacli export [<output-path>] [--bucket <bucket>]
 
 cacli debug [--config <config>]
-
-
-
-
