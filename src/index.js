@@ -1,6 +1,7 @@
 const argParse = require('./utils/argParse')
 const help = require('./commands/help')
 const init = require('./commands/init')
+const login = require('./commands/login')
 const train = require('./commands/train')
 const list = require('./commands/list')
 const logs = require('./commands/logs')
@@ -15,6 +16,7 @@ module.exports = () => {
   args.add('', help)
   args.add('help', help)
   args.add('init', init)
+  args.add('login', login)
   args.add('train', train)
   args.add('run', train) // Alias for train.
   args.add('list', list)
