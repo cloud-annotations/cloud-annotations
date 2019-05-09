@@ -7,13 +7,19 @@ const fs = require('fs-extra')
 const { CREDENTIAL_PATH } = require('./mockCredentials')
 
 before(() => {
-  fs.removeSync(CREDENTIAL_PATH + '.tmp')
-  fs.copySync(CREDENTIAL_PATH, CREDENTIAL_PATH + '.tmp')
+  // will crash if credentials file doesn't exist.
+  try {
+    fs.removeSync(CREDENTIAL_PATH + '.tmp')
+    fs.copySync(CREDENTIAL_PATH, CREDENTIAL_PATH + '.tmp')
+  } catch {}
 })
 
 after(() => {
-  fs.copySync(CREDENTIAL_PATH + '.tmp', CREDENTIAL_PATH)
-  fs.removeSync(CREDENTIAL_PATH + '.tmp')
+  // will crash if credentials file doesn't exist.
+  try {
+    fs.copySync(CREDENTIAL_PATH + '.tmp', CREDENTIAL_PATH)
+    fs.removeSync(CREDENTIAL_PATH + '.tmp')
+  } catch {}
 })
 
 beforeEach(() => {
