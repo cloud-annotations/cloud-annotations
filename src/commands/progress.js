@@ -1,6 +1,6 @@
 const { green } = require('chalk')
 const WML = require('./../api/wml')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const safeGet = require('./../utils/safeGet')
 const optionsParse = require('./../utils/optionsParse')
 const ProgressBar = require('./../utils/progressBar')
@@ -31,7 +31,7 @@ module.exports = async (options, importedConfig) => {
     return process.exit()
   }
 
-  const config = importedConfig || loadConfig(ops.config)
+  const config = importedConfig || (await loadCredentials())
 
   if (!ops.model_id) {
     console.log('No Model ID provided')

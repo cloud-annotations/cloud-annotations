@@ -1,6 +1,6 @@
 const moment = require('moment')
 const WML = require('./../api/wml')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const { red, green, bold, dim } = require('chalk')
 const Table = require('./../utils/table')
 const optionsParse = require('./../utils/optionsParse')
@@ -16,7 +16,7 @@ module.exports = async options => {
     return process.exit()
   }
 
-  const config = loadConfig(ops.config)
+  const config = await loadCredentials()
 
   const wml = new WML(config)
   const runs = await wml.listTrainingRuns()

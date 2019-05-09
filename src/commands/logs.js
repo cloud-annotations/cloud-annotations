@@ -1,5 +1,5 @@
 const WML = require('./../api/wml')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
 const COS = require('ibm-cos-sdk')
@@ -16,7 +16,7 @@ module.exports = async options => {
     return process.exit()
   }
 
-  const config = loadConfig(ops.config)
+  const config = await loadCredentials()
 
   if (!ops.model_id) {
     console.log('No Model ID provided')

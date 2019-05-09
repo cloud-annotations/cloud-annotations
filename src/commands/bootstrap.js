@@ -1,5 +1,5 @@
 const { green, red } = require('chalk')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const COS = require('ibm-cos-sdk')
 const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
@@ -74,7 +74,7 @@ module.exports = async options => {
     return process.exit(1)
   }
 
-  const config = loadConfig(ops.config)
+  const config = await loadCredentials()
 
   const spinner = new Spinner()
   spinner.setMessage('Authenticating...')

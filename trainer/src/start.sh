@@ -13,13 +13,13 @@ EOF"
 
 TYPE=$(eval "$SCRIPT")
 
-if [ $TYPE = "localization" ]; then
 PIPELINE_CONFIG_PATH=${RESULT_DIR}/pipeline.config
 OUTPUT_DIRECTORY=${RESULT_DIR}/model
 OUTPUT_LABEL_PATH=${OUTPUT_DIRECTORY}/labels.json
 CHECKPOINT_PATH=${RESULT_DIR}/checkpoint
 LABEL_MAP_PATH=${RESULT_DIR}/data/label_map.pbtxt
 
+if [ $TYPE = "localization" ]; then
 export PYTHONPATH=${PWD}/object_detection/slim
 python -m data.prepare_data_object_detection
 python -m object_detection.model_main \
@@ -44,10 +44,10 @@ else
 python -m data.prepare_data_classification
 python -m classification.retrain \
   --image_dir=${RESULT_DIR}/data \
-  --saved_model_dir=${RESULT_DIR}/model/saved_model \
+  --saved_model_dir=$OUTPUT_DIRECTORY/saved_model \
   --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
   --how_many_training_steps=$1 \
-  --output_labels=${RESULT_DIR}/model/labels.txt
+  --output_labels=$OUTPUT_DIRECTORY/labels.txt
 fi
 
 echo training success
