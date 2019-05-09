@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap 'echo CACLI-FAILING; exit' ERR
+
 pip install --user --no-deps -r requirements.txt
 
 SCRIPT="python - << EOF
