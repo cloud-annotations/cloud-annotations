@@ -1,4 +1,4 @@
-const { green } = require('chalk')
+const { green, red } = require('chalk')
 const WML = require('./../api/wml')
 const loadCredentials = require('./../utils/loadCredentials')
 const safeGet = require('./../utils/safeGet')
@@ -71,8 +71,9 @@ module.exports = async (options, importedConfig) => {
       const objectDetectionStepRegex = /tensorflow:loss = [\d.]*, step = (\d*)/gm
       const classificationStepRegex = /Step (\d*): Train accuracy/gm
       const rateRegex = /tensorflow:global_step\/sec: ([\d.]*)/gm
-      const successRegex = /training success/gm
-      const failRegex = /CACLI-FAILING/gm
+      const successRegex = /CACLI-TRAINING-SUCCESS/gm
+      const trainingFailedRegex = /CACLI-TRAINING-FAILED/gm
+      const conversionFailedRegex = /CACLI-CONVERSION-FAILED/gm
 
       const steps =
         getMatches(message, objectDetectionStepRegex)[1] ||
@@ -100,11 +101,16 @@ module.exports = async (options, importedConfig) => {
         spinner.start()
       }
 
-      if (getMatches(message, failRegex)[0]) {
+      if (getMatches(message, trainingFailedRegex)[0]) {
         progressBar.stop()
-        console.log(`${green('error')} Training failed.`)
-        spinner.setMessage('Generating model files... ')
-        spinner.start()
+        console.log(`${red('error')} Training failed.`)
+        return process.exit(1)
+      }
+
+      if (getMatches(message, conversionFailedRegex)[0]) {
+        progressBar.stop()
+        console.log(`${red('error')} Conversion failed.`)
+        return process.exit(1)
       }
     }
   })
