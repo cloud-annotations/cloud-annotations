@@ -1,6 +1,10 @@
 {
   "name": "cloud-annotations",
   "description": "Easy training for classification and object detection",
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
   "version": "1.0.14",
   "license": "MIT",
   "repository": {
@@ -22,6 +26,7 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.3",
+    "decache": "^4.5.1",
     "mocha": "^6.0.2",
     "mock-stdin": "^0.3.1",
     "nyc": "^13.3.0",

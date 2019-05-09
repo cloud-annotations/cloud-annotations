@@ -1,7 +1,5 @@
 const assert = require('assert').strict
 const sinon = require('sinon')
-const os = require('os')
-const path = require('path')
 const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
 const init = require('./../../src/commands/init')
@@ -160,13 +158,11 @@ describe('init', () => {
     io = stdin()
     try {
       fs.removeSync('__tests__/.tmp/')
-      fs.removeSync(path.join(os.homedir(), '.cacli', 'credentials'))
     } catch {}
   })
   afterEach(() => {
     io.restore()
     fs.removeSync('__tests__/.tmp/')
-    fs.removeSync(path.join(os.homedir(), '.cacli', 'credentials'))
   })
 
   it('only gpu', async () => {

@@ -1,3 +1,12 @@
+if (process.version.match(/v(\d+)\./)[1] < 10) {
+  console.log(
+    `Node version 10 or later is required. Not satisfied by current version ${
+      process.version
+    }.`
+  )
+  return process.exit(1)
+}
+
 const argParse = require('./utils/argParse')
 const help = require('./commands/help')
 const init = require('./commands/init')

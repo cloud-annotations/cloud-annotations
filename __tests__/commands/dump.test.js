@@ -4,6 +4,7 @@ const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
 const dump = require('./../../src/commands/dump')
 const wait = require('./../wait')
+const { fill, noBuckets } = require('./../mockCredentials')
 
 describe('dump', () => {
   const keys = {
@@ -23,6 +24,7 @@ describe('dump', () => {
 
   it('dumps', async () => {
     sinon.stub(fs, 'outputFile')
+    fill()
     const promise = dump(['--config', '__tests__/config.yaml'])
     await wait()
     await wait()
@@ -48,12 +50,14 @@ describe('dump', () => {
 
   it('fails with no buckets', async () => {
     sinon.stub(process, 'exit')
+    noBuckets()
     await dump(['--config', '__tests__/config.2.yaml'])
     assert(process.exit.called)
   })
 
   it('fails with out of region bucket', async () => {
     sinon.stub(process, 'exit')
+    fill()
     const promise = dump(['--config', '__tests__/config.yaml'])
     await wait()
     await wait()

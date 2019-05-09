@@ -4,6 +4,7 @@ const fs = require('fs-extra')
 const sinon = require('sinon')
 const download = require('./../../src/commands/download')
 const wait = require('./../wait')
+const { fill } = require('./../mockCredentials')
 
 describe('download', () => {
   const keys = { enter: '\x0D' }
@@ -17,6 +18,7 @@ describe('download', () => {
   })
 
   it('model running', async () => {
+    fill()
     const promise = download([
       'model-running',
       '--config',
@@ -30,6 +32,7 @@ describe('download', () => {
   })
 
   it('model pending watch progress', async () => {
+    fill()
     const promise = download([
       'model-pending',
       '--config',
@@ -43,6 +46,7 @@ describe('download', () => {
 
   it('model completed', async () => {
     sinon.stub(fs, 'outputFile')
+    fill()
     await download(['model-completed', '--config', '__tests__/config.yaml'])
     assert(fs.outputFile.calledWith('./dir/object.jpg'))
     assert(fs.outputFile.calledWith('./dir/object/object2.jpg'))
@@ -52,18 +56,21 @@ describe('download', () => {
 
   it('model error', async () => {
     sinon.stub(process, 'exit')
+    fill()
     await download(['model-error', '--config', '__tests__/config.yaml'])
     assert(process.exit.called)
   })
 
   it('model failed', async () => {
     sinon.stub(process, 'exit')
+    fill()
     await download(['model-failed', '--config', '__tests__/config.yaml'])
     assert(process.exit.called)
   })
 
   it('model canceled', async () => {
     sinon.stub(process, 'exit')
+    fill()
     await download(['model-canceled', '--config', '__tests__/config.yaml'])
     assert(process.exit.called)
   })

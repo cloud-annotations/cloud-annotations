@@ -1,26 +1,10 @@
 const sinon = require('sinon')
-const os = require('os')
-const path = require('path')
 const fs = require('fs')
 const fse = require('fs-extra')
 const stdin = require('mock-stdin').stdin
 const train = require('./../../src/commands/train')
 const wait = require('./../wait')
-
-const CREDENTIAL_PATH = path.join(os.homedir(), '.cacli', 'credentials')
-
-const prepCredentials = () => {
-  const file = `[default]
-instance_id: 
-username: username
-password: password
-url: url
-access_key_id: access_key_id
-secret_access_key: secret_access_key
-region: us-geo
-`
-  fse.outputFileSync(CREDENTIAL_PATH, file)
-}
+const { fill } = require('./../mockCredentials')
 
 describe('train', () => {
   const keys = { enter: '\x0D' }
@@ -30,12 +14,11 @@ describe('train', () => {
     io = stdin()
   })
   afterEach(() => {
-    fse.removeSync(CREDENTIAL_PATH)
     io.restore()
   })
 
   it('trains', async () => {
-    prepCredentials()
+    fill()
     const promise = train(['--config', '__tests__/config.yaml'])
     // Need to wait twice for some reason...
     await wait()
@@ -46,7 +29,7 @@ describe('train', () => {
   })
 
   it('trains with a zip', async () => {
-    prepCredentials()
+    fill()
     const promise = train([
       '__tests__/fake.zip',
       '--config',
@@ -60,7 +43,7 @@ describe('train', () => {
   })
 
   it('watches progress', async () => {
-    prepCredentials()
+    fill()
     const promise = train(['--config', '__tests__/config.yaml'])
     // Need to wait twice for some reason...
     await wait()

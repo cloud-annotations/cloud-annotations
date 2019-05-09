@@ -97,7 +97,6 @@ module.exports = class ConfigBuilder {
   }
 
   getYaml() {
-    console.log(this.config)
     return yaml.safeDump(this.config)
   }
 

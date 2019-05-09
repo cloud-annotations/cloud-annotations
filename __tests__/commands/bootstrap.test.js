@@ -3,6 +3,7 @@ const stdin = require('mock-stdin').stdin
 const sinon = require('sinon')
 const bootstrap = require('./../../src/commands/bootstrap')
 const wait = require('./../wait')
+const { fill } = require('./../mockCredentials')
 
 describe('bootstrap', () => {
   const keys = { enter: '\x0D' }
@@ -22,6 +23,7 @@ describe('bootstrap', () => {
   })
 
   it('bootstraps', async () => {
+    fill()
     const promise = bootstrap([
       '__tests__',
       '--config',

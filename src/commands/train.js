@@ -112,7 +112,7 @@ module.exports = async options => {
         `Your answers can optionally be saved in a ${configPath} file for later use.`
       )
       console.log()
-      const config = await init(['--config', ops.config], true)
+      const config = await init(['--config', configPath], true)
       console.log()
       return config
     }
@@ -121,8 +121,6 @@ module.exports = async options => {
   const credentials = new CredentialsBuilder({})
 
   config.credentials = credentials.credentials
-
-  console.log(config)
 
   try {
     await validateConfig(config)

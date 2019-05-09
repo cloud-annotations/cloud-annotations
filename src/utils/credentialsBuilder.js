@@ -6,7 +6,10 @@ const safeGet = require('./../utils/safeGet')
 const CREDENTIAL_PATH = path.join(os.homedir(), '.cacli', 'credentials')
 
 const getItem = (string, profile, item) => {
-  const r = new RegExp(`\\[${profile}\\]\\s(?:.*\\s){0,7}${item}: (.*?)\\s`, '')
+  const r = new RegExp(
+    `\\[${profile}\\]\\s(?:.*\\s){0,7}${item}: (.*?)(?:\\s|$)`,
+    ''
+  )
   try {
     return r.exec(string)[1]
   } catch {

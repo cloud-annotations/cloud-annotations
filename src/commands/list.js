@@ -17,6 +17,7 @@ module.exports = async options => {
   }
 
   const config = loadConfig(ops.config)
+
   const wml = new WML(config)
   const runs = await wml.listTrainingRuns()
 
