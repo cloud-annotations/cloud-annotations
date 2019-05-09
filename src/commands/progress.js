@@ -31,13 +31,13 @@ module.exports = async (options, importedConfig) => {
     return process.exit()
   }
 
-  const config = importedConfig || (await loadCredentials())
-
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli progress <model_id>')
     return process.exit(1)
   }
+
+  const config = importedConfig || (await loadCredentials())
 
   const wml = new WML(config)
 

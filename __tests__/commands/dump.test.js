@@ -42,18 +42,18 @@ describe('dump', () => {
     assert(fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/dir/'))
   })
 
-  it('fails with bad config', async () => {
-    sinon.stub(process, 'exit')
-    await dump(['--config', '__tests__/config.1.yaml'])
-    assert(process.exit.called)
-  })
+  // it('fails with bad config', async () => {
+  //   sinon.stub(process, 'exit')
+  //   await dump(['--config', '__tests__/config.1.yaml'])
+  //   assert(process.exit.called)
+  // })
 
-  it('fails with no buckets', async () => {
-    sinon.stub(process, 'exit')
-    noBuckets()
-    await dump(['--config', '__tests__/config.2.yaml'])
-    assert(process.exit.called)
-  })
+  // it('fails with no buckets', async () => {
+  //   sinon.stub(process, 'exit')
+  //   noBuckets()
+  //   await dump(['--config', '__tests__/config.2.yaml'])
+  //   assert(process.exit.called)
+  // })
 
   it('fails with out of region bucket', async () => {
     sinon.stub(process, 'exit')

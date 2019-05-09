@@ -6,6 +6,16 @@ const index = require('./../src/index')
 const fs = require('fs-extra')
 const { CREDENTIAL_PATH } = require('./mockCredentials')
 
+before(() => {
+  fs.removeSync(CREDENTIAL_PATH + '.tmp')
+  fs.copySync(CREDENTIAL_PATH, CREDENTIAL_PATH + '.tmp')
+})
+
+after(() => {
+  fs.copySync(CREDENTIAL_PATH + '.tmp', CREDENTIAL_PATH)
+  fs.removeSync(CREDENTIAL_PATH + '.tmp')
+})
+
 beforeEach(() => {
   mock.wml(sinon)
   mock.cos(sinon)

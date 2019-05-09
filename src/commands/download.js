@@ -55,13 +55,13 @@ module.exports = async options => {
     return process.exit()
   }
 
-  const config = await loadCredentials()
-
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli download <model_id>')
     return process.exit(1)
   }
+
+  const config = await loadCredentials()
 
   const run = await new WML(config).getTrainingRun(ops.model_id)
 

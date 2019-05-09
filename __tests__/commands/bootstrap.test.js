@@ -16,11 +16,11 @@ describe('bootstrap', () => {
     io.restore()
   })
 
-  it('exits on bad yaml', async () => {
-    sinon.stub(process, 'exit')
-    await bootstrap(['fake-path', '--config', '__tests__/config.1.yaml'])
-    assert(process.exit.called)
-  })
+  // it('exits on bad yaml', async () => {
+  //   sinon.stub(process, 'exit')
+  //   await bootstrap(['fake-path', '--config', '__tests__/config.1.yaml'])
+  //   assert(process.exit.called)
+  // })
 
   it('bootstraps', async () => {
     fill()

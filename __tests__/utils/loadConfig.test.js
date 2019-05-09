@@ -1,12 +1,14 @@
 const sinon = require('sinon')
 const assert = require('assert').strict
 const loadCredentials = require('./../../src/utils/loadCredentials')
+const { fill } = require('./../mockCredentials')
 
 describe('loadConfig', () => {
   it('loads default config', async () => {
     // This looks for the config in the root directory which is git ignored,
     // so this will try to exit in travis ci so we stub process.exit.
-    sinon.stub(process, 'exit')
+    fill()
+    // sinon.stub(process, 'exit')
     await loadCredentials()
   })
 
