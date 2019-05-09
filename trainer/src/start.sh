@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trap 'echo CACLI-FAILING; exit' ERR
+trap 'echo CACLI-TRAINING-FAILED; exit' ERR
 
 pip install --user --no-deps -r requirements.txt
 
@@ -22,6 +22,9 @@ CHECKPOINT_PATH=${RESULT_DIR}/checkpoint
 LABEL_MAP_PATH=${RESULT_DIR}/data/label_map.pbtxt
 
 if [ $TYPE = "localization" ]; then
+echo '/////////////////////////////'
+echo '//  Training Localization  //'
+echo '/////////////////////////////'
 export PYTHONPATH=${PWD}/object_detection/slim
 python -m data.prepare_data_object_detection
 python -m object_detection.model_main \
@@ -43,6 +46,9 @@ python -m export_labels \
   --label_map_path=$LABEL_MAP_PATH \
   --output_label_path=$OUTPUT_LABEL_PATH
 else
+echo '/////////////////////////////'
+echo '// Training classification //'
+echo '/////////////////////////////'
 python -m data.prepare_data_classification
 python -m classification.retrain \
   --image_dir=${RESULT_DIR}/data \
@@ -52,7 +58,9 @@ python -m classification.retrain \
   --output_labels=$OUTPUT_DIRECTORY/labels.txt
 fi
 
-echo training success
+echo 'CACLI-TRAINING-SUCCESS'
+trap 'echo CACLI-CONVERSION-FAILED; exit' ERR
+
 python -m convert.convert --tfjs --coreml --tflite \
   --tfjs-path=${RESULT_DIR}/model_web \
   --mlmodel-path=${RESULT_DIR}/model_ios \

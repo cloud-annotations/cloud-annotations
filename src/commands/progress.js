@@ -72,6 +72,7 @@ module.exports = async (options, importedConfig) => {
       const classificationStepRegex = /Step (\d*): Train accuracy/gm
       const rateRegex = /tensorflow:global_step\/sec: ([\d.]*)/gm
       const successRegex = /training success/gm
+      const failRegex = /CACLI-FAILING/gm
 
       const steps =
         getMatches(message, objectDetectionStepRegex)[1] ||
@@ -95,6 +96,13 @@ module.exports = async (options, importedConfig) => {
       if (getMatches(message, successRegex)[0]) {
         progressBar.stop()
         console.log(`${green('success')} Training complete.`)
+        spinner.setMessage('Generating model files... ')
+        spinner.start()
+      }
+
+      if (getMatches(message, failRegex)[0]) {
+        progressBar.stop()
+        console.log(`${green('error')} Training failed.`)
         spinner.setMessage('Generating model files... ')
         spinner.start()
       }
