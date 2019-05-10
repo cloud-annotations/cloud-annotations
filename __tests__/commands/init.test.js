@@ -165,14 +165,58 @@ describe('init', () => {
     fs.removeSync('__tests__/.tmp/')
   })
 
+  it('only gpu', async () => {
+    sinon.stub(fs, 'outputFileSync')
+    const promise = init(['--config', '__tests__/config.4.yaml']).then(
+      config => {
+        const expected = {
+          name: 'fake',
+          buckets: { training: 'fake', output: 'fake' },
+          trainingParams: { gpu: 'k80', steps: '500' }
+        }
+        assert.deepEqual(config, expected)
+      }
+    )
+    await runWith(allBlank)
+    return promise
+  })
+
+  it('only steps', async () => {
+    sinon.stub(fs, 'outputFileSync')
+    const promise = init(['--config', '__tests__/config.5.yaml']).then(
+      config => {
+        const expected = {
+          name: 'fake',
+          buckets: { training: 'fake', output: 'fake' },
+          trainingParams: { gpu: 'k80', steps: '500' }
+        }
+        assert.deepEqual(config, expected)
+      }
+    )
+    await runWith(allBlank)
+    return promise
+  })
+
+  it('outputs same config when all blank fields', async () => {
+    sinon.stub(fs, 'outputFileSync')
+    const promise = init(['--config', '__tests__/config.3.yaml']).then(
+      config => {
+        const expected = {
+          name: 'fake',
+          buckets: { training: 'fake', output: 'fake' },
+          trainingParams: { gpu: 'k80', steps: '500' }
+        }
+        assert.deepEqual(config, expected)
+      }
+    )
+    await runWith(allBlank)
+    return promise
+  })
+
   it('outputs proper config with all blank fields', async () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: { instance_id: '', username: '', password: '', url: '' },
-          cos: { access_key_id: '', secret_access_key: '', region: 'us-geo' }
-        },
         buckets: { training: '' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -186,19 +230,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'bucket',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'us-geo'
-          }
-        },
         buckets: { training: 'bucket', output: 'bucket' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -212,19 +243,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'bucket',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'us-geo'
-          }
-        },
         buckets: { training: 'bucket' },
         trainingParams: { gpu: 'v100', steps: '6000' }
       }
@@ -238,19 +256,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'fake',
-            secret_access_key: 'secret_access_key',
-            region: 'us-geo'
-          }
-        },
         buckets: { training: '' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -264,19 +269,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'fake',
-            region: 'us-geo'
-          }
-        },
         buckets: { training: '' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -290,19 +282,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'fake'
-          }
-        },
         buckets: { training: '' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -316,19 +295,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'random-error'
-          }
-        },
         buckets: { training: '' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -342,19 +308,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'out-of-region',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'us-geo'
-          }
-        },
         buckets: { training: 'out-of-region', output: 'random-error' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -368,19 +321,6 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig]).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: {
-            instance_id: '',
-            username: 'username',
-            password: 'password',
-            url: 'url'
-          },
-          cos: {
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-            region: 'empty'
-          }
-        },
         buckets: { training: '' },
         trainingParams: { gpu: 'k80', steps: '500' }
       }
@@ -394,12 +334,7 @@ describe('init', () => {
     const promise = init(['--config', tmpConfig], true).then(config => {
       const expected = {
         name: 'untitled-project',
-        credentials: {
-          wml: { instance_id: '', username: '', password: '', url: '' },
-          cos: { access_key_id: '', secret_access_key: '', region: 'us-geo' }
-        },
-        buckets: { training: '' },
-        trainingParams: {}
+        buckets: { training: '' }
       }
       assert.deepEqual(config, expected)
     })

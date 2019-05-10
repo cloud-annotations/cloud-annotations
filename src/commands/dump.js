@@ -1,5 +1,5 @@
 const { dim, green, red } = require('chalk')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const COS = require('ibm-cos-sdk')
 const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
@@ -82,7 +82,7 @@ module.exports = async options => {
     return process.exit()
   }
 
-  const config = loadConfig(ops.config)
+  const config = await loadCredentials()
 
   const spinner = new Spinner()
   spinner.setMessage('Authenticating...')
@@ -98,7 +98,6 @@ module.exports = async options => {
     return process.exit(1)
   }
 
-  console.log(buckets)
   if (buckets.length === 0) {
     console.error(`${red('error')} No buckets available.`)
     return process.exit(1)

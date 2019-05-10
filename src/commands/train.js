@@ -9,6 +9,8 @@ const input = require('./../utils/input')
 const stringLength = require('./../utils/stringLength')
 const stringToBool = require('./../utils/stringToBool')
 const optionsParse = require('./../utils/optionsParse')
+const ConfigBuilder = require('./../utils/configBuilder')
+const CredentialsBuilder = require('./../utils/credentialsBuilder')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
 const Spinner = require('./../utils/spinner')
 
@@ -98,7 +100,8 @@ module.exports = async options => {
 
   const config = await (async () => {
     try {
-      const config = yaml.safeLoad(fs.readFileSync(configPath))
+      const config = new ConfigBuilder(ops.config).config
+      yaml.safeLoad(fs.readFileSync(configPath)) // force a crash.
       console.log(dim(`(Using settings from ${configPath})`))
       return config
     } catch {
@@ -109,17 +112,15 @@ module.exports = async options => {
         `Your answers can optionally be saved in a ${configPath} file for later use.`
       )
       console.log()
-      if (ops.config) {
-        const config = await init(['--config', ops.config], true)
-        console.log()
-        return config
-      } else {
-        const config = await init([], true)
-        console.log()
-        return config
-      }
+      const config = await init(['--config', configPath], true)
+      console.log()
+      return config
     }
   })()
+
+  const credentials = new CredentialsBuilder({})
+
+  config.credentials = credentials.credentials
 
   try {
     await validateConfig(config)

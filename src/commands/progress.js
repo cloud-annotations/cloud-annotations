@@ -1,6 +1,6 @@
-const { green } = require('chalk')
+const { green, red } = require('chalk')
 const WML = require('./../api/wml')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const safeGet = require('./../utils/safeGet')
 const optionsParse = require('./../utils/optionsParse')
 const ProgressBar = require('./../utils/progressBar')
@@ -31,13 +31,13 @@ module.exports = async (options, importedConfig) => {
     return process.exit()
   }
 
-  const config = importedConfig || loadConfig(ops.config)
-
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli progress <model_id>')
     return process.exit(1)
   }
+
+  const config = importedConfig || (await loadCredentials())
 
   const wml = new WML(config)
 
@@ -71,7 +71,9 @@ module.exports = async (options, importedConfig) => {
       const objectDetectionStepRegex = /tensorflow:loss = [\d.]*, step = (\d*)/gm
       const classificationStepRegex = /Step (\d*): Train accuracy/gm
       const rateRegex = /tensorflow:global_step\/sec: ([\d.]*)/gm
-      const successRegex = /training success/gm
+      const successRegex = /CACLI-TRAINING-SUCCESS/gm
+      const trainingFailedRegex = /CACLI-TRAINING-FAILED/gm
+      const conversionFailedRegex = /CACLI-CONVERSION-FAILED/gm
 
       const steps =
         getMatches(message, objectDetectionStepRegex)[1] ||
@@ -97,6 +99,18 @@ module.exports = async (options, importedConfig) => {
         console.log(`${green('success')} Training complete.`)
         spinner.setMessage('Generating model files... ')
         spinner.start()
+      }
+
+      if (getMatches(message, trainingFailedRegex)[0]) {
+        progressBar.stop()
+        console.log(`${red('error')} Training failed.`)
+        return process.exit(1)
+      }
+
+      if (getMatches(message, conversionFailedRegex)[0]) {
+        progressBar.stop()
+        console.log(`${red('error')} Conversion failed.`)
+        return process.exit(1)
       }
     }
   })

@@ -1,0 +1,7 @@
+name: fake
+buckets:
+  training: fake
+  output: fake
+trainingParams:
+  gpu: k80
+  steps: '500'

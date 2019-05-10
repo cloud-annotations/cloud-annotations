@@ -2,8 +2,10 @@ const assert = require('assert').strict
 const sinon = require('sinon')
 const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
+const rewire = require('rewire')
 const dump = require('./../../src/commands/dump')
 const wait = require('./../wait')
+const { fill } = require('./../mockCredentials')
 
 describe('dump', () => {
   const keys = {
@@ -23,6 +25,7 @@ describe('dump', () => {
 
   it('dumps', async () => {
     sinon.stub(fs, 'outputFile')
+    fill()
     const promise = dump(['--config', '__tests__/config.yaml'])
     await wait()
     await wait()
@@ -40,20 +43,28 @@ describe('dump', () => {
     assert(fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/dir/'))
   })
 
-  it('fails with bad config', async () => {
+  it('fails with no buckets', async () => {
+    const dump = rewire('./../../src/commands/dump')
     sinon.stub(process, 'exit')
-    await dump(['--config', '__tests__/config.1.yaml'])
+    const stub = sinon.stub().returns([])
+    dump.__set__('listBuckets', stub)
+    fill()
+    await dump(['--config', '__tests__/config.yaml'])
     assert(process.exit.called)
   })
 
-  it('fails with no buckets', async () => {
+  it('gracefully throws error', async () => {
+    const dump = rewire('./../../src/commands/dump')
     sinon.stub(process, 'exit')
-    await dump(['--config', '__tests__/config.2.yaml'])
-    assert(process.exit.called)
+    const stub = sinon.stub().throws('fake error')
+    dump.__set__('listBuckets', stub)
+    fill()
+    await dump(['--config', '__tests__/config.yaml'])
   })
 
   it('fails with out of region bucket', async () => {
     sinon.stub(process, 'exit')
+    fill()
     const promise = dump(['--config', '__tests__/config.yaml'])
     await wait()
     await wait()

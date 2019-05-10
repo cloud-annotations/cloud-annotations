@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const { green } = require('chalk')
-const loadConfig = require('./../utils/loadConfig')
+const loadCredentials = require('./../utils/loadCredentials')
 const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
 const input = require('./../utils/input')
@@ -55,13 +55,13 @@ module.exports = async options => {
     return process.exit()
   }
 
-  const config = loadConfig(ops.config)
-
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli download <model_id>')
     return process.exit(1)
   }
+
+  const config = await loadCredentials()
 
   const run = await new WML(config).getTrainingRun(ops.model_id)
 

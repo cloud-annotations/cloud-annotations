@@ -1,6 +1,5 @@
 const assert = require('assert').strict
 const rewire = require('rewire')
-const train = rewire('./../../src/commands/train')
 
 describe('train validateConfig', () => {
   const realCredentials = {
@@ -60,6 +59,7 @@ describe('train validateConfig', () => {
 
   it('finishes safely with good credentials', async () => {
     try {
+      const train = rewire('./../../src/commands/train')
       await train.__get__('validateConfig')(realCredentials)
     } catch {
       assert(false)
@@ -68,6 +68,7 @@ describe('train validateConfig', () => {
 
   it('exits with no credentials', async () => {
     try {
+      const train = rewire('./../../src/commands/train')
       await train.__get__('validateConfig')(empty)
     } catch {
       assert(true)
@@ -76,6 +77,7 @@ describe('train validateConfig', () => {
 
   it('exits with wrong region', async () => {
     try {
+      const train = rewire('./../../src/commands/train')
       await train.__get__('validateConfig')(invalidRegion)
     } catch {
       assert(true)

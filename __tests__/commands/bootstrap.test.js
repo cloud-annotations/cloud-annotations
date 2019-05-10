@@ -1,8 +1,8 @@
-const assert = require('assert').strict
 const stdin = require('mock-stdin').stdin
 const sinon = require('sinon')
 const bootstrap = require('./../../src/commands/bootstrap')
 const wait = require('./../wait')
+const { fill } = require('./../mockCredentials')
 
 describe('bootstrap', () => {
   const keys = { enter: '\x0D' }
@@ -15,13 +15,8 @@ describe('bootstrap', () => {
     io.restore()
   })
 
-  it('exits on bad yaml', async () => {
-    sinon.stub(process, 'exit')
-    await bootstrap(['fake-path', '--config', '__tests__/config.1.yaml'])
-    assert(process.exit.called)
-  })
-
   it('bootstraps', async () => {
+    fill()
     const promise = bootstrap([
       '__tests__',
       '--config',

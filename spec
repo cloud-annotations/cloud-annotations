@@ -14,6 +14,9 @@ where <command> is one of:
 
   progress <model-id>    Monitor the progress of a training run
   logs <model-id>        Monitor the logs of a training run
+  info <model-id>        Get model information, like output path
+  cancel <model-id>      Cancel a training run
+  deploy <model-id>      Deploy model as an API endpoint
   download <model-id>    Download all available model formats
 
   bootstrap <path>       Upload annotations to a bucket
@@ -40,21 +43,27 @@ cacli train [<training-zip>]
             [--steps <steps>]
             [--python <version>]
             [(--tensorflow | --keras | --...) <version>]
+            [--local | --docker]
 
 cacli list
+
 
 cacli progress <model-id>
 
 cacli logs <model-id>
 
+cacli info <model-id>
+
+cacli cancel <model-id>
+
+cacli deploy <model-id>
+
 cacli download <model-id> [<output-path>] [--file <file-or-dir>]
+
 
 cacli bootstrap <path> [--bucket <bucket>]
 
 cacli export [<output-path>] [--bucket <bucket>]
 
+
 cacli debug [--config <config>]
-
-
-
-

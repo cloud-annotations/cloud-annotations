@@ -1,6 +1,6 @@
 const assert = require('assert').strict
 const rewire = require('rewire')
-const ProgressBar = rewire('./../../src/utils/progressBar')
+const ProgressBar = require('./../../src/utils/progressBar')
 
 describe('progress bar', () => {
   it('fills', () => {
@@ -25,24 +25,28 @@ describe('progress bar', () => {
   })
 
   it('no rate', () => {
+    const ProgressBar = rewire('./../../src/utils/progressBar')
     const [unit, eta] = ProgressBar.__get__('getRateInfo')(0, 1, 0)
     assert.equal(unit, '')
     assert.equal(eta, '???')
   })
 
   it('seconds are seconds', () => {
+    const ProgressBar = rewire('./../../src/utils/progressBar')
     const [unit, eta] = ProgressBar.__get__('getRateInfo')(1, 1, 0)
     assert.equal(unit, 'sec')
     assert.equal(eta, 1)
   })
 
   it('minutes are minutes', () => {
+    const ProgressBar = rewire('./../../src/utils/progressBar')
     const [unit, eta] = ProgressBar.__get__('getRateInfo')(1 / 60, 1, 0)
     assert.equal(unit, 'mins')
     assert.equal(eta, 1)
   })
 
   it('hours are hours', () => {
+    const ProgressBar = rewire('./../../src/utils/progressBar')
     const [unit, eta] = ProgressBar.__get__('getRateInfo')(1 / (60 * 60), 1, 0)
     assert.equal(unit, 'hrs')
     assert.equal(eta, 1)

@@ -92,7 +92,19 @@ module.exports.wml = sinon => {
             }
             const real7 = {
               status: {
-                message: 'training success'
+                message: 'CACLI-TRAINING-SUCCESS'
+              }
+            }
+
+            const trainingFailed = {
+              status: {
+                message: 'CACLI-TRAINING-FAILED'
+              }
+            }
+
+            const conversionFailed = {
+              status: {
+                message: 'CACLI-CONVERSION-FAILED'
               }
             }
 
@@ -107,7 +119,13 @@ module.exports.wml = sinon => {
             fn(JSON.stringify(real4))
             fn(JSON.stringify(real5))
             fn(JSON.stringify(real6))
+            if (modelId === 'training-failed') {
+              fn(JSON.stringify(trainingFailed))
+            }
             fn(JSON.stringify(real7))
+            if (modelId === 'conversion-failed') {
+              fn(JSON.stringify(conversionFailed))
+            }
           }
           if (key === 'open') {
             fn()
@@ -136,6 +154,12 @@ module.exports.wml = sinon => {
       }
       if (modelId === 'model-pending') {
         return resolve(getModelPending)
+      }
+      if (modelId === 'training-failed') {
+        return resolve(getModelRunning)
+      }
+      if (modelId === 'conversion-failed') {
+        return resolve(getModelRunning)
       }
       return resolve(getModelRunning)
     })

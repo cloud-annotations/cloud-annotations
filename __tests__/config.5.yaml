@@ -1,0 +1,6 @@
+name: fake
+buckets:
+  training: fake
+  output: fake
+trainingParams:
+  steps: '500'

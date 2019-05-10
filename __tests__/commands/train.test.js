@@ -4,6 +4,7 @@ const fse = require('fs-extra')
 const stdin = require('mock-stdin').stdin
 const train = require('./../../src/commands/train')
 const wait = require('./../wait')
+const { fill } = require('./../mockCredentials')
 
 describe('train', () => {
   const keys = { enter: '\x0D' }
@@ -17,6 +18,7 @@ describe('train', () => {
   })
 
   it('trains', async () => {
+    fill()
     const promise = train(['--config', '__tests__/config.yaml'])
     // Need to wait twice for some reason...
     await wait()
@@ -27,6 +29,7 @@ describe('train', () => {
   })
 
   it('trains with a zip', async () => {
+    fill()
     const promise = train([
       '__tests__/fake.zip',
       '--config',
@@ -40,6 +43,7 @@ describe('train', () => {
   })
 
   it('watches progress', async () => {
+    fill()
     const promise = train(['--config', '__tests__/config.yaml'])
     // Need to wait twice for some reason...
     await wait()
