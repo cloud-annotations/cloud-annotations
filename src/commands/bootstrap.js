@@ -1,11 +1,10 @@
-const { green, red } = require('chalk')
+const { green } = require('chalk')
 const loadCredentials = require('./../utils/loadCredentials')
 const COS = require('ibm-cos-sdk')
 const optionsParse = require('./../utils/optionsParse')
 const cosEndpointBuilder = require('./../utils/cosEndpointBuilder')
-const cosHandleErrors = require('./../utils/cosHandleErrors')
-const Spinner = require('./../utils/spinner')
 const input = require('./../utils/input')
+const Spinner = require('./../utils/spinner')
 const path = require('path')
 const klawSync = require('klaw-sync')
 const fs = require('fs-extra')
@@ -37,23 +36,6 @@ const uploadBucket = async (cos, bucket, dir) => {
   await Promise.all(promises)
 }
 
-async function listBuckets({ region, access_key_id, secret_access_key }) {
-  const config = {
-    endpoint: cosEndpointBuilder(region, true),
-    accessKeyId: access_key_id,
-    secretAccessKey: secret_access_key
-  }
-  const cos = new COS.S3(config)
-  return await cos
-    .listBuckets()
-    .promise()
-    .then(data =>
-      data.Buckets.map(bucket => {
-        return bucket.Name
-      })
-    )
-}
-
 module.exports = async options => {
   // Parse help options.
   const parser = optionsParse()
@@ -76,21 +58,9 @@ module.exports = async options => {
 
   const config = await loadCredentials()
 
-  const spinner = new Spinner()
-  spinner.setMessage('Authenticating...')
-  spinner.start()
-
-  try {
-    await listBuckets(config.credentials.cos)
-    spinner.stop()
-  } catch (e) {
-    spinner.stop()
-    cosHandleErrors(e, red('error'))
-    return process.exit(1)
-  }
-
   const bucket = await input('Name for your new bucket: ')
 
+  const spinner = new Spinner()
   spinner.setMessage(`Creating ${bucket}...`)
   spinner.start()
   const { region, access_key_id, secret_access_key } = config.credentials.cos

@@ -2,7 +2,7 @@ const assert = require('assert').strict
 const stdin = require('mock-stdin').stdin
 const rewire = require('rewire')
 const sinon = require('sinon')
-const picker = rewire('./../../src/utils/picker')
+const picker = require('./../../src/utils/picker')
 const wait = require('./../wait')
 const { cursorShow } = require('ansi-escapes')
 
@@ -112,6 +112,7 @@ describe('picker', () => {
   })
 
   it('safe exit', done => {
+    const picker = rewire('./../../src/utils/picker')
     const handleExit = picker.__get__('handleExit')
     const stub = sinon.stub(console, 'log')
     picker(prompt, longList)
