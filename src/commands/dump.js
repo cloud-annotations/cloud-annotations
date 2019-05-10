@@ -98,7 +98,6 @@ module.exports = async options => {
     return process.exit(1)
   }
 
-  console.log(buckets)
   if (buckets.length === 0) {
     console.error(`${red('error')} No buckets available.`)
     return process.exit(1)

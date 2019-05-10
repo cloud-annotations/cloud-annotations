@@ -4,6 +4,7 @@ const rewire = require('rewire')
 const sinon = require('sinon')
 const picker = rewire('./../../src/utils/picker')
 const wait = require('./../wait')
+const { cursorShow } = require('ansi-escapes')
 
 describe('picker', () => {
   const prompt = 'pick an item: '
@@ -112,15 +113,12 @@ describe('picker', () => {
 
   it('safe exit', done => {
     const handleExit = picker.__get__('handleExit')
-    const exitSpy = sinon.spy(handleExit)
-    picker.__set__('handleExit', exitSpy)
+    const stub = sinon.stub(console, 'log')
     picker(prompt, longList)
 
-    process.once('SIGTERM', () => {
-      assert.equal(exitSpy.called, true)
-      done()
-    })
+    handleExit()
 
-    process.kill(process.pid, 'SIGTERM')
+    assert.equal(stub.calledWith(cursorShow), true)
+    done()
   })
 })
