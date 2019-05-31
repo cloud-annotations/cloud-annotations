@@ -44,7 +44,7 @@ module.exports = (region, local) => {
     hkg02: 'hkg02'
   }
 
-  region = compatMap[region]
+  const compatRegion = compatMap[region] || region
 
   let private
   if (local) {
@@ -52,5 +52,6 @@ module.exports = (region, local) => {
   } else {
     private = 'private.'
   }
-  return `https://s3.${private}${region}.cloud-object-storage.appdomain.cloud`
+
+  return `https://s3.${private}${compatRegion}.cloud-object-storage.appdomain.cloud`
 }
