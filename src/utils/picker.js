@@ -4,7 +4,7 @@ const MuteStream = require('mute-stream')
 const { eraseLines, cursorHide, cursorShow } = require('ansi-escapes')
 
 const renderItems = (items, delegate, index) => {
-  let pointer = (delegate.windowSize - 1) / 2
+  let pointer = Math.ceil((delegate.windowSize - 1) / 2)
   if (index < pointer) {
     for (let i = 0; i < delegate.windowSize; i++) {
       process.stdout.write(delegate.renderItem(items[i], i === index))
