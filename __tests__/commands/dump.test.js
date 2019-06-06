@@ -63,6 +63,7 @@ describe('dump', () => {
     }
 
     sinon.stub(fs, 'outputFile')
+    sinon.stub(fs, 'writeFileSync')
     const stub = sinon.stub(fs, 'readFileSync')
     stub
       .withArgs('exported_buckets/bucket/_annotations.json', 'utf8')
@@ -93,6 +94,7 @@ describe('dump', () => {
     }
 
     sinon.stub(fs, 'outputFile')
+    sinon.stub(fs, 'writeFileSync')
     const stub = sinon.stub(fs, 'readFileSync')
     stub
       .withArgs('exported_buckets/bucket/_annotations.json', 'utf8')

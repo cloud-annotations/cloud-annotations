@@ -93,7 +93,7 @@ module.exports = async options => {
     return process.exit()
   }
 
-  const config = await loadCredentials()
+  const config = await loadCredentials(true)
 
   const spinner = new Spinner()
   spinner.setMessage('Authenticating...')
