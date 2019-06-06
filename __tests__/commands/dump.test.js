@@ -82,6 +82,36 @@ describe('dump', () => {
     await promise
   })
 
+  it('exports create ml classification', async () => {
+    const obj = {
+      version: '1.0',
+      type: 'classification',
+      labels: ['Mountain Dew', 'Coke', 'Pepsi'],
+      annotations: {
+        'fake.jpg': ['Pepsi']
+      }
+    }
+
+    sinon.stub(fs, 'outputFile')
+    const stub = sinon.stub(fs, 'readFileSync')
+    stub
+      .withArgs('exported_buckets/bucket/_annotations.json', 'utf8')
+      .returns(JSON.stringify(obj))
+    stub.callThrough()
+
+    const sizeStub = sinon.stub().returns({ width: 50, height: 50 })
+    const dump = proxyquire('./../../src/commands/dump', {
+      'image-size': sizeStub
+    })
+
+    fill()
+    const promise = dump(['--config', '__tests__/config.yaml', '--create-ml'])
+    await wait()
+    await wait()
+    io.send(keys.enter)
+    await promise
+  })
+
   it('fails with no buckets', async () => {
     const dump = rewire('./../../src/commands/dump')
     sinon.stub(process, 'exit')
