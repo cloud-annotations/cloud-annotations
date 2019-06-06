@@ -1506,6 +1506,11 @@ ignore@^3.3.3:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.10.tgz#0a97fb876986e8081c631160f8f9f389157f0043"
   integrity sha512-Pgs951kaMm5GXP7MOvxERINe3gsaVjUWFm+UZPSq9xYriQAksyhg0csnS0KXSNRD5NmNdapXEpjxG49+AKh/ug==
 
+image-size@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.7.4.tgz#092c1e541a93511917bfc957a1fc7add21c72e87"
+  integrity sha512-GqPgxs+VkOr12aWwjSkyRzf5atzObWpFtiRuDgxCl2I/SDpZOKZFRD3iIAeAN6/usmn8SeLWRt7a8JRYK0Whbw==
+
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
