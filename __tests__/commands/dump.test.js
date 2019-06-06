@@ -2,6 +2,7 @@ const assert = require('assert').strict
 const sinon = require('sinon')
 const stdin = require('mock-stdin').stdin
 const fs = require('fs-extra')
+const proxyquire = require('proxyquire')
 const rewire = require('rewire')
 const dump = require('./../../src/commands/dump')
 const wait = require('./../wait')
@@ -41,6 +42,44 @@ describe('dump', () => {
       fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/object/')
     )
     assert(fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/dir/'))
+  })
+
+  it('exports create ml', async () => {
+    const obj = {
+      version: '1.0',
+      type: 'localization',
+      labels: ['Mountain Dew', 'Coke', 'Pepsi'],
+      annotations: {
+        'fake.jpg': [
+          {
+            x: 0.7255949630314233,
+            x2: 0.9695875693160814,
+            y: 0.5820120073891626,
+            y2: 1,
+            label: 'Pepsi'
+          }
+        ]
+      }
+    }
+
+    sinon.stub(fs, 'outputFile')
+    const stub = sinon.stub(fs, 'readFileSync')
+    stub
+      .withArgs('exported_buckets/bucket/_annotations.json', 'utf8')
+      .returns(JSON.stringify(obj))
+    stub.callThrough()
+
+    const sizeStub = sinon.stub().returns({ width: 50, height: 50 })
+    const dump = proxyquire('./../../src/commands/dump', {
+      'image-size': sizeStub
+    })
+
+    fill()
+    const promise = dump(['--config', '__tests__/config.yaml', '--create-ml'])
+    await wait()
+    await wait()
+    io.send(keys.enter)
+    await promise
   })
 
   it('fails with no buckets', async () => {
