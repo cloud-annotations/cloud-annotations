@@ -49,11 +49,6 @@ const opWeight = op => {
 
 const getName = flag => {
   var f = flag.sort((a, b) => opWeight(a) > opWeight(b))[0]
-  if (f.startsWith('-')) {
-    f = f.replace('-', '')
-  }
-  if (f.startsWith('-')) {
-    f = f.replace('-', '')
-  }
+  f = f.replace(/-/g, '')
   return f
 }

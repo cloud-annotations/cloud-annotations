@@ -8,15 +8,25 @@ const Spinner = require('./../utils/spinner')
 const picker = require('./../utils/picker')
 const fs = require('fs-extra')
 
-// TODO: Account for buckets with more than 1000 files.
-const downloadBucket = async (cos, bucket, path) => {
-  const files = await cos
-    .listObjectsV2({ Bucket: bucket })
+const fileList = async (cos, bucket, continuationToken, list = []) => {
+  const currentList = await cos
+    .listObjectsV2({ Bucket: bucket, ContinuationToken: continuationToken })
     .promise()
-    .then(data =>
-      data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
-    )
 
+  const files = [
+    ...list,
+    ...currentList.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
+  ]
+
+  if (currentList.NextContinuationToken) {
+    return fileList(cos, bucket, currentList.NextContinuationToken, files)
+  } else {
+    return files
+  }
+}
+
+const downloadBucket = async (cos, bucket, path) => {
+  const files = await fileList(cos, bucket)
   const promises = files.map(file => {
     const outputPath = `./${path}/${bucket}/${file}`
     return cos
@@ -73,6 +83,7 @@ module.exports = async options => {
   // Parse help options.
   const parser = optionsParse()
   parser.add(['--config', '-c'])
+  parser.add([true, '--create-ml'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -132,6 +143,48 @@ module.exports = async options => {
   }
   const cos = new COS.S3(cosConfig)
   await downloadBucket(cos, bucket, 'exported_buckets')
+
+  if (ops.createml) {
+    const sizeOf = require('image-size')
+    const obj = JSON.parse(
+      fs.readFileSync(`exported_buckets/${bucket}/_annotations.json`, 'utf8')
+    )
+    if (obj.type === 'localization') {
+      const newAnnotations = Object.keys(obj.annotations).map(image => {
+        const dimensions = sizeOf(`exported_buckets/${bucket}/${image}`)
+        const annotations = obj.annotations[image].map(annotation => {
+          const relWidth = annotation.x2 - annotation.x
+          const relHeight = annotation.y2 - annotation.y
+          const midX = (annotation.x + relWidth / 2) * dimensions.width
+          const midY = (annotation.y + relHeight / 2) * dimensions.height
+          const width = relWidth * dimensions.width
+          const height = relHeight * dimensions.height
+          return {
+            label: annotation.label,
+            coordinates: {
+              x: Math.round(midX),
+              y: Math.round(midY),
+              width: Math.round(width),
+              height: Math.round(height)
+            }
+          }
+        })
+        return {
+          image: image,
+          annotations: annotations
+        }
+      })
+
+      fs.writeFileSync(
+        `exported_buckets/${bucket}/annotations.json`,
+        JSON.stringify(newAnnotations),
+        'utf8'
+      )
+
+      fs.removeSync(`exported_buckets/${bucket}/_annotations.json`)
+    }
+  }
+
   spinner.stop()
   console.log(`${green('success')} Export complete.`)
 }

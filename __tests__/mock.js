@@ -254,15 +254,16 @@ module.exports.cos = sinon => {
       listObjectsV2: options => ({
         promise: () =>
           new Promise((resolve, _) => {
-            // { Bucket: bucket, Prefix: `${prefix}/${path}` }
-            // { Bucket: bucket }
+            const nextToken =
+              options.ContinuationToken === undefined ? 'x' : null
             resolve({
               Contents: [
                 { Key: 'dir/object.jpg' },
                 { Key: 'dir/dir/' },
                 { Key: 'dir/object/' },
                 { Key: 'dir/object/object2.jpg' }
-              ]
+              ],
+              NextContinuationToken: nextToken
             })
           })
       }),

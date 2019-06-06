@@ -5,7 +5,7 @@
     "node": ">=10.0.0",
     "npm": ">=6.0.0"
   },
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
     "mocha": "^6.0.2",
     "mock-stdin": "^0.3.1",
     "nyc": "^13.3.0",
+    "proxyquire": "^2.1.0",
     "rewire": "^4.0.1",
     "sinon": "^7.3.1"
   },
@@ -38,6 +39,7 @@
     "chalk": "^2.4.2",
     "fs-extra": "^7.0.1",
     "ibm-cos-sdk": "^1.4.4",
+    "image-size": "^0.7.4",
     "js-yaml": "^3.12.2",
     "klaw-sync": "^6.0.0",
     "moment": "^2.24.0",
