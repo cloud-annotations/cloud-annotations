@@ -18,8 +18,8 @@ const fileList = async (cos, bucket, continuationToken, list = []) => {
     ...currentList.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
   ]
 
-  if (currentList.ContinuationToken) {
-    return fileList(cos, bucket, currentList.ContinuationToken, files)
+  if (currentList.NextContinuationToken) {
+    return fileList(cos, bucket, currentList.NextContinuationToken, files)
   } else {
     return files
   }
