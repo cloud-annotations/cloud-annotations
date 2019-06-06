@@ -3,11 +3,13 @@ const CredentialsBuilder = require('./../utils/credentialsBuilder')
 const { authCOS, authWML } = require('./../commands/login')
 const login = require('./../commands/login')
 
-module.exports = async () => {
+module.exports = async onlyCOS => {
   try {
     const credentials = new CredentialsBuilder({})
     await authCOS(credentials)
-    await authWML(credentials)
+    if (!onlyCOS) {
+      await authWML(credentials)
+    }
     return {
       credentials: credentials.credentials
     }
@@ -15,7 +17,7 @@ module.exports = async () => {
     console.log(dim('(Invalid credentials, running log in)'))
     console.log()
     return {
-      credentials: await login(null, true)
+      credentials: await login(null, true, onlyCOS)
     }
   }
 }

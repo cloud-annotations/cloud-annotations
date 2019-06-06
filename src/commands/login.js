@@ -17,7 +17,7 @@ async function authenticate({ region, access_key_id, secret_access_key }) {
   return await cos.listBuckets().promise()
 }
 
-const DEFAULT_REGION = 'us-geo'
+const DEFAULT_REGION = 'us'
 
 const wmlLogin = async (credentials, force) => {
   // Watson Machine Learning Credentials
@@ -94,10 +94,12 @@ const cosLogin = async (credentials, force) => {
   }
 }
 
-module.exports = async (_, force) => {
+module.exports = async (_, force, onlyCOS) => {
   const credentials = new CredentialsBuilder({})
 
-  await wmlLogin(credentials, force)
+  if (!onlyCOS) {
+    await wmlLogin(credentials, force)
+  }
   await cosLogin(credentials, force)
 
   credentials.outputFile()

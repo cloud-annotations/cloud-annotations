@@ -53,6 +53,26 @@ describe('loadCredentials', () => {
     return promise
   })
 
+  it('asks questions when no credentials', async () => {
+    const promise = loadCredentials(true)
+
+    const keys = { enter: '\x0D' }
+
+    await wait()
+    await wait()
+    io.send('access_key_id')
+    io.send(keys.enter)
+
+    await wait()
+    io.send('secret_access_key')
+    io.send(keys.enter)
+
+    await wait()
+    io.send(keys.enter)
+
+    return promise
+  })
+
   it('re-asks when wrong credentials entered', async () => {
     const promise = loadCredentials()
 
