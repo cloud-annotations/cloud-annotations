@@ -106,7 +106,7 @@ class WML {
     const steps = safeGet(() => this._trainingParams.steps) || DEFAULT_STEPS
     const gpu = safeGet(() => this._trainingParams.gpu) || DEFAULT_GPU
     // Try to find the start command (could be `start.sh` or `zipname/start.sh`)
-    const command = `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && ./start.sh ${steps}`
+    const command = `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && chmod 777 ./start.sh && ./start.sh ${steps}`
     const connection = {
       endpoint_url: cosEndpointBuilder(this._cos.region, false),
       access_key_id: this._cos.access_key_id,
