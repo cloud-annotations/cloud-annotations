@@ -89,7 +89,8 @@ module.exports = async options => {
 
   // If help was an option, print usage and exit.
   if (ops.help) {
-    console.log('cacli export')
+    console.log('cacli export                  Export complete Bucket')
+    console.log('cacli export --create-ml      Export annotations for Apples Create ML')
     return process.exit()
   }
 

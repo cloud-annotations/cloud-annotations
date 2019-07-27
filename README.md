@@ -40,6 +40,7 @@ where <command> is one of:
   progress     Monitor the progress of a training run
   list         List all training runs
   download     Download a trained model
+  export       Export files from Bucket
 
 cacli <cmd> -h     quick help on <cmd>
 ```
