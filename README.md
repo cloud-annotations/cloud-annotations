@@ -28,7 +28,7 @@ If something doesn’t work, please [file an issue](https://github.com/cloud-ann
 $ cacli
 ┌─────────────────────────────┐
 │ (C)loud (A)nnotations (CLI) │
-│ version 1.1.0               │
+│ version 1.1.5               │
 └─────────────────────────────┘
 
 Usage: cacli <command>
