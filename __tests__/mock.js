@@ -13,9 +13,7 @@ const postTrainingDefinition = require('./fixtures/training-definition.json')
 const putTrainingDefinition = require('./fixtures/put-training-definition.json')
 const postModel = require('./fixtures/post-model.json')
 
-const validUsername = 'username'
-const validPassword = 'password'
-const validUrl = 'url'
+const validApiKey = 'api_key'
 const validAccessKeyId = 'access_key_id'
 const validSecretAccessKey = 'secret_access_key'
 const validRegion = 'us'
@@ -24,20 +22,16 @@ const invalidBucket = 'out-of-region'
 const randomError = 'random-error'
 
 module.exports.wml = sinon => {
-  sinon.stub(api, 'authenticate').callsFake((url, username, password) => {
+  sinon.stub(api, 'authenticate').callsFake(apiKey => {
     return new Promise((resolve, _) => {
-      if (
-        url !== validUrl ||
-        username !== validUsername ||
-        password !== validPassword
-      ) {
+      if (apiKey !== validApiKey) {
         throw Error(badAuth)
       }
       resolve(goodAuth)
     })
   })
 
-  sinon.stub(api, 'socket').callsFake((url, token, modelId) => {
+  sinon.stub(api, 'socket').callsFake((url, token, instanceId, modelId) => {
     return new Promise((resolve, _) => {
       resolve({
         on: (key, fn) => {
@@ -138,7 +132,7 @@ module.exports.wml = sinon => {
     })
   })
 
-  sinon.stub(api, 'getModel').callsFake((url, token, modelId) => {
+  sinon.stub(api, 'getModel').callsFake((url, token, instanceId, modelId) => {
     return new Promise((resolve, _) => {
       if (modelId === 'model-completed') {
         return resolve(getModel)
@@ -165,21 +159,23 @@ module.exports.wml = sinon => {
     })
   })
 
-  sinon.stub(api, 'getModels').callsFake((url, token) => {
+  sinon.stub(api, 'getModels').callsFake((url, token, instanceId) => {
     return new Promise((resolve, _) => {
       resolve(getModels)
     })
   })
 
-  sinon.stub(api, 'postModel').callsFake((url, token, trainingRun) => {
-    return new Promise((resolve, _) => {
-      resolve(postModel)
+  sinon
+    .stub(api, 'postModel')
+    .callsFake((url, token, instanceId, trainingRun) => {
+      return new Promise((resolve, _) => {
+        resolve(postModel)
+      })
     })
-  })
 
   sinon
     .stub(api, 'postTrainingDefinition')
-    .callsFake((url, token, trainingDefinition) => {
+    .callsFake((url, token, instanceId, trainingDefinition) => {
       return new Promise((resolve, _) => {
         resolve(postTrainingDefinition)
       })
@@ -187,7 +183,7 @@ module.exports.wml = sinon => {
 
   sinon
     .stub(api, 'putTrainingDefinition')
-    .callsFake((url, token, trainingZip) => {
+    .callsFake((url, token, instanceId, trainingZip) => {
       return new Promise((resolve, _) => {
         resolve(putTrainingDefinition)
       })

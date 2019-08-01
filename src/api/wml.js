@@ -22,13 +22,13 @@ const DEFAULT_TRAINING_DEFINITION = {
 
 class WML {
   constructor(config) {
-    const { url, username, password } = config.credentials.wml
-    const { cos } = config.credentials
+    const { cos, wml } = config.credentials
+    const { url, instance_id, api_key } = wml
     const { name, buckets, trainingParams } = config
     this._token = undefined
     this._url = url
-    this._username = username
-    this._password = password
+    this._instanceId = instance_id
+    this._apiKey = api_key
     this._name = name
     this._buckets = buckets
     this._trainingParams = trainingParams
@@ -37,11 +37,7 @@ class WML {
 
   async authenticate() {
     if (!this._token) {
-      this._token = await api.authenticate(
-        this._url,
-        this._username,
-        this._password
-      )
+      this._token = await api.authenticate(this._apiKey)
     }
   }
 
@@ -54,17 +50,17 @@ class WML {
 
   async createMonitorSocket(modelId) {
     await this.authenticate()
-    return api.socket(this._url, this._token, modelId)
+    return api.socket(this._url, this._token, this._instanceId, modelId)
   }
 
   async getTrainingRun(modelId) {
     await this.authenticate()
-    return api.getModel(this._url, this._token, modelId)
+    return api.getModel(this._url, this._token, this._instanceId, modelId)
   }
 
   async listTrainingRuns() {
     await this.authenticate()
-    return api.getModels(this._url, this._token)
+    return api.getModels(this._url, this._token, this._instanceId)
   }
 
   async createTrainingDefinition() {
@@ -77,6 +73,7 @@ class WML {
     return api.postTrainingDefinition(
       this._url,
       this._token,
+      this._instanceId,
       trainingDefinition
     )
   }
@@ -96,6 +93,7 @@ class WML {
     return api.putTrainingDefinition(
       trainingDefinition.entity.training_definition_version.content_url,
       this._token,
+      this._instanceId,
       trainingZip
     )
   }
@@ -137,7 +135,7 @@ class WML {
         type: 's3'
       }
     }
-    return api.postModel(this._url, this._token, trainingRun)
+    return api.postModel(this._url, this._token, this._instanceId, trainingRun)
   }
 }
 

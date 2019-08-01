@@ -7,8 +7,7 @@ const wait = require('./../wait')
 
 const allBlank = {
   instance_id: '',
-  username: '',
-  password: '',
+  api_key: '',
   url: '',
   access_key_id: '',
   secret_access_key: '',
@@ -21,8 +20,7 @@ const allBlank = {
 
 const credentials = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'secret_access_key',
@@ -38,8 +36,7 @@ const credentials = {
 
 const overrides = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'secret_access_key',
@@ -54,8 +51,7 @@ const overrides = {
 
 const invalidAccessKeyId = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'fake',
   secret_access_key: 'secret_access_key',
@@ -68,8 +64,7 @@ const invalidAccessKeyId = {
 
 const signatureDoesNotMatch = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'fake',
@@ -82,8 +77,7 @@ const signatureDoesNotMatch = {
 
 const unknownEndpoint = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'secret_access_key',
@@ -96,8 +90,7 @@ const unknownEndpoint = {
 
 const unknownError = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'secret_access_key',
@@ -110,8 +103,7 @@ const unknownError = {
 
 const invalidRegion = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'secret_access_key',
@@ -127,8 +119,7 @@ const invalidRegion = {
 
 const noBuckets = {
   instance_id: '',
-  username: 'username',
-  password: 'password',
+  api_key: 'api_key',
   url: 'url',
   access_key_id: 'access_key_id',
   secret_access_key: 'secret_access_key',
@@ -141,8 +132,7 @@ const noBuckets = {
 
 const skippedSteps = {
   instance_id: '',
-  username: '',
-  password: '',
+  api_key: '',
   url: '',
   access_key_id: '',
   secret_access_key: '',
@@ -355,11 +345,7 @@ describe('init', () => {
     io.send(keys.enter)
 
     await wait()
-    io.send(run.username)
-    io.send(keys.enter)
-
-    await wait()
-    io.send(run.password)
+    io.send(run.api_key)
     io.send(keys.enter)
 
     await wait()

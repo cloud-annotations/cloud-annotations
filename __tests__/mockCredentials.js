@@ -9,8 +9,7 @@ module.exports.CREDENTIAL_PATH = CREDENTIAL_PATH
 module.exports.fill = () => {
   const file = `[default]
 instance_id: 
-username: username
-password: password
+api_key: api_key
 url: url
 access_key_id: access_key_id
 secret_access_key: secret_access_key

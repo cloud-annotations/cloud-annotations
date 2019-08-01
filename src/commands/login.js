@@ -25,11 +25,8 @@ const wmlLogin = async (credentials, force) => {
   const instance_id = credentials.instanceId()
   credentials.setInstanceId(await input('instance_id: ', instance_id))
 
-  const username = credentials.username()
-  credentials.setUsername(await input('username: ', username))
-
-  const password = credentials.password()
-  credentials.setPassword(await input('password: ', password))
+  const api_key = credentials.apiKey()
+  credentials.setApiKey(await input('api_key: ', api_key))
 
   const url = credentials.url()
   credentials.setUrl(await input('url: ', url))
