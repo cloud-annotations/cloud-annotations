@@ -25,8 +25,7 @@ module.exports = class CredentialsBuilder {
       this.credentials = {
         wml: {
           instance_id: getItem(file, this.profile, 'instance_id'),
-          username: getItem(file, this.profile, 'username'),
-          password: getItem(file, this.profile, 'password'),
+          api_key: getItem(file, this.profile, 'api_key'),
           url: getItem(file, this.profile, 'url')
         },
         cos: {
@@ -39,8 +38,7 @@ module.exports = class CredentialsBuilder {
       this.credentials = {
         wml: {
           instance_id: '',
-          username: '',
-          password: '',
+          api_key: '',
           url: ''
         },
         cos: {
@@ -56,12 +54,8 @@ module.exports = class CredentialsBuilder {
     return safeGet(() => this.credentials.wml.instance_id)
   }
 
-  username() {
-    return safeGet(() => this.credentials.wml.username)
-  }
-
-  password() {
-    return safeGet(() => this.credentials.wml.password)
+  apiKey() {
+    return safeGet(() => this.credentials.wml.api_key)
   }
 
   url() {
@@ -84,12 +78,8 @@ module.exports = class CredentialsBuilder {
     this.credentials.wml.instance_id = value
   }
 
-  setUsername(value) {
-    this.credentials.wml.username = value
-  }
-
-  setPassword(value) {
-    this.credentials.wml.password = value
+  setApiKey(value) {
+    this.credentials.wml.api_key = value
   }
 
   setUrl(value) {
@@ -111,8 +101,7 @@ module.exports = class CredentialsBuilder {
   outputFile() {
     const file = `[${this.profile}]
 instance_id: ${this.credentials.wml.instance_id}
-username: ${this.credentials.wml.username}
-password: ${this.credentials.wml.password}
+api_key: ${this.credentials.wml.api_key}
 url: ${this.credentials.wml.url}
 access_key_id: ${this.credentials.cos.access_key_id}
 secret_access_key: ${this.credentials.cos.secret_access_key}
