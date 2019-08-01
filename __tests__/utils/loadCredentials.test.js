@@ -28,11 +28,7 @@ describe('loadCredentials', () => {
     io.send(keys.enter)
 
     await wait()
-    io.send('username')
-    io.send(keys.enter)
-
-    await wait()
-    io.send('password')
+    io.send('api_key')
     io.send(keys.enter)
 
     await wait()
@@ -84,11 +80,7 @@ describe('loadCredentials', () => {
     io.send(keys.enter)
 
     await wait()
-    io.send('x_username')
-    io.send(keys.enter)
-
-    await wait()
-    io.send('x_password')
+    io.send('x_api_key')
     io.send(keys.enter)
 
     await wait()
@@ -100,11 +92,7 @@ describe('loadCredentials', () => {
     io.send(keys.enter)
 
     await wait()
-    io.send('username')
-    io.send(keys.enter)
-
-    await wait()
-    io.send('password')
+    io.send('api_key')
     io.send(keys.enter)
 
     await wait()

@@ -7,8 +7,7 @@ describe('train validateConfig', () => {
     credentials: {
       wml: {
         instance_id: '',
-        username: 'username',
-        password: 'password',
+        api_key: 'api_key',
         url: 'url'
       },
       cos: {
@@ -27,7 +26,6 @@ describe('train validateConfig', () => {
       wml: {
         instance_id: '',
         username: '',
-        password: '',
         url: ''
       },
       cos: {
@@ -44,8 +42,7 @@ describe('train validateConfig', () => {
     credentials: {
       wml: {
         instance_id: '',
-        username: 'username',
-        password: 'password',
+        api_key: 'api_key',
         url: 'url'
       },
       cos: {
