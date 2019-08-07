@@ -42,11 +42,29 @@ const downloadBucket = async (cos, bucket, path) => {
 
 const downloadAnnotations = async (cos, bucket, path) => {
   const files = await fileList(cos, bucket)
-  const filter = ['*.jpg','annotations.json']
   const promises = files.filter(file=>{
     //filter for jpegs and annotation.json
     return (/\.(jpe?g)$|_annotation.json/gim.test(file))
   }).map(file => {
+    const outputPath = `./${path}/${bucket}/${file}`
+    return cos
+      .getObject({
+        Bucket: bucket,
+        Key: file
+      })
+      .promise()
+      .then(data => fs.outputFile(outputPath, data.Body))
+  })
+  await Promise.all(promises)
+}
+
+const downloadGraph = async (cos, bucket, path) => {
+  const files = await fileList(cos, bucket)
+  const promises = files.filter(file=>{
+    //filter files
+    return(/(frozen_inference_graph.pb|label_map.pbtxt|training-output.json)$/gim.test(file))
+  }).map(file => {
+    
     const outputPath = `./${path}/${bucket}/${file}`
     return cos
       .getObject({
@@ -104,6 +122,7 @@ module.exports = async options => {
   parser.add(['--config', '-c'])
   parser.add([true, '--create-ml'])
   parser.add([true,'--annotations'])
+  parser.add([true,'--graph'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -112,6 +131,7 @@ module.exports = async options => {
     console.log('cacli export                  Export complete Bucket')
     console.log('cacli export --create-ml      Export annotations for Apples Create ML')
     console.log('cacli export --annotations    Export only annotations and pictures')
+    console.log('cacli export --graph          Export frozen_inference_graph.pb and label_map.pbtxt')
     return process.exit()
   }
 
@@ -181,6 +201,23 @@ module.exports = async options => {
       console.log(`${red('Error')} no annotations.json found`)
     }
 
+    return
+  }
+
+  if (ops.graph){
+    //only download pictures and annotations
+    spinner.message = `Exporting graphs from ${bucket}...`
+    await downloadGraph(cos, bucket, 'exported_buckets')
+    fs.readdirSync(`exported_buckets/${bucket}`).filter(folder =>{
+      return (/model-*/gim.test(folder))
+    }).map(model=>{
+      const training = JSON.parse(
+        fs.readFileSync(`exported_buckets/${bucket}/${model}/training-output.json`, 'utf8')
+      ).training_output
+      fs.moveSync(`exported_buckets/${bucket}/${training}`,`exported_buckets/${bucket}/${model}`)
+    })
+
+    spinner.stop()
     return
   }
 
