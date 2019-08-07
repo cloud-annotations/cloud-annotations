@@ -43,6 +43,46 @@ const downloadDir = async (cos, bucket, prefix, path) => {
   await Promise.all(promises)
 }
 
+const downloadModel = async (cos, bucket, prefix) => {
+  //add model files
+  const model = await cos
+    .listObjectsV2({ Bucket: bucket, Prefix: `${prefix}/model/` })
+    .promise()
+    .then(data =>
+      data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
+    )
+
+  const promises = model.map(file => {
+    const outputPath = './' + file.replace(`${prefix}/`, '')
+    return cos
+      .getObject({
+        Bucket: bucket,
+        Key: file
+      })
+      .promise()
+      .then(data => fs.outputFile(outputPath, data.Body))
+  })
+  //add files in data directory
+  const data = await cos
+    .listObjectsV2({ Bucket: bucket, Prefix: `${prefix}/data` })
+    .promise()
+    .then(data =>
+      data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
+    )
+
+  promises.push(...data.map(file => {
+    const outputPath = './model/' + file.replace(`${prefix}/`, '')
+    return cos
+      .getObject({
+        Bucket: bucket,
+        Key: file
+      })
+      .promise()
+      .then(data => fs.outputFile(outputPath, data.Body))
+  }))
+  await Promise.all(promises)
+}
+
 module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
@@ -116,7 +156,7 @@ module.exports = async options => {
   if (ops.web|| defaults)
     downloads.push(downloadDir(cos, bucket, model_location, 'model_web'))
   if (ops.graph|| defaults)
-    await downloadModel(cos, bucket, model_location, 'model')
+    await downloadModel(cos, bucket, model_location)
   await Promise.all(downloads)
 
 
