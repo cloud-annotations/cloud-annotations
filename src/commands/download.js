@@ -47,14 +47,22 @@ module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
   parser.add(['--config', '-c'])
+  parser.add([true, '--ios'])
+  parser.add([true,'--android'])
+  parser.add([true,'--web'])
+  parser.add([true,'--graph'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   if (ops.help) {
-    console.log('cacli download <model_id>')
+    console.log('cacli download <model_id>              Download all Models')
+    console.log('cacli download <model_id> --android')
+    console.log('cacli download <model_id> --ios')
+    console.log('cacli download <model_id> --web')
+    console.log('cacli download <model_id> --graph')
     return process.exit()
   }
-
+  console.log(ops)
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli download <model_id>')
@@ -96,10 +104,22 @@ module.exports = async options => {
     secretAccessKey: secret_access_key
   }
   const cos = new COS.S3(cosConfig)
+  
+  let downloads = []
+  let defaults = ops.length > 1 ? false : true 
 
-  await downloadDir(cos, bucket, model_location, 'model_ios')
-  await downloadDir(cos, bucket, model_location, 'model_web')
-  await downloadDir(cos, bucket, model_location, 'model_android')
+  
+  if(ops.ios || defaults)
+    downloads.push(downloadDir(cos, bucket, model_location, 'model_ios'))
+  if (ops.android|| defaults)
+    downloads.push(downloadDir(cos, bucket, model_location, 'model_android'))
+  if (ops.web|| defaults)
+    downloads.push(downloadDir(cos, bucket, model_location, 'model_web'))
+  if (ops.graph|| defaults)
+    await downloadModel(cos, bucket, model_location, 'model')
+  await Promise.all(downloads)
+
+
 
   spinner.stop()
   console.log(`${green('success')} Download complete.`)
