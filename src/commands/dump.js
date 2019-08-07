@@ -131,7 +131,7 @@ module.exports = async options => {
     console.log('cacli export                  Export complete Bucket')
     console.log('cacli export --create-ml      Export annotations for Apples Create ML')
     console.log('cacli export --annotations    Export only annotations and pictures')
-    console.log('cacli export --graph          Export frozen_inference_graph.pb and label_map.pbtxt')
+    console.log('cacli export --graph          Export frozen_inference_graph.pb')
     return process.exit()
   }
 
