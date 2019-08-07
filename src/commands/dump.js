@@ -62,7 +62,7 @@ const downloadGraph = async (cos, bucket, path) => {
   const files = await fileList(cos, bucket)
   const promises = files.filter(file=>{
     //filter files
-    return(/(frozen_inference_graph.pb|label_map.pbtxt|training-output.json)$/gim.test(file))
+    return(/(frozen_inference_graph.pb|label_map.pbtxt|training-output.json|training-log.txt)$/gim.test(file))
   }).map(file => {
     
     const outputPath = `./${path}/${bucket}/${file}`
@@ -207,17 +207,26 @@ module.exports = async options => {
   if (ops.graph){
     //only download pictures and annotations
     spinner.message = `Exporting graphs from ${bucket}...`
+
     await downloadGraph(cos, bucket, 'exported_buckets')
-    fs.readdirSync(`exported_buckets/${bucket}`).filter(folder =>{
-      return (/model-*/gim.test(folder))
-    }).map(model=>{
-      const training = JSON.parse(
-        fs.readFileSync(`exported_buckets/${bucket}/${model}/training-output.json`, 'utf8')
-      ).training_output
-      fs.moveSync(`exported_buckets/${bucket}/${training}`,`exported_buckets/${bucket}/${model}`)
-    })
+    //move files from training dir to model dir do identify the trained model
+    if(fs.existsSync(`exported_buckets/${bucket}`)){
+      fs.readdirSync(`exported_buckets/${bucket}`).filter(folder =>{
+        return (/model-*/gim.test(folder))
+      }).map(model=>{
+
+        const training = JSON.parse(
+          fs.readFileSync(`exported_buckets/${bucket}/${model}/training-output.json`, 'utf8')
+        ).training_output
+
+        if(fs.existsSync(`exported_buckets/${bucket}/${training}`) && fs.existsSync(`exported_buckets/${bucket}/${model}`))
+          fs.moveSync(`exported_buckets/${bucket}/${training}`,`exported_buckets/${bucket}/${model}`)
+      })
+    }
 
     spinner.stop()
+    console.log(`${green('success')} Export complete.`)
+
     return
   }
 
