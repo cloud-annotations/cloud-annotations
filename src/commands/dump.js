@@ -120,7 +120,6 @@ module.exports = async options => {
   // Parse help options.
   const parser = optionsParse()
   parser.add(['--config', '-c'])
-  parser.add([true, '--create-ml'])
   parser.add([true,'--annotations'])
   parser.add([true,'--graph'])
   parser.add([true, 'help', '--help', '-help', '-h'])
