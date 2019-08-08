@@ -110,9 +110,8 @@ module.exports = async options => {
     downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_android'))
   if (ops.web)
     downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_web'))
-  
   //default, download complete Model
-  if(Object.keys(ops).length < 3)
+  if(!ops.coreml && !ops.tflite && !ops.web)
     downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, ''))
   
   await Promise.all(downloads)
