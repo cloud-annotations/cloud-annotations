@@ -23,7 +23,7 @@ const stillRunning = async (modelId, config) => {
   }
 }
 
-const downloadDir = async (cos, bucket, prefix, path) => {
+const downloadDir = async (cos, bucket, prefix, modelId, path) => {
   const files = await cos
     .listObjectsV2({ Bucket: bucket, Prefix: `${prefix}/${path}` })
     .promise()
@@ -31,7 +31,7 @@ const downloadDir = async (cos, bucket, prefix, path) => {
       data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
     )
   const promises = files.map(file => {
-    const outputPath = './' + file.replace(`${prefix}/`, '')
+    const outputPath = `./${modelId}/` + file.replace(`${prefix}/`, '')
     return cos
       .getObject({
         Bucket: bucket,
@@ -40,46 +40,6 @@ const downloadDir = async (cos, bucket, prefix, path) => {
       .promise()
       .then(data => fs.outputFile(outputPath, data.Body))
   })
-  await Promise.all(promises)
-}
-
-const downloadModel = async (cos, bucket, prefix) => {
-  //add model files
-  const model = await cos
-    .listObjectsV2({ Bucket: bucket, Prefix: `${prefix}/model/` })
-    .promise()
-    .then(data =>
-      data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
-    )
-
-  const promises = model.map(file => {
-    const outputPath = './' + file.replace(`${prefix}/`, '')
-    return cos
-      .getObject({
-        Bucket: bucket,
-        Key: file
-      })
-      .promise()
-      .then(data => fs.outputFile(outputPath, data.Body))
-  })
-  //add files in data directory
-  const data = await cos
-    .listObjectsV2({ Bucket: bucket, Prefix: `${prefix}/data` })
-    .promise()
-    .then(data =>
-      data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
-    )
-
-  promises.push(...data.map(file => {
-    const outputPath = './model/' + file.replace(`${prefix}/`, '')
-    return cos
-      .getObject({
-        Bucket: bucket,
-        Key: file
-      })
-      .promise()
-      .then(data => fs.outputFile(outputPath, data.Body))
-  }))
   await Promise.all(promises)
 }
 
@@ -87,8 +47,8 @@ module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
   parser.add(['--config', '-c'])
-  parser.add([true, '--ios'])
-  parser.add([true,'--android'])
+  parser.add([true, '--coreml'])
+  parser.add([true,'--tflite'])
   parser.add([true,'--web'])
   parser.add([true,'--graph'])
   parser.add([true, 'help', '--help', '-help', '-h'])
@@ -96,13 +56,11 @@ module.exports = async options => {
 
   if (ops.help) {
     console.log('cacli download <model_id>              Download all Models')
-    console.log('cacli download <model_id> --android')
-    console.log('cacli download <model_id> --ios')
-    console.log('cacli download <model_id> --web')
-    console.log('cacli download <model_id> --graph')
+    console.log('cacli download <model_id> --tflite     Download tflite Model for Android')
+    console.log('cacli download <model_id> --coreml     Download coreml Model for iOS')
+    console.log('cacli download <model_id> --web        Download web Model')
     return process.exit()
   }
-  console.log(ops)
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli download <model_id>')
@@ -144,19 +102,19 @@ module.exports = async options => {
     secretAccessKey: secret_access_key
   }
   const cos = new COS.S3(cosConfig)
-  
   let downloads = []
-  let defaults = ops.length > 1 ? false : true 
-
   
-  if(ops.ios || defaults)
-    downloads.push(downloadDir(cos, bucket, model_location, 'model_ios'))
-  if (ops.android|| defaults)
-    downloads.push(downloadDir(cos, bucket, model_location, 'model_android'))
-  if (ops.web|| defaults)
-    downloads.push(downloadDir(cos, bucket, model_location, 'model_web'))
-  if (ops.graph|| defaults)
-    await downloadModel(cos, bucket, model_location)
+  if(ops.coreml)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_ios'))
+  if (ops.tflite)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_android'))
+  if (ops.web)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_web'))
+  
+    //default, download complete Model
+  if(Object.keys(ops).length < 3)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, ''))
+  
   await Promise.all(downloads)
 
 
