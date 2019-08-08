@@ -131,7 +131,6 @@ module.exports = async options => {
     console.log('cacli export                  Export complete Bucket')
     console.log('cacli export --create-ml      Export annotations for Apples Create ML')
     console.log('cacli export --annotations    Export only annotations and pictures')
-    console.log('cacli export --graph          Export frozen_inference_graph.pb')
     return process.exit()
   }
 
@@ -185,7 +184,6 @@ module.exports = async options => {
   }
   const cos = new COS.S3(cosConfig)
 
-
   if (ops.annotations){
     //only download pictures and annotations
     spinner.message = `Exporting annotations from ${bucket}...`
@@ -200,32 +198,6 @@ module.exports = async options => {
       spinner.stop()
       console.log(`${red('Error')} no annotations.json found`)
     }
-
-    return
-  }
-
-  if (ops.graph){
-    //only download pictures and annotations
-    spinner.message = `Exporting graphs from ${bucket}...`
-
-    await downloadGraph(cos, bucket, 'exported_buckets')
-    //move files from training dir to model dir do identify the trained model
-    if(fs.existsSync(`exported_buckets/${bucket}`)){
-      fs.readdirSync(`exported_buckets/${bucket}`).filter(folder =>{
-        return (/model-*/gim.test(folder))
-      }).map(model=>{
-
-        const training = JSON.parse(
-          fs.readFileSync(`exported_buckets/${bucket}/${model}/training-output.json`, 'utf8')
-        ).training_output
-
-        if(fs.existsSync(`exported_buckets/${bucket}/${training}`) && fs.existsSync(`exported_buckets/${bucket}/${model}`))
-          fs.moveSync(`exported_buckets/${bucket}/${training}`,`exported_buckets/${bucket}/${model}`)
-      })
-    }
-
-    spinner.stop()
-    console.log(`${green('success')} Export complete.`)
 
     return
   }

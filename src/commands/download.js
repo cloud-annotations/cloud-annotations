@@ -111,13 +111,11 @@ module.exports = async options => {
   if (ops.web)
     downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_web'))
   
-    //default, download complete Model
+  //default, download complete Model
   if(Object.keys(ops).length < 3)
     downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, ''))
   
   await Promise.all(downloads)
-
-
 
   spinner.stop()
   console.log(`${green('success')} Download complete.`)
