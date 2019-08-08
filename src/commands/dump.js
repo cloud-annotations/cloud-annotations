@@ -58,25 +58,6 @@ const downloadAnnotations = async (cos, bucket, path) => {
   await Promise.all(promises)
 }
 
-const downloadGraph = async (cos, bucket, path) => {
-  const files = await fileList(cos, bucket)
-  const promises = files.filter(file=>{
-    //filter files
-    return(/(frozen_inference_graph.pb|label_map.pbtxt|training-output.json|training-log.txt)$/gim.test(file))
-  }).map(file => {
-    
-    const outputPath = `./${path}/${bucket}/${file}`
-    return cos
-      .getObject({
-        Bucket: bucket,
-        Key: file
-      })
-      .promise()
-      .then(data => fs.outputFile(outputPath, data.Body))
-  })
-  await Promise.all(promises)
-}
-
 async function listBuckets({ region, access_key_id, secret_access_key }) {
   const config = {
     endpoint: cosEndpointBuilder(region, true),
@@ -120,8 +101,8 @@ module.exports = async options => {
   // Parse help options.
   const parser = optionsParse()
   parser.add(['--config', '-c'])
+  parser.add([true, '--create-ml'])
   parser.add([true,'--annotations'])
-  parser.add([true,'--graph'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
