@@ -65,7 +65,7 @@ describe('download', () => {
     assert(fs.outputFile.neverCalledWith('./dir/object/'))
     assert(fs.outputFile.neverCalledWith('./dir/dir/'))
     
-    await download(['model-completed', '--config', '__tests__/config.yaml','--web'])
+    await download(['model-completed', '--config', '__tests__/config.yaml','--tfjs'])
     assert(fs.outputFile.calledWith('./model-completed/dir/object.jpg'))
     assert(fs.outputFile.calledWith('./model-completed/dir/object/object2.jpg'))
     assert(fs.outputFile.neverCalledWith('./dir/object/'))
