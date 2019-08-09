@@ -40,24 +40,6 @@ const downloadBucket = async (cos, bucket, path) => {
   await Promise.all(promises)
 }
 
-const downloadAnnotations = async (cos, bucket, path) => {
-  const files = await fileList(cos, bucket)
-  const promises = files.filter(file=>{
-    //filter for jpegs and annotation.json
-    return (/\.(jpe?g)$|_annotation.json/gim.test(file))
-  }).map(file => {
-    const outputPath = `./${path}/${bucket}/${file}`
-    return cos
-      .getObject({
-        Bucket: bucket,
-        Key: file
-      })
-      .promise()
-      .then(data => fs.outputFile(outputPath, data.Body))
-  })
-  await Promise.all(promises)
-}
-
 async function listBuckets({ region, access_key_id, secret_access_key }) {
   const config = {
     endpoint: cosEndpointBuilder(region, true),
@@ -102,7 +84,6 @@ module.exports = async options => {
   const parser = optionsParse()
   parser.add(['--config', '-c'])
   parser.add([true, '--create-ml'])
-  parser.add([true,'--annotations'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -110,7 +91,6 @@ module.exports = async options => {
   if (ops.help) {
     console.log('cacli export                  Export complete Bucket')
     console.log('cacli export --create-ml      Export annotations for Apples Create ML')
-    console.log('cacli export --annotations    Export only annotations and pictures')
     return process.exit()
   }
 
@@ -163,25 +143,6 @@ module.exports = async options => {
     secretAccessKey: secret_access_key
   }
   const cos = new COS.S3(cosConfig)
-
-  if (ops.annotations){
-    //only download pictures and annotations
-    spinner.message = `Exporting annotations from ${bucket}...`
-    await downloadAnnotations(cos, bucket, 'exported_buckets')
-    
-    if(fs.existsSync(`exported_buckets/${bucket}/_annotations.json`)){
-      fs.renameSync(`exported_buckets/${bucket}/_annotations.json`,`exported_buckets/${bucket}/annotations.json`)
-      spinner.stop()
-      console.log(`${green('success')} Export complete.`)
-      
-    }else{
-      spinner.stop()
-      console.log(`${red('Error')} no annotations.json found`)
-    }
-
-    return
-  }
-
   await downloadBucket(cos, bucket, 'exported_buckets')
 
   if (ops.createml) {
