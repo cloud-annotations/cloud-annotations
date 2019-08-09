@@ -43,64 +43,6 @@ describe('dump', () => {
     )
     assert(fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/dir/'))
   })
-  
-  it('export annotations with annotations.json',async () => {
-    sinon.stub(fs, 'outputFile')
-    sinon.stub(fs, 'writeFileSync')
-    const existStub = sinon.stub(fs, 'existsSync')
-    existStub
-      .withArgs('exported_buckets/bucket/_annotations.json')
-      .returns(true)
-    existStub.callThrough()
-
-    const renameStub = sinon.stub(fs, 'renameSync')
-    renameStub
-      .withArgs('exported_buckets/bucket/_annotations.json','exported_buckets/bucket/annotations.json')
-    renameStub.callsFake()
-
-    fill()
-    const promise = dump(['--config', '__tests__/config.yaml','--annotations'])
-    await wait()
-    await wait()
-    io.send(keys.enter)
-    await promise
-    assert(fs.outputFile.calledWith('./exported_buckets/bucket/dir/object.jpg'))
-    assert(
-      fs.outputFile.calledWith(
-        './exported_buckets/bucket/dir/object/object2.jpg'
-      )
-    )
-    assert(
-      fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/object/')
-    )
-    assert(fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/dir/'))
-    
-  })
-
-  it('export annotations without annotations.json',async () => {
-    sinon.stub(fs, 'outputFile')
-    sinon.stub(fs, 'renameSync')
-
-    fill()
-    const promise = dump(['--config', '__tests__/config.yaml','--annotations'])
-    await wait()
-    await wait()
-    io.send(keys.enter)
-    await promise
-
-    assert(fs.outputFile.calledWith('./exported_buckets/bucket/dir/object.jpg'))
-    assert(
-      fs.outputFile.calledWith(
-        './exported_buckets/bucket/dir/object/object2.jpg'
-      )
-    )
-    assert(
-      fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/object/')
-    )
-    assert(fs.outputFile.neverCalledWith('./exported_buckets/bucket/dir/dir/'))
-    assert(fs.renameSync.neverCalledWith('exported_buckets/bucket/_annotations.json','exported_buckets/bucket/annotations.json'))
-
-  })
 
   it('exports create ml', async () => {
     const obj = {
