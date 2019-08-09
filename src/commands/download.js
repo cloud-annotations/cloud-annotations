@@ -23,7 +23,7 @@ const stillRunning = async (modelId, config) => {
   }
 }
 
-const downloadDir = async (cos, bucket, prefix, path) => {
+const downloadDir = async (cos, bucket, prefix, modelId, path) => {
   const files = await cos
     .listObjectsV2({ Bucket: bucket, Prefix: `${prefix}/${path}` })
     .promise()
@@ -31,7 +31,7 @@ const downloadDir = async (cos, bucket, prefix, path) => {
       data.Contents.map(o => o.Key).filter(name => !name.endsWith('/'))
     )
   const promises = files.map(file => {
-    const outputPath = './' + file.replace(`${prefix}/`, '')
+    const outputPath = `./${modelId}/` + file.replace(`${prefix}/`, '')
     return cos
       .getObject({
         Bucket: bucket,
@@ -47,14 +47,16 @@ module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
   parser.add(['--config', '-c'])
+  parser.add([true, '--coreml'])
+  parser.add([true,'--tflite'])
+  parser.add([true,'--tfjs'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
   if (ops.help) {
-    console.log('cacli download <model_id>')
+    console.log('cacli download <model_id> [--tflite] [--coreml] [--tfjs]')
     return process.exit()
   }
-
   if (!ops.model_id) {
     console.log('No Model ID provided')
     console.log('Usage: cacli download <model_id>')
@@ -96,10 +98,19 @@ module.exports = async options => {
     secretAccessKey: secret_access_key
   }
   const cos = new COS.S3(cosConfig)
-
-  await downloadDir(cos, bucket, model_location, 'model_ios')
-  await downloadDir(cos, bucket, model_location, 'model_web')
-  await downloadDir(cos, bucket, model_location, 'model_android')
+  let downloads = []
+  
+  if(ops.coreml)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_ios'))
+  if (ops.tflite)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_android'))
+  if (ops.tfjs)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_web'))
+  //default, download complete Model
+  if(downloads.length === 0)
+    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, ''))
+  
+  await Promise.all(downloads)
 
   spinner.stop()
   console.log(`${green('success')} Download complete.`)
