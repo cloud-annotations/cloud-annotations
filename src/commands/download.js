@@ -48,8 +48,8 @@ module.exports = async options => {
   parser.add('model_id')
   parser.add(['--config', '-c'])
   parser.add([true, '--coreml'])
-  parser.add([true,'--tflite'])
-  parser.add([true,'--tfjs'])
+  parser.add([true, '--tflite'])
+  parser.add([true, '--tfjs'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -99,17 +99,28 @@ module.exports = async options => {
   }
   const cos = new COS.S3(cosConfig)
   let downloads = []
-  
-  if(ops.coreml)
-    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_ios'))
-  if (ops.tflite)
-    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_android'))
-  if (ops.tfjs)
-    downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, 'model_web'))
-  //default, download complete Model
-  if(downloads.length === 0)
+
+  if (ops.coreml) {
+    downloads.push(
+      downloadDir(cos, bucket, model_location, ops.model_id, 'model_ios')
+    )
+  }
+  if (ops.tflite) {
+    downloads.push(
+      downloadDir(cos, bucket, model_location, ops.model_id, 'model_android')
+    )
+  }
+  if (ops.tfjs) {
+    downloads.push(
+      downloadDir(cos, bucket, model_location, ops.model_id, 'model_web')
+    )
+  }
+
+  // Default, download everything.
+  if (downloads.length === 0) {
     downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, ''))
-  
+  }
+
   await Promise.all(downloads)
 
   spinner.stop()
