@@ -4,6 +4,7 @@
 [![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
 [![Coverage Status](https://img.shields.io/coveralls/cloud-annotations/training/master.svg)](https://coveralls.io/github/cloud-annotations/training?branch=master)
 
+**🚨IMPORTANT🚨** Watson Machine Learning recently changed their credential system to use apikeys. Please update to `cacli v1.1.6` 
 
 ![](https://cloud-annotations.github.io/training/object-detection/assets/main.png)
 
@@ -28,7 +29,7 @@ If something doesn’t work, please [file an issue](https://github.com/cloud-ann
 $ cacli
 ┌─────────────────────────────┐
 │ (C)loud (A)nnotations (CLI) │
-│ version 1.1.0               │
+│ version 1.1.7               │
 └─────────────────────────────┘
 
 Usage: cacli <command>
@@ -40,6 +41,7 @@ where <command> is one of:
   progress     Monitor the progress of a training run
   list         List all training runs
   download     Download a trained model
+  export       Export files from Bucket
 
 cacli <cmd> -h     quick help on <cmd>
 ```
