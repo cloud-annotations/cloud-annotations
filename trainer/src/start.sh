@@ -18,7 +18,7 @@ TYPE=$(eval "$SCRIPT")
 PIPELINE_CONFIG_PATH=pipeline.config
 OUTPUT_DIRECTORY=${RESULT_DIR}/model
 OUTPUT_LABEL_PATH=${OUTPUT_DIRECTORY}/labels.json
-CHECKPOINT_PATH=checkpoints
+CHECKPOINT_PATH=${RESULT_DIR}/checkpoints
 LABEL_MAP_PATH=data/label_map.pbtxt
 
 if [ $TYPE = "localization" ]; then

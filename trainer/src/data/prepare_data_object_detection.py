@@ -39,7 +39,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
         return path
 
     data_dir = create_dir('', 'data')
-    checkpoint_dir = create_dir('', 'checkpoints')
+    checkpoint_dir = create_dir(write_dir, 'checkpoints')
 
     ############################################################################
     # Create LabelMap Proto
