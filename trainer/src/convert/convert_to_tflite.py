@@ -1,4 +1,5 @@
 import tensorflow as tf
+from pkg_resources import parse_version
 
 import os
 import json
@@ -7,11 +8,11 @@ import shutil
 from convert.types import ModelType
 from convert.convert_ssd_helper import convert_ssd_tflite
 
-# TensorFlow 1.9 to TensorFlow 1.11
-if tf.__version__ <= '1.11.0':
-    from tensorflow.contrib.lite.python.lite import TocoConverter as convert
-elif tf.__version__ <= '1.12.0':
+# TensorFlow 1.12
+if parse_version(tf.__version__) < parse_version('1.13'):
     convert = tf.contrib.lite.TFLiteConverter
+
+# Current
 else:
     convert = tf.lite.TFLiteConverter
 

@@ -15,11 +15,11 @@ EOF"
 
 TYPE=$(eval "$SCRIPT")
 
-PIPELINE_CONFIG_PATH=${RESULT_DIR}/pipeline.config
+PIPELINE_CONFIG_PATH=pipeline.config
 OUTPUT_DIRECTORY=${RESULT_DIR}/model
 OUTPUT_LABEL_PATH=${OUTPUT_DIRECTORY}/labels.json
-CHECKPOINT_PATH=${RESULT_DIR}/checkpoint
-LABEL_MAP_PATH=${RESULT_DIR}/data/label_map.pbtxt
+CHECKPOINT_PATH=checkpoints
+LABEL_MAP_PATH=data/label_map.pbtxt
 
 if [ $TYPE = "localization" ]; then
 echo '/////////////////////////////'
@@ -51,7 +51,7 @@ echo '// Training classification //'
 echo '/////////////////////////////'
 python -m data.prepare_data_classification
 python -m classification.retrain \
-  --image_dir=${RESULT_DIR}/data \
+  --image_dir=data \
   --saved_model_dir=$OUTPUT_DIRECTORY/saved_model \
   --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
   --how_many_training_steps=$1 \

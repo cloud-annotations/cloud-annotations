@@ -22,7 +22,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
         os.makedirs(path)
         return path
 
-    data_dir = create_dir(write_bucket, 'data')
+    data_dir = create_dir('', 'data')
 
     create_dir(write_bucket, 'model')
 
