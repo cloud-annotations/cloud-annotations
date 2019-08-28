@@ -1,6 +1,6 @@
 #!/bin/bash
 
-trap 'echo CACLI-TRAINING-FAILED; exit' ERR
+trap 'echo CACLI-TRAINING-FAILED; exit 1' ERR
 
 pip install --user --no-deps -r requirements.txt
 
@@ -59,7 +59,7 @@ python -m classification.retrain \
 fi
 
 echo 'CACLI-TRAINING-SUCCESS'
-trap 'echo CACLI-CONVERSION-FAILED; exit' ERR
+trap 'echo CACLI-CONVERSION-FAILED; exit 1' ERR
 
 python -m convert.convert --tfjs --coreml --tflite \
   --tfjs-path=${RESULT_DIR}/model_web \

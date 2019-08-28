@@ -8,13 +8,7 @@ import shutil
 from convert.types import ModelType
 from convert.convert_ssd_helper import convert_ssd_tflite
 
-# TensorFlow 1.12
-if parse_version(tf.__version__) < parse_version('1.13'):
-    convert = tf.contrib.lite.TFLiteConverter
-
-# Current
-else:
-    convert = tf.lite.TFLiteConverter
+from convert.TFLiteConverter import convert
 
 def convert_to_tflite(exported_graph_path, model_structure, output_path):
     if model_structure['type'] == ModelType.LOCALIZATION:
