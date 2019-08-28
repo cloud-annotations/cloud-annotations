@@ -64,15 +64,27 @@ def infer_model_structure():
 
 model_structure = infer_model_structure()
 
-if args.coreml:
-    from convert.convert_to_core_ml import convert_to_core_ml
-    convert_to_core_ml(args.exported_graph_path, model_structure, args.mlmodel_path)
+try:
+    if args.coreml:
+        from convert.convert_to_core_ml import convert_to_core_ml
+        convert_to_core_ml(args.exported_graph_path, model_structure, args.mlmodel_path)
+except Exception as e:
+    print(e)
+    print("Unable to convert to Core ML")
 
-if args.tflite:
-    from convert.convert_to_tflite import convert_to_tflite
-    convert_to_tflite(args.exported_graph_path, model_structure, args.tflite_path)
+try:
+    if args.tflite:
+        from convert.convert_to_tflite import convert_to_tflite
+        convert_to_tflite(args.exported_graph_path, model_structure, args.tflite_path)
+except Exception as e:
+    print(e)
+    print("Unable to convert to TensorFlow Lite")
 
-if args.tfjs:
-    from convert.convert_to_tfjs import convert_to_tfjs
-    output_names = model_structure['output_names']
-    convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)
+try:
+    if args.tfjs:
+        from convert.convert_to_tfjs import convert_to_tfjs
+        output_names = model_structure['output_names']
+        convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)
+except Exception as e:
+    print(e)
+    print("Unable to convert to TensorFlow.js")

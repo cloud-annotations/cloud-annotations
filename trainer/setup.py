@@ -10,6 +10,8 @@ from setuptools import setup, find_packages
 from setuptools.command.sdist import sdist
 from subprocess import call
 
+# There is some custom code in `model_main.py` to change up the logging
+# verbosity and other things like how many steps to print accuracy.
 PULL_OBJECT_DETECTION = """
     svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection &&
     svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim &&

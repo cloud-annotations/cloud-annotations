@@ -38,8 +38,8 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
         os.makedirs(path)
         return path
 
-    data_dir = create_dir(write_bucket, 'data')
-    checkpoint_dir = create_dir(write_bucket, 'checkpoint')
+    data_dir = create_dir('', 'data')
+    checkpoint_dir = create_dir(write_dir, 'checkpoints')
 
     ############################################################################
     # Create LabelMap Proto
@@ -155,7 +155,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
     download_base = 'http://download.tensorflow.org/models/object_detection/'
     model_file = 'ssd_mobilenet_v1_coco_2018_01_28.tar.gz'
 
-    tar_path = os.path.join(write_bucket, model_file)
+    tar_path = os.path.join('', model_file)
 
     if not os.path.exists(tar_path):
         print('Downloading model checkpoint...')
@@ -183,7 +183,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
     fill_checkpoint = os.path.join(checkpoint_dir, 'model.ckpt')
 
     skeleton_path = 'pipeline_skeleton.config'
-    pipeline_path = os.path.join(write_bucket, 'pipeline.config')
+    pipeline_path = 'pipeline.config'
 
     with open(skeleton_path, 'r') as skeleton:
         with open(pipeline_path, 'w') as pipeline:

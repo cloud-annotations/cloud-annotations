@@ -1,4 +1,5 @@
 import tensorflow as tf
+from pkg_resources import parse_version
 
 import os
 import json
@@ -7,13 +8,7 @@ import shutil
 from convert.types import ModelType
 from convert.convert_ssd_helper import convert_ssd_tflite
 
-# TensorFlow 1.9 to TensorFlow 1.11
-if tf.__version__ <= '1.11.0':
-    from tensorflow.contrib.lite.python.lite import TocoConverter as convert
-elif tf.__version__ <= '1.12.0':
-    convert = tf.contrib.lite.TFLiteConverter
-else:
-    convert = tf.lite.TFLiteConverter
+from convert.TFLiteConverter import convert
 
 def convert_to_tflite(exported_graph_path, model_structure, output_path):
     if model_structure['type'] == ModelType.LOCALIZATION:

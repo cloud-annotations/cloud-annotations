@@ -9,12 +9,15 @@ import tfcoreml
 import coremltools
 import numpy as np
 import tensorflow as tf
+from pkg_resources import parse_version
 
 from tensorflow.python.tools import strip_unused_lib
 from tensorflow.python.framework import dtypes
 from tensorflow.python.platform import gfile
 from coremltools.models.pipeline import Pipeline
 from coremltools.models import datatypes
+
+from convert.TFLiteConverter import convert
 
 
 def optimize_graph(input_path, output_path, input_nodes, output_nodes):
@@ -50,13 +53,6 @@ def convert_ssd_tflite(exported_graph_path, model_structure, output_path):
     # Convert to tflite model.
     input_arrays = [input_node]
     output_arrays = [bbox_output_node, class_output_node]
-
-    if tf.__version__ <= '1.11.0':
-        from tensorflow.contrib.lite.python.lite import TocoConverter as convert
-    elif tf.__version__ <= '1.12.0':
-        convert = tf.contrib.lite.TFLiteConverter
-    else:
-        convert = tf.lite.TFLiteConverter
 
     converter = convert.from_frozen_graph(
         frozen_model_path,
