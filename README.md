@@ -4,7 +4,7 @@
 [![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
 [![Coverage Status](https://img.shields.io/coveralls/cloud-annotations/training/master.svg)](https://coveralls.io/github/cloud-annotations/training?branch=master)
 
-**🚨IMPORTANT🚨** Watson Machine Learning recently changed their credential system to use apikeys. Please update to `cacli v1.1.6+` 
+**🚨IMPORTANT🚨** Watson Machine Learning recently changed their credential system to use apikeys. Please update to `cacli v1.1.9+` 
 
 ![](https://cloud-annotations.github.io/training/object-detection/assets/main.png)
 
