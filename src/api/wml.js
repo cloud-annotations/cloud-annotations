@@ -14,7 +14,7 @@ const DEFAULT_TRAINING_DEFINITION = {
     runtimes: [
       {
         name: 'python',
-        version: '3.5'
+        version: '3.6'
       }
     ]
   }
