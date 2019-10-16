@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: " en " }}">
+
+{%- include head.html -%}
+
+<body>
+  {{ content }}
+
+  <script>
+  [].slice.call(document.getElementsByTagName('a')).forEach(function(elem) {
+    elem.addEventListener('click', function(e) {
+      if (location.host !== this.host) {
+        e.preventDefault()
+        var newTab = window.open()
+        newTab.opener = null
+        newTab.location = this.href
+        return false
+      }
+    })
+  })
+  </script>
+</body>
+
+</html>
