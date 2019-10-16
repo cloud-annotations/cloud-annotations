@@ -109,15 +109,16 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
                 poses = []
 
                 for annotation in annotations[example]:
-                    xmins.append(annotation['x'])
-                    xmaxs.append(annotation['x2'])
-                    ymins.append(annotation['y'])
-                    ymaxs.append(annotation['y2'])
-                    classes_text.append(annotation['label'].encode('utf8'))
-                    classes.append(1) # temporary, I need to assign labels to actual ids
-                    difficult_obj.append(0)
-                    truncated.append(0)
-                    poses.append(''.encode('utf8'))
+                    if 'x' in annotation and 'x2' in annotation and 'y' in annotation and 'y2' in annotation:
+                        xmins.append(annotation['x'])
+                        xmaxs.append(annotation['x2'])
+                        ymins.append(annotation['y'])
+                        ymaxs.append(annotation['y2'])
+                        classes_text.append(annotation['label'].encode('utf8'))
+                        classes.append(1) # temporary, I need to assign labels to actual ids
+                        difficult_obj.append(0)
+                        truncated.append(0)
+                        poses.append(''.encode('utf8'))
 
                 try:
                     feature_dict = {
