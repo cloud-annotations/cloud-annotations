@@ -70,5 +70,6 @@ module.exports = async options => {
   tensorboard.on('error', () => {
     // Error: spawn tensorboard ENOENT
     console.error(`${red('error')} Please ensure TensorBoard is installed.`)
+    return process.exit(1)
   })
 }

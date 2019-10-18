@@ -54,7 +54,8 @@
       "src/**/*.js"
     ],
     "exclude": [
-      "src/api/api.js"
+      "src/api/api.js",
+      "src/commands/tensorboard.js" 
     ]
   }
 }
