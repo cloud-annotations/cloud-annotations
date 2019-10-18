@@ -1,8 +1,6 @@
 if (process.version.match(/v(\d+)\./)[1] < 10) {
   console.log(
-    `Node version 10 or later is required. Not satisfied by current version ${
-      process.version
-    }.`
+    `Node version 10 or later is required. Not satisfied by current version ${process.version}.`
   )
   return process.exit(1)
 }
@@ -14,6 +12,7 @@ const login = require('./commands/login')
 const train = require('./commands/train')
 const list = require('./commands/list')
 const logs = require('./commands/logs')
+const tensorboard = require('./commands/tensorboard')
 const progress = require('./commands/progress')
 const download = require('./commands/download')
 const bootstrap = require('./commands/bootstrap')
@@ -30,6 +29,7 @@ module.exports = () => {
   args.add('run', train) // Alias for train.
   args.add('list', list)
   args.add('logs', logs)
+  args.add('tensorboard', tensorboard)
   args.add('progress', progress)
   args.add('download', download)
 
