@@ -1,5 +1,7 @@
 const { spawn } = require('child_process')
 
+const { red } = require('chalk')
+
 const WML = require('./../api/wml')
 const loadCredentials = require('./../utils/loadCredentials')
 const optionsParse = require('./../utils/optionsParse')
@@ -9,6 +11,7 @@ module.exports = async options => {
   const parser = optionsParse()
   parser.add('model_id')
   parser.add(['--config', '-c'])
+  parser.add([true, '--verbose', '-v'])
   parser.add([true, 'help', '--help', '-help', '-h'])
   const ops = parser.parse(options)
 
@@ -56,6 +59,16 @@ module.exports = async options => {
   )
 
   tensorboard.stderr.on('data', data => {
-    console.log(data.toString())
+    const message = data.toString()
+    if (ops.verbose) {
+      console.log(message)
+    } else if (/^TensorBoard.*/.test(message)) {
+      console.log(message.trim())
+    }
+  })
+
+  tensorboard.on('error', () => {
+    // Error: spawn tensorboard ENOENT
+    console.error(`${red('error')} Please ensure TensorBoard is installed.`)
   })
 }
