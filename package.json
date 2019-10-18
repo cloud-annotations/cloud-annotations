@@ -5,7 +5,7 @@
     "node": ">=10.0.0",
     "npm": ">=6.0.0"
   },
-  "version": "1.1.10",
+  "version": "1.1.11",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -55,7 +55,7 @@
     ],
     "exclude": [
       "src/api/api.js",
-      "src/commands/tensorboard.js" 
+      "src/commands/tensorboard.js"
     ]
   }
 }
