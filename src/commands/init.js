@@ -113,19 +113,24 @@ module.exports = async (options, skipOptionalSteps) => {
   } else if (buckets) {
     console.log(bold('Buckets'))
     const i = Math.max(0, buckets.indexOf(config.trainingBucket()))
-    config.setTrainingBucket(
-      await picker(
-        `training data bucket: ${dim('(Use arrow keys)')}`,
+
+    let trainingBucket
+    if (buckets.length === 1) {
+      trainingBucket = buckets[0]
+    } else {
+      trainingBucket = await picker(
+        `training data bucket: ${dim('(Use arrow keys and enter to choose)')}`,
         buckets,
         {
           default: i
         }
       )
-    )
+    }
+    config.setTrainingBucket(trainingBucket)
     console.log(`training data bucket: ${config.trainingBucket()}`)
     console.log()
 
-    if (verbose) {
+    if (verbose && buckets.length > 1) {
       const use_output = stringToBool(
         await input(
           'Would you like to store output in a separate bucket? ',

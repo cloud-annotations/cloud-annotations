@@ -5,6 +5,16 @@ if (process.version.match(/v(\d+)\./)[1] < 10) {
   return process.exit(1)
 }
 
+const { yellow } = require('chalk')
+if (!process.stdout.isTTY) {
+  console.log(
+    `${yellow(
+      'warning'
+    )} Not a true terminal, some inputs might not work properly.`
+  )
+  console.log()
+}
+
 const argParse = require('./utils/argParse')
 const help = require('./commands/help')
 const init = require('./commands/init')
