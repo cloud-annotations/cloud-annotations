@@ -106,14 +106,10 @@ module.exports = async options => {
       return config
     } catch {
       console.log(
-        `No ${configPath} found, so we will ask you a bunch of questions instead.`
-      )
-      console.log(
-        `Your answers can optionally be saved in a ${configPath} file for later use.`
+        `No ${configPath} found, we will only ask the required information.`
       )
       console.log()
       const config = await init(['--config', configPath], true)
-      console.log()
       return config
     }
   })()

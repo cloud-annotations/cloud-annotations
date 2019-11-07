@@ -98,6 +98,10 @@ module.exports = class CredentialsBuilder {
     this.credentials.cos.region = value
   }
 
+  clear() {
+    fs.unlinkSync(CREDENTIAL_PATH)
+  }
+
   outputFile() {
     const file = `[${this.profile}]
 instance_id: ${this.credentials.wml.instance_id}
