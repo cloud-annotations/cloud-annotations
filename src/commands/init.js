@@ -1,7 +1,7 @@
 const { dim, bold, yellow } = require('chalk')
 const input = require('./../utils/input')
 const COS = require('ibm-cos-sdk')
-const login = require('./../commands/login')
+const loadCredentials = require('./../utils/loadCredentials')
 const stringToBool = require('./../utils/stringToBool')
 const optionsParse = require('./../utils/optionsParse')
 const ConfigBuilder = require('./../utils/configBuilder')
@@ -85,7 +85,8 @@ module.exports = async (options, skipOptionalSteps) => {
     console.log()
   }
 
-  const credentials = await login()
+  // Check if logged in.
+  const { credentials } = await loadCredentials()
 
   const spinner = new Spinner()
   spinner.setMessage('Loading buckets...')
@@ -112,40 +113,47 @@ module.exports = async (options, skipOptionalSteps) => {
   } else if (buckets) {
     console.log(bold('Buckets'))
     const i = Math.max(0, buckets.indexOf(config.trainingBucket()))
-    config.setTrainingBucket(
-      await picker(
-        `training data bucket: ${dim('(Use arrow keys)')}`,
+
+    let trainingBucket
+    if (buckets.length === 1) {
+      trainingBucket = buckets[0]
+    } else {
+      trainingBucket = await picker(
+        `training data bucket: ${dim('(Use arrow keys and enter to choose)')}`,
         buckets,
         {
           default: i
         }
       )
-    )
+    }
+    config.setTrainingBucket(trainingBucket)
     console.log(`training data bucket: ${config.trainingBucket()}`)
     console.log()
 
-    const use_output = stringToBool(
-      await input(
-        'Would you like to store output in a separate bucket? ',
-        DEFAULT_USE_OUTPUT
-      )
-    )
-    process.stdout.write(eraseLines(3))
-    console.log()
-
-    await (async () => {
-      if (use_output) {
-        process.stdout.write(eraseLines(2))
-        const i = Math.max(0, buckets.indexOf(config.outputBucket()))
-        config.setOutputBucket(
-          await picker(`output bucket: ${dim('(Use arrow keys)')}`, buckets, {
-            default: i
-          })
+    if (verbose && buckets.length > 1) {
+      const use_output = stringToBool(
+        await input(
+          'Would you like to store output in a separate bucket? ',
+          DEFAULT_USE_OUTPUT
         )
-        console.log(`output bucket: ${config.outputBucket()}`)
-        console.log()
-      }
-    })()
+      )
+      process.stdout.write(eraseLines(3))
+      console.log()
+
+      await (async () => {
+        if (use_output) {
+          process.stdout.write(eraseLines(2))
+          const i = Math.max(0, buckets.indexOf(config.outputBucket()))
+          config.setOutputBucket(
+            await picker(`output bucket: ${dim('(Use arrow keys)')}`, buckets, {
+              default: i
+            })
+          )
+          console.log(`output bucket: ${config.outputBucket()}`)
+          console.log()
+        }
+      })()
+    }
   }
 
   spinner.setMessage('Checking buckets...')
@@ -179,6 +187,8 @@ module.exports = async (options, skipOptionalSteps) => {
       }\`.`
     )
   }
+
+  // Only print space after printing both warnings.
   if (!validTraining || !validOutput) {
     console.log()
   }
@@ -204,13 +214,16 @@ module.exports = async (options, skipOptionalSteps) => {
   }
 
   // Write to yaml
-  console.log(`About to write to ${process.cwd()}/${config.configPath}`)
-  console.log()
-  const yamlFile = config.getYaml()
-  console.log(yamlFile)
-  const save = stringToBool(await input('Is this ok? ', DEFAULT_SAVE))
-  if (save) {
-    config.outputFile()
+  if (verbose) {
+    console.log(`About to write to ${process.cwd()}/${config.configPath}`)
+    console.log()
+    const yamlFile = config.getYaml()
+    console.log(yamlFile)
+    const save = stringToBool(await input('Is this ok? ', DEFAULT_SAVE))
+    if (save) {
+      config.outputFile()
+    }
   }
+
   return config.config
 }

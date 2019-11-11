@@ -5,7 +5,7 @@
     "node": ">=10.0.0",
     "npm": ">=6.0.0"
   },
-  "version": "1.1.12",
+  "version": "1.2.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -18,7 +18,8 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "build": "cd trainer && python setup.py all",
     "alias": "sed -i '' '/alias cacli-dev=/d' ~/.bashrc && echo \"alias cacli-dev=\\\"$PWD/bin/cacli\\\"\" >> ~/.bashrc",
-    "patch": "./publish-trainer.sh $(npm --no-git-tag-version version patch) && yarn publish"
+    "patch": "./publish-trainer.sh $(npm --no-git-tag-version version patch) && yarn publish",
+    "minor": "./publish-trainer.sh $(npm --no-git-tag-version version minor) && yarn publish"
   },
   "main": "src/api/wml.js",
   "bin": {

@@ -60,7 +60,7 @@ module.exports = async (options, importedConfig) => {
   spinner.setMessage('Preparing to train (this may take a while)... ')
   spinner.start()
 
-  const totalStepsRegex = /\.\/start\.sh (\d*)/gm
+  const totalStepsRegex = /\.\/start\.sh (\d*)$/
   const trainingCommand = run.entity.model_definition.execution.command
   const totalSteps = totalStepsRegex.exec(trainingCommand)[1]
   const progressBar = new ProgressBar(totalSteps)
