@@ -33,6 +33,7 @@ import (
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
+	"golang.org/x/sys/unix"
 )
 
 type TrainingRuns struct {
@@ -119,6 +120,13 @@ type TableItem struct {
 	Status string
 }
 
+type winsize struct {
+	Row    uint16
+	Col    uint16
+	Xpixel uint16
+	Ypixel uint16
+}
+
 func s(x float64) string {
 	if int(x) == 1 {
 		return ""
@@ -176,6 +184,13 @@ func TimeElapsed(now time.Time, then time.Time, full bool) string {
 		return strings.Join(parts, ", ") + text
 	}
 	return parts[0] + text
+}
+
+func min(a int, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // listCmd represents the list command
@@ -1503,8 +1518,14 @@ to quickly create a Cobra application.`,
 			log.Println(err)
 		}
 
-		// TODO: find terminal width.
-		firstRowSize := 90 - (14 + 11 + 14) - 11 // -11 for padding
+		// calculate window size.
+		ws, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
+		if err != nil {
+			ws := new(winsize)
+			ws.Col = 80
+		}
+
+		firstRowSize := min(int(ws.Col), 90) - (14 + 11 + 14) - 11 // -11 for padding
 
 		statusTransformer := text.Transformer(func(val interface{}) string {
 			// a little on the hacky side...
