@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/cloud-annotations/cacli/cmd"
+import "github.com/cloud-annotations/training/cacli/cmd"
 
 func main() {
 	cmd.Execute()
