@@ -24,6 +24,7 @@ github.com/client9/misspell v0.3.4 h1:ta993UF76GwbvJcIo3Y68y/M3WxlpEHPWIGDkJYwzJ
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloud-annotations/promptui v0.3.3 h1:vc95kCQJuGybOivs7Epq5lfSlIgvWadjJ+p+Y1lunPE=
 github.com/cloud-annotations/promptui v0.3.3/go.mod h1:/PJs/uOgPcDk093s5f6ObIr/QimkeWb2evTFDKuZN20=
+github.com/cloud-annotations/training v1.2.1 h1:aSV3RfIEQLKRZTWlxpOn39Wd1+NeK2ZNlshZLqwbelg=
 github.com/coreos/bbolt v1.3.2/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
 github.com/coreos/etcd v3.3.10+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=
 github.com/coreos/go-etcd v2.0.0+incompatible/go.mod h1:Jez6KQU2B/sWsbdaef3ED8NzMklzPG4d5KIOhIy30Tk=
