@@ -12,6 +12,8 @@ github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk5
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a h1:idn718Q4B6AGu/h5Sxe66HYVdqdGu2l9Iebqhi/AEoA=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
+github.com/augustoroman/ansi v0.0.0-20170322154318-187ed69e51a0 h1:JcYyCwdV+nGbdy6dJAPJof0RgGPpSG7cVCflqQ1NV9k=
+github.com/augustoroman/ansi v0.0.0-20170322154318-187ed69e51a0/go.mod h1:D9dN1Uc0HfvPWb8242g2qkamYOPbAubAuDhIv6xddtM=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
 github.com/briandowns/spinner v1.7.0 h1:aan1hBBOoscry2TXAkgtxkJiq7Se0+9pt+TUWaPrB4g=
@@ -29,6 +31,8 @@ github.com/cloud-annotations/promptui v0.3.3 h1:vc95kCQJuGybOivs7Epq5lfSlIgvWadj
 github.com/cloud-annotations/promptui v0.3.3/go.mod h1:/PJs/uOgPcDk093s5f6ObIr/QimkeWb2evTFDKuZN20=
 github.com/cloud-annotations/survey v1.8.9 h1:ZpzYlJD81TDp/Fhg9WlI0/Rz1jd0W29jwV4S5rdJn00=
 github.com/cloud-annotations/survey v1.8.9/go.mod h1:gUHQahQeoahGLr5FwS4c7nkpsKS8dC84wI4sfR4SzUw=
+github.com/cloud-annotations/survey v1.8.10 h1:pi13NFrCjR1Du961gkFHIUBLE5cU9u1iLeFbMJkYpVI=
+github.com/cloud-annotations/survey v1.8.10/go.mod h1:KrrSnEHngIXfSR8r8y1nvKDfMH5hXig+Rr0SmwsjyVs=
 github.com/cloud-annotations/training v1.2.1 h1:aSV3RfIEQLKRZTWlxpOn39Wd1+NeK2ZNlshZLqwbelg=
 github.com/coreos/bbolt v1.3.2/go.mod h1:iRUV2dpdMOn7Bo10OQBFzIJO9kkE559Wcmn+qkEiiKk=
 github.com/coreos/etcd v3.3.10+incompatible/go.mod h1:uF7uidLiAD3TWHmW31ZFd/JWoc32PjwdhPthX9715RE=

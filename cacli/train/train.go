@@ -6,17 +6,10 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
-	"github.com/cloud-annotations/promptui"
 	"github.com/cloud-annotations/survey"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
-
-type pepper struct {
-	Name     string
-	HeatUnit int
-	Peppers  int
-}
 
 func Run(cmd *cobra.Command, args []string) {
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
@@ -30,32 +23,29 @@ func Run(cmd *cobra.Command, args []string) {
 	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
-	peppers := []pepper{
-		{Name: "Bell Pepper", HeatUnit: 0, Peppers: 0},
-		{Name: "Banana Pepper", HeatUnit: 100, Peppers: 1},
-		{Name: "Poblano", HeatUnit: 1000, Peppers: 2},
-		{Name: "Jalapeño", HeatUnit: 3500, Peppers: 3},
-		{Name: "Aleppo", HeatUnit: 10000, Peppers: 4},
-		{Name: "Tabasco", HeatUnit: 30000, Peppers: 5},
-		{Name: "Malagueta", HeatUnit: 50000, Peppers: 6},
+	color := ""
+	survey.SelectQuestionTemplate = `
+{{- if .ShowAnswer}}
+	{{- color "default"}}{{ .Message }}{{color "reset"}}{{color "cyan+b"}} {{.Answer}}{{color "reset"}}{{"\n"}}
+{{- else}}
+	{{- color "default+b"}}{{ .Message }}s{{color "reset"}}{{- color "default"}}{{ .FilterMessage }}{{color "reset"}}
+  {{- color "default+d"}} (Use arrow keys and enter to choose){{color "reset"}}
+  {{- "\n"}}
+  {{- range $ix, $choice := .PageEntries}}
+    {{- if eq $ix $.SelectedIndex }}{{color "cyan+b" }}❯ {{else}}{{color "default"}}  {{end}}
+    {{- $choice.Value}}
+    {{- color "reset"}}{{"\n"}}
+  {{- end}}
+{{- end}}`
+
+	prompt3 := &survey.Select{
+		Message:  "Bucket",
+		Options:  []string{"red", "blue", "green", "red", "blue", "green", "red", "blue", "green", "red", "blue", "green", "red", "blue", "green"},
+		PageSize: 11,
 	}
 
-	templates := &promptui.SelectTemplates{
-		Label:    "{{ . | bold }}s {{\"(Use arrow keys and enter to choose)\" | faint }}",
-		Active:   "{{\"❯\" | cyan | bold }} {{ .Name | cyan | bold }}",
-		Inactive: "  {{ .Name }}",
-		Selected: "{{ .Label }} {{ .Item.Name | cyan | bold }}",
-	}
-
-	prompt := promptui.Select{
-		Label:     "Bucket",
-		Items:     peppers,
-		Templates: templates,
-		Size:      11,
-		HideHelp:  true,
-	}
-
-	if _, _, err := prompt.Run(); err != nil {
+	err := survey.AskOne(prompt3, &color)
+	if err != nil {
 		return
 	}
 
@@ -83,8 +73,18 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Println()
 
 	name := false
+	survey.ConfirmQuestionTemplate = `
+{{- if .ShowHelp }}{{- color .Config.Icons.Help.Format }}{{ .Config.Icons.Help.Text }} {{ .Help }}{{color "reset"}}{{"\n"}}{{end}}
+{{- color "default"}}{{ .Message }} {{color "reset"}}
+{{- if .Answer}}
+  {{- color "cyan+b"}}{{.Answer}}{{color "reset"}}{{"\n"}}
+{{- else }}
+  {{- if and .Help (not .ShowHelp)}}{{color "cyan"}}[{{ .Config.HelpInput }} for help]{{color "reset"}} {{end}}
+  {{- color "default"}}{{if .Default}}(yes) {{else}}(no) {{end}}{{color "reset"}}
+{{- end}}`
 	prompt2 := &survey.Confirm{
-		Message: "Do you like pie?",
+		Message: "Would you like to monitor progress?",
+		Default: true,
 	}
 	survey.AskOne(prompt2, &name)
 
