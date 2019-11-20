@@ -193,6 +193,15 @@ func min(a int, b int) int {
 	return b
 }
 
+func getWindowWidth() int {
+	defaultWidowWidth := 80
+	ws, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
+	if err != nil {
+		return defaultWidowWidth
+	}
+	return int(ws.Col)
+}
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -1518,14 +1527,12 @@ to quickly create a Cobra application.`,
 			log.Println(err)
 		}
 
-		// calculate window size.
-		ws, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
-		if err != nil {
-			ws := new(winsize)
-			ws.Col = 80
-		}
-
-		firstRowSize := min(int(ws.Col), 90) - (14 + 11 + 14) - 11 // -11 for padding
+		maxTableWidth := min(getWindowWidth(), 90)
+		modelIDWidth := 14
+		statusWidth := 11
+		submittedWidth := 14
+		otherPadding := 11 // left & right space + 3 columns 3 space padding.
+		nameWidth := maxTableWidth - modelIDWidth - statusWidth - submittedWidth - otherPadding
 
 		statusTransformer := text.Transformer(func(val interface{}) string {
 			// a little on the hacky side...
@@ -1589,32 +1596,32 @@ to quickly create a Cobra application.`,
 				AlignHeader:  text.AlignLeft,
 				ColorsHeader: text.Colors{text.Bold},
 				Transformer:  statusTransformer,
-				WidthMin:     firstRowSize,
-				WidthMax:     firstRowSize,
+				WidthMin:     nameWidth,
+				WidthMax:     nameWidth,
 			}, {
 				Name:         "model id",
 				Align:        text.AlignCenter,
 				AlignHeader:  text.AlignCenter,
 				ColorsHeader: text.Colors{text.Bold},
 				Transformer:  statusTransformer,
-				WidthMin:     14,
-				WidthMax:     14,
+				WidthMin:     modelIDWidth,
+				WidthMax:     modelIDWidth,
 			}, {
 				Name:         "status",
 				Align:        text.AlignCenter,
 				AlignHeader:  text.AlignCenter,
 				ColorsHeader: text.Colors{text.Bold},
 				Transformer:  statusTransformer,
-				WidthMin:     11,
-				WidthMax:     11,
+				WidthMin:     statusWidth,
+				WidthMax:     statusWidth,
 			}, {
 				Name:         "submitted",
 				Align:        text.AlignRight,
 				AlignHeader:  text.AlignRight,
 				ColorsHeader: text.Colors{text.Bold},
 				Transformer:  statusTransformer,
-				WidthMin:     14,
-				WidthMax:     14,
+				WidthMin:     submittedWidth,
+				WidthMax:     submittedWidth,
 			},
 		})
 
