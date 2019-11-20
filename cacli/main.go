@@ -21,8 +21,12 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/cloud-annotations/training/cacli/cmd"
+import (
+	"github.com/cloud-annotations/training/cacli/api"
+)
 
 func main() {
-	cmd.Execute()
+	//cmd.Execute()
+
+	api.Authenticate("eyBA-mAKLZSyhnDQgiTtom_Y_U3znlPtDUPLl8x_BXTG")
 }
