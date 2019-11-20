@@ -7,6 +7,7 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/promptui"
+	"github.com/cloud-annotations/survey"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
@@ -80,6 +81,12 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Printf("│ %s │\n", text.Colors{text.FgCyan, text.Bold}.Sprintf(modelID))
 	fmt.Printf("└─%s─┘\n", border)
 	fmt.Println()
+
+	name := false
+	prompt2 := &survey.Confirm{
+		Message: "Do you like pie?",
+	}
+	survey.AskOne(prompt2, &name)
 
 	// const shouldMonitor = stringToBool(
 	//   await input(`Would you like to monitor progress? `, 'yes')
