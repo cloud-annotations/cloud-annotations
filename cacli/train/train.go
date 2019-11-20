@@ -21,12 +21,12 @@ func Run(cmd *cobra.Command, args []string) {
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
 	s.Suffix = " Checking login..."
 	s.Start()
-	time.Sleep(2 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
 	s.Suffix = " Loading buckets..."
 	s.Start()
-	time.Sleep(2 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
 	peppers := []pepper{
@@ -62,12 +62,12 @@ func Run(cmd *cobra.Command, args []string) {
 
 	s.Suffix = " Checking bucket..."
 	s.Start()
-	time.Sleep(2 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
 	s.Suffix = " Starting training run..."
 	s.Start()
-	time.Sleep(2 * time.Second)
+	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
 	fmt.Println(text.FgGreen.Sprintf("success"), "Training run submitted.")
