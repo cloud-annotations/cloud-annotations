@@ -3,6 +3,7 @@ module github.com/cloud-annotations/training/cacli
 go 1.13
 
 require (
+	github.com/briandowns/spinner v1.7.0
 	github.com/cloud-annotations/promptui v0.3.3
 	github.com/go-openapi/strfmt v0.19.3 // indirect
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
