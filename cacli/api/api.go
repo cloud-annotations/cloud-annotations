@@ -79,3 +79,11 @@ func GetModels(url, token string) {
 func PostModel(url, token string) {
 
 }
+
+func PostTrainingDefinition(url, token, instanceId string) {
+
+}
+
+func PutTrainingDefinition(url, token, instanceId string) {
+
+}
