@@ -61,6 +61,15 @@ func Run(cmd *cobra.Command, args []string) {
 	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
+	// TODO: the spinner can be a bit buggy and do this:
+	//
+	// success Training run submitted.
+	//
+	// Model ID:
+	// ┌────────────────┐
+	// ⠦ Starting training run... │ model-iaa0w3y9 │
+	// └────────────────┘
+
 	fmt.Println(text.FgGreen.Sprintf("success"), "Training run submitted.")
 	fmt.Println()
 
@@ -72,7 +81,7 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Printf("└─%s─┘\n", border)
 	fmt.Println()
 
-	name := false
+	shouldMonitor := false
 	survey.ConfirmQuestionTemplate = `
 {{- if .ShowHelp }}{{- color .Config.Icons.Help.Format }}{{ .Config.Icons.Help.Text }} {{ .Help }}{{color "reset"}}{{"\n"}}{{end}}
 {{- color "default"}}{{ .Message }} {{color "reset"}}
@@ -86,14 +95,10 @@ func Run(cmd *cobra.Command, args []string) {
 		Message: "Would you like to monitor progress?",
 		Default: true,
 	}
-	survey.AskOne(prompt2, &name)
+	survey.AskOne(prompt2, &shouldMonitor)
 
-	// const shouldMonitor = stringToBool(
-	//   await input(`Would you like to monitor progress? `, 'yes')
-	// )
-
-	// if (shouldMonitor) {
-	//   console.log()
-	//   await progress([modelId], finalizedConfig)
-	// }
+	if shouldMonitor {
+		fmt.Println()
+		// start monitor.
+	}
 }
