@@ -5,7 +5,7 @@
 *.so
 *.dylib
 cacli
-
+.idea/
 # Test binary, built with `go test -c`
 *.test
 
