@@ -23,10 +23,14 @@ package main
 
 import (
 	"github.com/cloud-annotations/training/cacli/api"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
 	//cmd.Execute()
 
-	api.Authenticate("eyBA-mAKLZSyhnDQgiTtom_Y_U3znlPtDUPLl8x_BXTG")
+	token := api.Authenticate("eyBA-mAKLZSyhnDQgiTtom_Y_U3znlPtDUPLl8x_BXTG")
+	//fmt.Println(token)
+	model := api.GetModel("https://us-south.ml.cloud.ibm.com", token, "09408f66-deea-48bc-aa8f-a7ec25172214", "model-pno350bn")
+	spew.Dump(model)
 }

@@ -38,42 +38,46 @@ func Authenticate(apikey string) string {
 	return result["access_token"].(string)
 }
 
-func GetModel(url, token, modelId string) {
+func GetModel(url, token, instanceId, modelId string) Model {
 	request, err := http.NewRequest("GET", url+"/v3/models/"+modelId, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	bearer := "Bearer " + token
 	request.Header.Add("Authorization", bearer)
+	request.Header.Add("ML-Instance-ID", instanceId)
 
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var result map[string]interface{}
+	var result Model
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	return result
 }
 
-func GetModels(url, token string) {
+func GetModels(url, token, instanceId string) Models {
 	request, err := http.NewRequest("GET", url+"/v3/models", nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	bearer := "Bearer " + token
 	request.Header.Add("Authorization", bearer)
+	request.Header.Add("ML-Instance-ID", instanceId)
 
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	var result map[string]interface{}
+	var result Models
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	return result
 }
 
 func PostModel(url, token string) {
