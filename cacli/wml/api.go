@@ -1,4 +1,4 @@
-package api
+package wml
 
 import (
 	"encoding/json"

@@ -22,7 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"github.com/cloud-annotations/training/cacli/train"
+	"github.com/cloud-annotations/training/cacli/cmd/train"
 	"github.com/spf13/cobra"
 )
 
