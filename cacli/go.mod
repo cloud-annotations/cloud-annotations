@@ -7,7 +7,11 @@ require (
 	github.com/cheggaaa/pb v2.0.7+incompatible
 	github.com/cheggaaa/pb/v3 v3.0.2 // indirect
 	github.com/cloud-annotations/promptui v0.3.3
+<<<<<<< HEAD
 	github.com/cloud-annotations/survey v1.8.10
+=======
+	github.com/davecgh/go-spew v1.1.1
+>>>>>>> origin/go-cli-api
 	github.com/go-openapi/strfmt v0.19.3 // indirect
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/mattn/go-runewidth v0.0.6 // indirect
