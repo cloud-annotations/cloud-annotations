@@ -116,23 +116,39 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) Token 
 	return result
 }
 
-//   const objectStorageResources = await request({
-//     url: objectStorageResourcesEndpoint,
-//     method: 'GET',
-//     headers: {
-//       Authorization: 'bearer ' + upgradedToken.access_token
-//     },
-//     json: true
-//   })
+func getResources(endpoint string, token string) Resources {
+	request, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-//   const machineLearningResources = await request({
-//     url: machineLearningResourcesEndpoint,
-//     method: 'GET',
-//     headers: {
-//       Authorization: 'bearer ' + upgradedToken.access_token
-//     },
-//     json: true
-//   })
+	basic := "Bearer " + token
+	request.Header.Add("Authorization", basic)
+
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer resp.Body.Close()
+
+	var result Resources
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return result
+}
+
+func getObjectStorageResources(token string) Resources {
+	endpoint := "https://resource-controller.cloud.ibm.com/v2/resource_instances?resource_id=dff97f5c-bc5e-4455-b470-411c3edbe49c"
+	return getResources(endpoint, token)
+}
+
+func getMachineLearningResources(token string) Resources {
+	endpoint := "https://resource-controller.cloud.ibm.com/v2/resource_instances?resource_id=51c53b72-918f-4869-b834-2d99eb28422a"
+	return getResources(endpoint, token)
+}
 
 //   const findCredential = await request({
 //     url: `https://resource-controller.${baseEndpoint}/v2/resource_keys?name=cloud-annotations-binding`,

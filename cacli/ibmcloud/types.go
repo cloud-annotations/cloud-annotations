@@ -1,5 +1,7 @@
 package ibmcloud
 
+import "time"
+
 // NOTE: some of the timestamps are malformed and we don't care about dates, so parse them as strings.
 
 type IdentityEndpoints struct {
@@ -130,4 +132,51 @@ type Entity struct {
 type Account struct {
 	Metadata Metadata `json:"metadata"`
 	Entity   Entity   `json:"entity"`
+}
+
+type Resources struct {
+	RowsCount int         `json:"rows_count"`
+	NextURL   interface{} `json:"next_url"`
+	Resources []Resource  `json:"resources"`
+}
+
+type PlanHistory struct {
+	ResourcePlanID string    `json:"resource_plan_id"`
+	StartDate      time.Time `json:"start_date"`
+	RequestorID    string    `json:"requestor_id"`
+}
+
+type Resource struct {
+	ID                  string        `json:"id"`
+	GUID                string        `json:"guid"`
+	URL                 string        `json:"url"`
+	CreatedAt           time.Time     `json:"created_at"`
+	UpdatedAt           time.Time     `json:"updated_at"`
+	DeletedAt           interface{}   `json:"deleted_at"`
+	CreatedBy           string        `json:"created_by"`
+	UpdatedBy           string        `json:"updated_by"`
+	DeletedBy           string        `json:"deleted_by"`
+	ScheduledReclaimAt  interface{}   `json:"scheduled_reclaim_at"`
+	RestoredAt          interface{}   `json:"restored_at"`
+	ScheduledReclaimBy  string        `json:"scheduled_reclaim_by"`
+	RestoredBy          string        `json:"restored_by"`
+	Name                string        `json:"name"`
+	RegionID            string        `json:"region_id"`
+	AccountID           string        `json:"account_id"`
+	ResourcePlanID      string        `json:"resource_plan_id"`
+	ResourceGroupID     string        `json:"resource_group_id"`
+	ResourceGroupCrn    string        `json:"resource_group_crn"`
+	TargetCrn           string        `json:"target_crn"`
+	Crn                 string        `json:"crn"`
+	State               string        `json:"state"`
+	Type                string        `json:"type"`
+	ResourceID          string        `json:"resource_id"`
+	DashboardURL        string        `json:"dashboard_url"`
+	LastOperation       interface{}   `json:"last_operation"`
+	ResourceAliasesURL  string        `json:"resource_aliases_url"`
+	ResourceBindingsURL string        `json:"resource_bindings_url"`
+	ResourceKeysURL     string        `json:"resource_keys_url"`
+	PlanHistory         []PlanHistory `json:"plan_history"`
+	Migrated            bool          `json:"migrated"`
+	ControlledBy        string        `json:"controlled_by"`
 }

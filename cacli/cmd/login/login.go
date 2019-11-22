@@ -68,4 +68,30 @@ func Run(*cobra.Command, []string) {
 	}
 
 	ibmcloud.BindAccountToToken(accounts.Resources[accountIndex])
+
+	objectStorage := ibmcloud.GetObjectStorageResources()
+	machineLearning := ibmcloud.GetMachineLearningResources()
+
+	var objectStorageNames []string
+	var machineLearningNames []string
+
+	for _, element := range objectStorage.Resources {
+		objectStorageNames = append(objectStorageNames, element.Name)
+	}
+	for _, element := range machineLearning.Resources {
+		machineLearningNames = append(machineLearningNames, element.Name)
+	}
+
+	objectStorageIndex := 0
+	if err := talkdirtytome.ImportantList("Object Storage Instance", objectStorageNames, &objectStorageIndex); err != nil {
+		return
+	}
+
+	machineLearningIndex := 0
+	if err := talkdirtytome.ImportantList("Machine Learning Instance", machineLearningNames, &machineLearningIndex); err != nil {
+		return
+	}
+
+	fmt.Println(objectStorageIndex)
+	fmt.Println(machineLearningIndex)
 }

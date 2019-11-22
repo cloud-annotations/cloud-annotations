@@ -48,3 +48,17 @@ func BindAccountToToken(account Account) Token {
 	token = upgradeToken(endpoints.TokenEndpoint, token.RefreshToken, account.Metadata.GUID)
 	return token
 }
+
+func GetObjectStorageResources() Resources {
+	if !tokenSet {
+		panic("boom")
+	}
+	return getObjectStorageResources(token.AccessToken)
+}
+
+func GetMachineLearningResources() Resources {
+	if !tokenSet {
+		panic("boom")
+	}
+	return getMachineLearningResources(token.AccessToken)
+}
