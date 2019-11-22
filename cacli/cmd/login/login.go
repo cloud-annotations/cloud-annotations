@@ -2,19 +2,19 @@ package login
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 	"runtime"
 
-	"github.com/cloud-annotations/survey"
+	"github.com/cloud-annotations/training/cacli/talkdirtytome"
+
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
+	"github.com/jedib0t/go-pretty/text"
 
 	"github.com/spf13/cobra"
 )
 
-func openbrowser(url string) {
+func openbrowser(url string) error {
 	var err error
-
 	switch runtime.GOOS {
 	case "linux":
 		err = exec.Command("xdg-open", url).Start()
@@ -25,53 +25,47 @@ func openbrowser(url string) {
 	default:
 		err = fmt.Errorf("unsupported platform")
 	}
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	return err
 }
 
 func Run(*cobra.Command, []string) {
 	identityEndpoints := ibmcloud.GetIdentityEndpoints()
 
-	fmt.Printf("receive a One-Time Passcode from %s to proceed.\n", identityEndpoints.PasscodeEndpoint)
+	fmt.Printf("receive a One-Time Passcode from %s to proceed.\n", text.Colors{text.Bold, text.FgCyan}.Sprintf(identityEndpoints.PasscodeEndpoint))
 
 	shouldOpenInBrowser := false
-	survey.ConfirmQuestionTemplate = `
-{{- if .ShowHelp }}{{- color .Config.Icons.Help.Format }}{{ .Config.Icons.Help.Text }} {{ .Help }}{{color "reset"}}{{"\n"}}{{end}}
-{{- color "default"}}{{ .Message }} {{color "reset"}}
-{{- if .Answer}}
-  {{- color "cyan+b"}}{{.Answer}}{{color "reset"}}{{"\n"}}
-{{- else }}
-  {{- if and .Help (not .ShowHelp)}}{{color "cyan"}}[{{ .Config.HelpInput }} for help]{{color "reset"}} {{end}}
-  {{- color "default"}}{{if .Default}}(yes) {{else}}(no) {{end}}{{color "reset"}}
-{{- end}}`
-	prompt1 := &survey.Confirm{
-		Message: "open the URL in the default browser?",
-		Default: true,
+	if err := talkdirtytome.YesOrNah("open the URL in the default browser?", &shouldOpenInBrowser); err != nil {
+		return
 	}
-	survey.AskOne(prompt1, &shouldOpenInBrowser)
 
 	if shouldOpenInBrowser {
 		openbrowser(identityEndpoints.PasscodeEndpoint)
 	}
 
 	otp := ""
-	survey.InputQuestionTemplate = `
-{{- if .ShowHelp }}{{- color .Config.Icons.Help.Format }}{{ .Config.Icons.Help.Text }} {{ .Help }}{{color "reset"}}{{"\n"}}{{end}}
-{{- color "default"}}{{ .Message }} {{color "reset"}}
-{{- if .Answer}}
-  {{- color "cyan+b"}}{{.Answer}}{{color "reset"}}{{"\n"}}
-{{- else }}
-  {{- if and .Help (not .ShowHelp)}}{{color "cyan"}}[{{ .Config.HelpInput }} for help]{{color "reset"}} {{end}}
-  {{- color "default"}}{{if .Default}}(yes) {{else}}(no) {{end}}{{color "reset"}}
-{{- end}}`
-	prompt2 := &survey.Input{
-		Message: "Would you like to monitor progress?",
+	if err := talkdirtytome.IWantStringCheese("One-Time Passcode", &otp); err != nil {
+		return
 	}
-	survey.AskOne(prompt2, &otp)
 
-	fmt.Println(otp)
+	ibmcloud.Authenticate(otp)
+	accounts := ibmcloud.GetAccounts()
 
-	//0EANCXlwL6
+	var accountNames []string
+	for _, account := range accounts.Resources {
+		accountID := account.Metadata.GUID
+
+		name := account.Entity.Name + " (" + accountID + ")"
+		bluemixSubscriptions := account.Entity.BluemixSubscriptions
+		if len(bluemixSubscriptions) > 0 && bluemixSubscriptions[0].SoftlayerAccountID != "" {
+			name += " <-> " + bluemixSubscriptions[0].SoftlayerAccountID
+		}
+		accountNames = append(accountNames, name)
+	}
+
+	accountIndex := 0
+	if err := talkdirtytome.ImportantList("Account", accountNames, &accountIndex); err != nil {
+		return
+	}
+
+	ibmcloud.BindAccountToToken(accounts.Resources[accountIndex])
 }

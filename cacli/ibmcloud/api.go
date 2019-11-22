@@ -2,10 +2,10 @@ package ibmcloud
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -20,7 +20,7 @@ var client = http.Client{
 	Timeout: timeout,
 }
 
-func GetIdentityEndpoints() IdentityEndpoints {
+func getIdentityEndpoints() IdentityEndpoints {
 	request, err := http.NewRequest("GET", "https://iam.cloud.ibm.com/identity/.well-known/openid-configuration", nil)
 	if err != nil {
 		log.Fatalln(err)
@@ -40,11 +40,11 @@ func GetIdentityEndpoints() IdentityEndpoints {
 	return result
 }
 
-func PostToken(endpoint string, otp string) {
+func getToken(endpoint string, otp string) Token {
 	form := url.Values{}
 	form.Add("grant_type", "urn:ibm:params:oauth:grant-type:passcode")
 	form.Add("passcode", otp)
-	request, err := http.NewRequest("POST", endpoint, nil)
+	request, err := http.NewRequest("POST", endpoint, strings.NewReader(form.Encode()))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -58,48 +58,63 @@ func PostToken(endpoint string, otp string) {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	var result Token
+	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
-	log.Println(string(body))
+	return result
 }
 
-//   const token = await request({
-//     url: tokenEndpoint,
-//     method: 'POST',
-//     headers: {
-//       Authorization: `Basic ${toBase64('bx:bx')}`
-//     },
-//     form: {
-//       grant_type: 'urn:ibm:params:oauth:grant-type:passcode',
-//       passcode: otp
-//     },
-//     json: true
-//   })
+func getAccounts(token string) Accounts {
+	request, err := http.NewRequest("GET", "https://accounts.cloud.ibm.com/coe/v2/accounts", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-//   const accountsJson = await request({
-//     url: accountsEndpoint,
-//     method: 'GET',
-//     headers: {
-//       Authorization: 'bearer ' + token.access_token
-//     },
-//     json: true
-//   })
+	basic := "Bearer " + token
+	request.Header.Add("Authorization", basic)
 
-//   const upgradedToken = await request({
-//     url: tokenEndpoint,
-//     method: 'POST',
-//     headers: {
-//       Authorization: `Basic ${toBase64('bx:bx')}`
-//     },
-//     form: {
-//       grant_type: 'refresh_token',
-//       refresh_token: token.refresh_token,
-//       bss_account: accountId
-//     },
-//     json: true
-//   })
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
+
+	var result Accounts
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return result
+}
+
+func upgradeToken(endpoint string, refreshToken string, accountID string) Token {
+	form := url.Values{}
+	form.Add("grant_type", "refresh_token")
+	form.Add("refresh_token", refreshToken)
+	form.Add("bss_account", accountID)
+	request, err := http.NewRequest("POST", endpoint, strings.NewReader(form.Encode()))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	basic := "Basic Yng6Yng="
+	request.Header.Add("Authorization", basic)
+
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
+
+	var result Token
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return result
+}
 
 //   const objectStorageResources = await request({
 //     url: objectStorageResourcesEndpoint,
