@@ -2,9 +2,11 @@ package login
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 
+	"github.com/cloud-annotations/survey/terminal"
 	"github.com/cloud-annotations/training/cacli/talkdirtytome"
 
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
@@ -29,6 +31,7 @@ func openbrowser(url string) error {
 }
 
 func Run(*cobra.Command, []string) {
+
 	identityEndpoints := ibmcloud.GetIdentityEndpoints()
 
 	fmt.Printf("receive a One-Time Passcode from %s to proceed.\n", text.Colors{text.Bold, text.FgCyan}.Sprintf(identityEndpoints.PasscodeEndpoint))
@@ -46,6 +49,8 @@ func Run(*cobra.Command, []string) {
 	if err := talkdirtytome.IWantStringCheese("One-Time Passcode", &otp); err != nil {
 		return
 	}
+
+	fmt.Println()
 
 	ibmcloud.Authenticate(otp)
 	accounts := ibmcloud.GetAccounts()
@@ -67,6 +72,8 @@ func Run(*cobra.Command, []string) {
 		return
 	}
 
+	fmt.Println()
+
 	ibmcloud.BindAccountToToken(accounts.Resources[accountIndex])
 
 	objectStorage := ibmcloud.GetObjectStorageResources()
@@ -87,11 +94,34 @@ func Run(*cobra.Command, []string) {
 		return
 	}
 
+	cursor := &terminal.Cursor{
+		In:  os.Stdin,
+		Out: os.Stdout,
+	}
+	cursor.HorizontalAbsolute(0)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	cursor.PreviousLine(1)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	cursor.PreviousLine(1)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	fmt.Println("Object Storage Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(objectStorageNames[objectStorageIndex]))
+
+	fmt.Println()
+
 	machineLearningIndex := 0
 	if err := talkdirtytome.ImportantList("Machine Learning Instance", machineLearningNames, &machineLearningIndex); err != nil {
 		return
 	}
 
-	fmt.Println(objectStorageIndex)
-	fmt.Println(machineLearningIndex)
+	cursor.HorizontalAbsolute(0)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	cursor.PreviousLine(1)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	cursor.PreviousLine(1)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
+
+	// fmt.Println(objectStorageIndex)
+	// fmt.Println(machineLearningIndex)
+
 }
