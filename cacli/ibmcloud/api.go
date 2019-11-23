@@ -2,6 +2,7 @@ package ibmcloud
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -9,19 +10,61 @@ import (
 	"time"
 )
 
-// body, err := ioutil.ReadAll(resp.Body)
-// if err != nil {
-// 	panic(err)
-// }
-// log.Println(string(body))
+// protocol
+const protocol = "https://"
 
-var timeout = time.Duration(5 * time.Second)
+// subdomains
+const (
+	subdomainIAM                = "iam."
+	subdomainAccounts           = "accounts."
+	subdomainResourceController = "resource-controller."
+)
+
+// domain
+const api = "cloud.ibm.com"
+
+// endpoints
+const (
+	identityEndpoint     = protocol + subdomainIAM + api + "/identity/.well-known/openid-configuration"
+	accountsEndpoint     = protocol + subdomainAccounts + api + "/coe/v2/accounts"
+	resourcesEndpoint    = protocol + subdomainResourceController + api + "/v2/resource_instances"
+	resourceKeysEndpoint = protocol + subdomainResourceController + api + "/v2/resource_keys"
+)
+
+// grant types
+const (
+	passcodeGrantType     = "urn:ibm:params:oauth:grant-type:passcode"
+	refreshTokenGrantType = "refresh_token"
+)
+
+const basicAuth = "Basic Yng6Yng="
+
 var client = http.Client{
-	Timeout: timeout,
+	Timeout: time.Duration(0 * time.Second),
+}
+
+func postForm(endpoint string, authString string, form url.Values, res interface{}) error {
+	request, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(form.Encode()))
+	if err != nil {
+		return err
+	}
+
+	request.Header.Add("Authorization", authString)
+
+	resp, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return err
+	}
+	return nil
 }
 
 func getIdentityEndpoints() IdentityEndpoints {
-	request, err := http.NewRequest("GET", "https://iam.cloud.ibm.com/identity/.well-known/openid-configuration", nil)
+	request, err := http.NewRequest(http.MethodGet, identityEndpoint, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -42,24 +85,11 @@ func getIdentityEndpoints() IdentityEndpoints {
 
 func getToken(endpoint string, otp string) Token {
 	form := url.Values{}
-	form.Add("grant_type", "urn:ibm:params:oauth:grant-type:passcode")
+	form.Add("grant_type", passcodeGrantType)
 	form.Add("passcode", otp)
-	request, err := http.NewRequest("POST", endpoint, strings.NewReader(form.Encode()))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	basic := "Basic Yng6Yng="
-	request.Header.Add("Authorization", basic)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer resp.Body.Close()
 
 	var result Token
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	err := postForm(endpoint, basicAuth, form, &result)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -67,13 +97,12 @@ func getToken(endpoint string, otp string) Token {
 }
 
 func getAccounts(token string) Accounts {
-	request, err := http.NewRequest("GET", "https://accounts.cloud.ibm.com/coe/v2/accounts", nil)
+	request, err := http.NewRequest(http.MethodGet, accountsEndpoint, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	basic := "Bearer " + token
-	request.Header.Add("Authorization", basic)
+	request.Header.Add("Authorization", "Bearer "+token)
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -91,25 +120,12 @@ func getAccounts(token string) Accounts {
 
 func upgradeToken(endpoint string, refreshToken string, accountID string) Token {
 	form := url.Values{}
-	form.Add("grant_type", "refresh_token")
+	form.Add("grant_type", refreshTokenGrantType)
 	form.Add("refresh_token", refreshToken)
 	form.Add("bss_account", accountID)
-	request, err := http.NewRequest("POST", endpoint, strings.NewReader(form.Encode()))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	basic := "Basic Yng6Yng="
-	request.Header.Add("Authorization", basic)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer resp.Body.Close()
 
 	var result Token
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	err := postForm(endpoint, basicAuth, form, &result)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -117,13 +133,12 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) Token 
 }
 
 func getResources(endpoint string, token string) Resources {
-	request, err := http.NewRequest("GET", endpoint, nil)
+	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	basic := "Bearer " + token
-	request.Header.Add("Authorization", basic)
+	request.Header.Add("Authorization", "Bearer "+token)
 
 	resp, err := client.Do(request)
 	if err != nil {
@@ -141,36 +156,60 @@ func getResources(endpoint string, token string) Resources {
 }
 
 func getObjectStorageResources(token string) Resources {
-	endpoint := "https://resource-controller.cloud.ibm.com/v2/resource_instances?resource_id=dff97f5c-bc5e-4455-b470-411c3edbe49c"
+	endpoint := resourcesEndpoint + "?resource_id=dff97f5c-bc5e-4455-b470-411c3edbe49c"
 	return getResources(endpoint, token)
 }
 
 func getMachineLearningResources(token string) Resources {
-	endpoint := "https://resource-controller.cloud.ibm.com/v2/resource_instances?resource_id=51c53b72-918f-4869-b834-2d99eb28422a"
+	endpoint := resourcesEndpoint + "?resource_id=51c53b72-918f-4869-b834-2d99eb28422a"
 	return getResources(endpoint, token)
 }
 
-//   const findCredential = await request({
-//     url: `https://resource-controller.${baseEndpoint}/v2/resource_keys?name=cloud-annotations-binding`,
-//     method: 'GET',
-//     headers: {
-//       Authorization: 'bearer ' + upgradedToken.access_token
-//     },
-//     json: true
-//   })
+func getCredentials(token string) {
+	endpoint := resourceKeysEndpoint + "?name=cloud-annotations-binding"
+	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
-//     cosCredential = await request({
-//       url: `https://resource-controller.${baseEndpoint}/v2/resource_keys`,
-//       method: 'POST',
-//       headers: {
-//         Authorization: 'bearer ' + upgradedToken.access_token
-//       },
-//       body: {
-//         name: 'cloud-annotations-binding',
-//         source: objectStorage.id,
-//         role: 'Writer',
-//         parameters: { HMAC: true }
-//       },
-//       json: true
-//     })
-//   }
+	request.Header.Add("Authorization", "Bearer "+token)
+
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(string(body))
+}
+
+func createCredential(token string, objectStorageID string) {
+	form := url.Values{}
+	form.Add("name", "cloud-annotations-binding")
+	form.Add("source", objectStorageID)
+	form.Add("role", "writer")
+	form.Add("parameters", "{\"HMAC\":true}")
+	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, strings.NewReader(form.Encode()))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	request.Header.Add("Authorization", "Bearer "+token)
+
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(string(body))
+}
