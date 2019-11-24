@@ -1,7 +1,5 @@
 package ibmcloud
 
-import "time"
-
 // NOTE: some of the timestamps are malformed and we don't care about dates, so parse them as strings.
 
 type IdentityEndpoints struct {
@@ -141,17 +139,17 @@ type Resources struct {
 }
 
 type PlanHistory struct {
-	ResourcePlanID string    `json:"resource_plan_id"`
-	StartDate      time.Time `json:"start_date"`
-	RequestorID    string    `json:"requestor_id"`
+	ResourcePlanID string `json:"resource_plan_id"`
+	StartDate      string `json:"start_date"`
+	RequestorID    string `json:"requestor_id"`
 }
 
 type Resource struct {
 	ID                  string        `json:"id"`
 	GUID                string        `json:"guid"`
 	URL                 string        `json:"url"`
-	CreatedAt           time.Time     `json:"created_at"`
-	UpdatedAt           time.Time     `json:"updated_at"`
+	CreatedAt           string        `json:"created_at"`
+	UpdatedAt           string        `json:"updated_at"`
 	DeletedAt           interface{}   `json:"deleted_at"`
 	CreatedBy           string        `json:"created_by"`
 	UpdatedBy           string        `json:"updated_by"`
@@ -179,4 +177,51 @@ type Resource struct {
 	PlanHistory         []PlanHistory `json:"plan_history"`
 	Migrated            bool          `json:"migrated"`
 	ControlledBy        string        `json:"controlled_by"`
+}
+
+type Credentials struct {
+	RowsCount int          `json:"rows_count"`
+	NextURL   interface{}  `json:"next_url"`
+	Resources []Credential `json:"resources"`
+}
+
+type CosHmacKeys struct {
+	AccessKeyID     string `json:"access_key_id"`
+	SecretAccessKey string `json:"secret_access_key"`
+}
+
+type CredentialSet struct {
+	Apikey               string      `json:"apikey"`
+	CosHmacKeys          CosHmacKeys `json:"cos_hmac_keys"`
+	Endpoints            string      `json:"endpoints"`
+	IamApikeyDescription string      `json:"iam_apikey_description"`
+	IamApikeyName        string      `json:"iam_apikey_name"`
+	IamRoleCrn           string      `json:"iam_role_crn"`
+	IamServiceidCrn      string      `json:"iam_serviceid_crn"`
+	ResourceInstanceID   string      `json:"resource_instance_id"`
+}
+
+type Credential struct {
+	ID                  string        `json:"id"`
+	GUID                string        `json:"guid"`
+	URL                 string        `json:"url"`
+	CreatedAt           string        `json:"created_at"`
+	UpdatedAt           string        `json:"updated_at"`
+	DeletedAt           interface{}   `json:"deleted_at"`
+	CreatedBy           string        `json:"created_by"`
+	UpdatedBy           string        `json:"updated_by"`
+	DeletedBy           string        `json:"deleted_by"`
+	SourceCrn           string        `json:"source_crn"`
+	Name                string        `json:"name"`
+	Role                string        `json:"role"`
+	Crn                 string        `json:"crn"`
+	State               string        `json:"state"`
+	AccountID           string        `json:"account_id"`
+	ResourceGroupID     string        `json:"resource_group_id"`
+	ResourceID          string        `json:"resource_id"`
+	Credentials         CredentialSet `json:"credentials"`
+	IamCompatible       bool          `json:"iam_compatible"`
+	Migrated            bool          `json:"migrated"`
+	ResourceInstanceURL string        `json:"resource_instance_url"`
+	ResourceAliasURL    interface{}   `json:"resource_alias_url"`
 }

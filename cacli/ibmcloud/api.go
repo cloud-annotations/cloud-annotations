@@ -1,8 +1,8 @@
 package ibmcloud
 
 import (
+	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -55,28 +55,43 @@ func postForm(endpoint string, authString string, form url.Values, res interface
 	if err != nil {
 		return err
 	}
+
 	defer resp.Body.Close()
 
 	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func getIdentityEndpoints() IdentityEndpoints {
-	request, err := http.NewRequest(http.MethodGet, identityEndpoint, nil)
+func fetch(endpoint string, authString string, res interface{}) error {
+	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		log.Fatalln(err)
+		return err
+	}
+
+	if authString != "" {
+		request.Header.Add("Authorization", authString)
 	}
 
 	resp, err := client.Do(request)
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
+
 	defer resp.Body.Close()
 
+	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getIdentityEndpoints() IdentityEndpoints {
 	var result IdentityEndpoints
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	err := fetch(identityEndpoint, "", &result)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -90,28 +105,6 @@ func getToken(endpoint string, otp string) Token {
 
 	var result Token
 	err := postForm(endpoint, basicAuth, form, &result)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return result
-}
-
-func getAccounts(token string) Accounts {
-	request, err := http.NewRequest(http.MethodGet, accountsEndpoint, nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	request.Header.Add("Authorization", "Bearer "+token)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer resp.Body.Close()
-
-	var result Accounts
-	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -132,42 +125,57 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) Token 
 	return result
 }
 
-func getResources(endpoint string, token string) Resources {
-	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	request.Header.Add("Authorization", "Bearer "+token)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	defer resp.Body.Close()
-
-	var result Resources
-	err = json.NewDecoder(resp.Body).Decode(&result)
+func getAccounts(token string) Accounts {
+	var result Accounts
+	err := fetch(accountsEndpoint, "Bearer "+token, &result)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	return result
 }
 
-func getObjectStorageResources(token string) Resources {
-	endpoint := resourcesEndpoint + "?resource_id=dff97f5c-bc5e-4455-b470-411c3edbe49c"
-	return getResources(endpoint, token)
+// TODO: better way to pass url encoded params.
+func getResources(token string, resourceID string) Resources {
+	endpoint := resourcesEndpoint + "?resource_id=" + resourceID
+	var result Resources
+	err := fetch(endpoint, "Bearer "+token, &result)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return result
 }
 
-func getMachineLearningResources(token string) Resources {
-	endpoint := resourcesEndpoint + "?resource_id=51c53b72-918f-4869-b834-2d99eb28422a"
-	return getResources(endpoint, token)
+type CredentialParams struct {
+	Name string
+	Crn  string
 }
 
-func getCredentials(token string) {
-	endpoint := resourceKeysEndpoint + "?name=cloud-annotations-binding"
-	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
+func getCredentials(token string, params CredentialParams) Credentials {
+	endpoint := resourceKeysEndpoint + "?name=" + params.Name + "&source_crn=" + params.Crn
+	var result Credentials
+	err := fetch(endpoint, "Bearer "+token, &result)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return result
+}
+
+// TODO: ...
+// func createCredentialX(token string, name string, resourceID string, role string, params string) {
+// 	form := url.Values{}
+// 	form.Add("name", "cloud-annotations-binding")
+// 	form.Add("source", resourceID)
+// 	form.Add("role", "writer")
+// 	form.Add("parameters", "{\"HMAC\":true}")
+
+// 	err := postForm(resourceKeysEndpoint, "Bearer "+token, form, nil)
+// 	if err != nil {
+// 		log.Fatalln(err)
+// 	}
+// }
+func createCredential(token string, objectStorageID string) Credential {
+	jsonStr := bytes.NewBuffer([]byte(`{"name":"cloud-annotations-binding","source":"` + objectStorageID + `","role":"writer","parameters":{"HMAC":true}}`))
+	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, jsonStr)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -178,38 +186,11 @@ func getCredentials(token string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(string(body))
-}
-
-func createCredential(token string, objectStorageID string) {
-	form := url.Values{}
-	form.Add("name", "cloud-annotations-binding")
-	form.Add("source", objectStorageID)
-	form.Add("role", "writer")
-	form.Add("parameters", "{\"HMAC\":true}")
-	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, strings.NewReader(form.Encode()))
-	if err != nil {
+	var result Credential
+	if err = json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		log.Fatalln(err)
 	}
-
-	request.Header.Add("Authorization", "Bearer "+token)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(string(body))
+	return result
 }

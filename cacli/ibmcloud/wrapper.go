@@ -53,12 +53,20 @@ func GetObjectStorageResources() Resources {
 	if !tokenSet {
 		panic("boom")
 	}
-	return getObjectStorageResources(token.AccessToken)
+	return getResources(token.AccessToken, "dff97f5c-bc5e-4455-b470-411c3edbe49c")
 }
 
 func GetMachineLearningResources() Resources {
 	if !tokenSet {
 		panic("boom")
 	}
-	return getMachineLearningResources(token.AccessToken)
+	return getResources(token.AccessToken, "51c53b72-918f-4869-b834-2d99eb28422a")
+}
+
+func GetCredentials(params CredentialParams) Credentials {
+	return getCredentials(token.AccessToken, params)
+}
+
+func CreateCredential(objectStorageID string) Credential {
+	return createCredential(token.AccessToken, objectStorageID)
 }

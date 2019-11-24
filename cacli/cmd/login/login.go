@@ -8,6 +8,7 @@ import (
 
 	"github.com/cloud-annotations/survey/terminal"
 	"github.com/cloud-annotations/training/cacli/talkdirtytome"
+	"github.com/davecgh/go-spew/spew"
 
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
 	"github.com/jedib0t/go-pretty/text"
@@ -121,7 +122,15 @@ func Run(*cobra.Command, []string) {
 	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
 	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
 
-	// fmt.Println(objectStorageIndex)
-	// fmt.Println(machineLearningIndex)
+	// TODO: can we bind the credential methods to the resource objects?
+	creds := ibmcloud.GetCredentials(ibmcloud.CredentialParams{
+		Name: "cloud-annotations-binding",
+		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
+	})
 
+	spew.Dump(creds)
+
+	createdCred := ibmcloud.CreateCredential(objectStorage.Resources[objectStorageIndex].GUID)
+
+	spew.Dump(createdCred)
 }
