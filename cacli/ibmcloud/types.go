@@ -2,6 +2,22 @@ package ibmcloud
 
 // NOTE: some of the timestamps are malformed and we don't care about dates, so parse them as strings.
 
+type GetCredentialsParams struct {
+	Name string
+	Crn  string
+}
+
+type CreateCredentialParams struct {
+	Name       string         `json:"name"`
+	Source     string         `json:"source"`
+	Role       string         `json:"role"`
+	Parameters HMACParameters `json:"parameters"`
+}
+
+type HMACParameters struct {
+	HMAC bool `json:"HMAC"`
+}
+
 type IdentityEndpoints struct {
 	Issuer                            string   `json:"issuer"`
 	AuthorizationEndpoint             string   `json:"authorization_endpoint"`

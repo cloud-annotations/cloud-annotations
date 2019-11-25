@@ -149,11 +149,6 @@ func getResources(token string, resourceID string) Resources {
 	return result
 }
 
-type GetCredentialsParams struct {
-	Name string
-	Crn  string
-}
-
 func getCredentials(token string, params GetCredentialsParams) Credentials {
 	endpoint := resourceKeysEndpoint + "?name=" + params.Name + "&source_crn=" + params.Crn
 	var result Credentials
@@ -162,17 +157,6 @@ func getCredentials(token string, params GetCredentialsParams) Credentials {
 		log.Fatalln(err)
 	}
 	return result
-}
-
-type CreateCredentialParams struct {
-	Name       string         `json:"name"`
-	Source     string         `json:"source"`
-	Role       string         `json:"role"`
-	Parameters HMACParameters `json:"parameters"`
-}
-
-type HMACParameters struct {
-	HMAC bool `json:"HMAC"`
 }
 
 func createCredential(token string, params CreateCredentialParams) Credential {
