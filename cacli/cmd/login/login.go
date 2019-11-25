@@ -123,6 +123,9 @@ func Run(*cobra.Command, []string) {
 	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
 
 	// TODO: can we bind the credential methods to the resource objects?
+	// we would need a way to keep the account session. i.e. we need to bind the
+	// session to all resources returned...
+	// maybe we shouldn't force this because it's not a restriction on the service.
 	creds := accountSession.GetCredentials(ibmcloud.CredentialParams{
 		Name: "cloud-annotations-binding",
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
