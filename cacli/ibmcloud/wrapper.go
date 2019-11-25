@@ -1,7 +1,5 @@
 package ibmcloud
 
-// TODO: return errors
-
 var endpoints IdentityEndpoints
 var endpointSet = false // idk how to null/undefined check...
 
@@ -64,15 +62,16 @@ func (s *AccountSession) GetMachineLearningResources() Resources {
 	return resources
 }
 
-func (s *AccountSession) GetCredentials(params CredentialParams) Credentials {
+func (s *AccountSession) GetCredentials(params GetCredentialsParams) Credentials {
 	credentials := getCredentials(s.Token.AccessToken, params)
 	if credentials.NextURL != nil {
-		// TODO: this should normally only ever return 1, but we should still get the rest.
+		// TODO: this should normally only ever return 1, but we should still get
+		// the rest. (could technically return hundreds)
 		panic("boom")
 	}
 	return credentials
 }
 
-func (s *AccountSession) CreateCredential(objectStorageID string) Credential {
-	return createCredential(s.Token.AccessToken, objectStorageID)
+func (s *AccountSession) CreateCredential(params CreateCredentialParams) Credential {
+	return createCredential(s.Token.AccessToken, params)
 }

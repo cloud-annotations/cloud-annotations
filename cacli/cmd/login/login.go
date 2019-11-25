@@ -126,14 +126,21 @@ func Run(*cobra.Command, []string) {
 	// we would need a way to keep the account session. i.e. we need to bind the
 	// session to all resources returned...
 	// maybe we shouldn't force this because it's not a restriction on the service.
-	creds := accountSession.GetCredentials(ibmcloud.CredentialParams{
+	creds := accountSession.GetCredentials(ibmcloud.GetCredentialsParams{
 		Name: "cloud-annotations-binding",
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
 	})
 
 	spew.Dump(creds)
 
-	createdCred := accountSession.CreateCredential(objectStorage.Resources[objectStorageIndex].GUID)
+	createdCred := accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
+		Name:   "cloud-annotations-binding",
+		Source: objectStorage.Resources[objectStorageIndex].GUID,
+		Role:   "writer",
+		Parameters: ibmcloud.HMACParameters{
+			HMAC: true,
+		},
+	})
 
 	spew.Dump(createdCred)
 }

@@ -1,5 +1,7 @@
 package ibmcloud
 
+// TODO: return errors
+
 import (
 	"bytes"
 	"encoding/json"
@@ -145,12 +147,12 @@ func getResources(token string, resourceID string) Resources {
 	return result
 }
 
-type CredentialParams struct {
+type GetCredentialsParams struct {
 	Name string
 	Crn  string
 }
 
-func getCredentials(token string, params CredentialParams) Credentials {
+func getCredentials(token string, params GetCredentialsParams) Credentials {
 	endpoint := resourceKeysEndpoint + "?name=" + params.Name + "&source_crn=" + params.Crn
 	var result Credentials
 	err := fetch(endpoint, "Bearer "+token, &result)
@@ -160,12 +162,23 @@ func getCredentials(token string, params CredentialParams) Credentials {
 	return result
 }
 
-func createCredential(token string, objectStorageID string) Credential {
-	// TODO: use marshaling
-	// values := map[string]string{"username": username, "password": password}
-	// jsonValue, _ := json.Marshal(values)
-	jsonStr := bytes.NewBuffer([]byte(`{"name":"cloud-annotations-binding","source":"` + objectStorageID + `","role":"writer","parameters":{"HMAC":true}}`))
-	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, jsonStr)
+type CreateCredentialParams struct {
+	Name       string         `json:"name"`
+	Source     string         `json:"source"`
+	Role       string         `json:"role"`
+	Parameters HMACParameters `json:"parameters"`
+}
+
+type HMACParameters struct {
+	HMAC bool `json:"HMAC"`
+}
+
+func createCredential(token string, params CreateCredentialParams) Credential {
+	jsonValue, err := json.Marshal(params)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, bytes.NewBuffer(jsonValue))
 	if err != nil {
 		log.Fatalln(err)
 	}
