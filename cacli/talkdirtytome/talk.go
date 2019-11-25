@@ -53,7 +53,7 @@ func YesOrNah(message string, res interface{}) error {
 	survey.ConfirmQuestionTemplate = `
 {{- color "default"}}{{ .Message }} {{color "reset"}}
 {{- if .Answer}}
-  {{- color "default"}}{{ .Answer }}{{color "reset"}}{{"\n"}}
+  {{- color "default"}}{{- if eq .Answer "Yes"}}yes{{- else }}no{{- end}}{{color "reset"}}{{"\n"}}
 {{- else }}
   {{- color "default"}}{{if .Default}}(yes) {{else}}(no) {{end}}{{color "reset"}}
 {{- end}}`

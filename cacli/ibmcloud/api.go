@@ -160,20 +160,10 @@ func getCredentials(token string, params CredentialParams) Credentials {
 	return result
 }
 
-// TODO: ...
-// func createCredentialX(token string, name string, resourceID string, role string, params string) {
-// 	form := url.Values{}
-// 	form.Add("name", "cloud-annotations-binding")
-// 	form.Add("source", resourceID)
-// 	form.Add("role", "writer")
-// 	form.Add("parameters", "{\"HMAC\":true}")
-
-// 	err := postForm(resourceKeysEndpoint, "Bearer "+token, form, nil)
-// 	if err != nil {
-// 		log.Fatalln(err)
-// 	}
-// }
 func createCredential(token string, objectStorageID string) Credential {
+	// TODO: use marshaling
+	// values := map[string]string{"username": username, "password": password}
+	// jsonValue, _ := json.Marshal(values)
 	jsonStr := bytes.NewBuffer([]byte(`{"name":"cloud-annotations-binding","source":"` + objectStorageID + `","role":"writer","parameters":{"HMAC":true}}`))
 	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, jsonStr)
 	if err != nil {
