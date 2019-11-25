@@ -67,6 +67,8 @@ func postForm(endpoint string, authString string, form url.Values, res interface
 	return nil
 }
 
+// TODO: return interface instead of side effects.
+// How do we handle Decoding if we don't have the struct passed in?
 func fetch(endpoint string, authString string, res interface{}) error {
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {

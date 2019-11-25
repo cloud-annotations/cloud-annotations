@@ -32,9 +32,8 @@ func openbrowser(url string) error {
 }
 
 func Run(*cobra.Command, []string) {
-
+	// Get the login endpoint and ask to open the browser.
 	identityEndpoints := ibmcloud.GetIdentityEndpoints()
-
 	fmt.Printf("receive a One-Time Passcode from %s to proceed.\n", text.Colors{text.Bold, text.FgCyan}.Sprintf(identityEndpoints.PasscodeEndpoint))
 
 	shouldOpenInBrowser := false
@@ -46,20 +45,22 @@ func Run(*cobra.Command, []string) {
 		openbrowser(identityEndpoints.PasscodeEndpoint)
 	}
 
+	// Ask for the one-time passcode.
 	otp := ""
 	if err := talkdirtytome.IWantStringCheese("One-Time Passcode", &otp); err != nil {
 		return
 	}
-
 	fmt.Println()
 
+	// Authenticate the passcode and get a list of accounts.
 	session := ibmcloud.Authenticate(otp)
 	accounts := session.GetAccounts()
 
+	// Loop through all the accounts and create a list of names in the form of:
+	// ACCOUNT_NAME (ACCOUNT_ID) <-> (SOFTLAYER_ID)
 	var accountNames []string
 	for _, account := range accounts.Resources {
 		accountID := account.Metadata.GUID
-
 		name := account.Entity.Name + " (" + accountID + ")"
 		bluemixSubscriptions := account.Entity.BluemixSubscriptions
 		if len(bluemixSubscriptions) > 0 && bluemixSubscriptions[0].SoftlayerAccountID != "" {
@@ -68,33 +69,38 @@ func Run(*cobra.Command, []string) {
 		accountNames = append(accountNames, name)
 	}
 
+	// Ask for an account.
 	accountIndex := 0
 	if err := talkdirtytome.ImportantList("Account", accountNames, &accountIndex); err != nil {
 		return
 	}
-
 	fmt.Println()
 
+	// Bind the chosen account to the session.
 	accountSession := session.BindAccountToToken(accounts.Resources[accountIndex])
 
+	// Get lists of resources.
 	objectStorage := accountSession.GetObjectStorageResources()
 	machineLearning := accountSession.GetMachineLearningResources()
 
+	// Generate resource names.
 	var objectStorageNames []string
-	var machineLearningNames []string
-
 	for _, element := range objectStorage.Resources {
 		objectStorageNames = append(objectStorageNames, element.Name)
 	}
+
+	var machineLearningNames []string
 	for _, element := range machineLearning.Resources {
 		machineLearningNames = append(machineLearningNames, element.Name)
 	}
 
+	// Ask for an object storage instace.
 	objectStorageIndex := 0
 	if err := talkdirtytome.ImportantList("Object Storage Instance", objectStorageNames, &objectStorageIndex); err != nil {
 		return
 	}
 
+	// Delete a few lines to be flush with the last question.
 	cursor := &terminal.Cursor{
 		In:  os.Stdin,
 		Out: os.Stdout,
@@ -106,14 +112,15 @@ func Run(*cobra.Command, []string) {
 	cursor.PreviousLine(1)
 	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
 	fmt.Println("Object Storage Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(objectStorageNames[objectStorageIndex]))
-
 	fmt.Println()
 
+	// Ask for a watson machine learning instace.
 	machineLearningIndex := 0
 	if err := talkdirtytome.ImportantList("Machine Learning Instance", machineLearningNames, &machineLearningIndex); err != nil {
 		return
 	}
 
+	// Delete a few lines to be flush with the last question.
 	cursor.HorizontalAbsolute(0)
 	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
 	cursor.PreviousLine(1)
