@@ -31,6 +31,15 @@ func openbrowser(url string) error {
 	return err
 }
 
+func clearLines(cursor *terminal.Cursor, num int) {
+	cursor.HorizontalAbsolute(0)
+	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	for i := 0; i < num-1; i++ {
+		cursor.PreviousLine(1)
+		terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	}
+}
+
 func Run(*cobra.Command, []string) {
 	// Get the login endpoint and ask to open the browser.
 	identityEndpoints := ibmcloud.GetIdentityEndpoints()
@@ -101,16 +110,8 @@ func Run(*cobra.Command, []string) {
 	}
 
 	// Delete a few lines to be flush with the last question.
-	cursor := &terminal.Cursor{
-		In:  os.Stdin,
-		Out: os.Stdout,
-	}
-	cursor.HorizontalAbsolute(0)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
-	cursor.PreviousLine(1)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
-	cursor.PreviousLine(1)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	cursor := &terminal.Cursor{In: os.Stdin, Out: os.Stdout}
+	clearLines(cursor, 3)
 	fmt.Println("Object Storage Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(objectStorageNames[objectStorageIndex]))
 	fmt.Println()
 
@@ -121,12 +122,7 @@ func Run(*cobra.Command, []string) {
 	}
 
 	// Delete a few lines to be flush with the last question.
-	cursor.HorizontalAbsolute(0)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
-	cursor.PreviousLine(1)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
-	cursor.PreviousLine(1)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+	clearLines(cursor, 3)
 	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
 
 	// TODO: can we bind the credential methods to the resource objects?
