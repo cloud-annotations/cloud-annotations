@@ -5,16 +5,20 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/survey/terminal"
 	"github.com/cloud-annotations/training/cacli/talkdirtytome"
-	"github.com/davecgh/go-spew/spew"
 
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
 	"github.com/jedib0t/go-pretty/text"
 
 	"github.com/spf13/cobra"
 )
+
+var s = spinner.New(spinner.CharSets[14], 60*time.Millisecond)
+var c = &terminal.Cursor{In: os.Stdin, Out: os.Stdout}
 
 func openbrowser(url string) error {
 	var err error
@@ -31,12 +35,12 @@ func openbrowser(url string) error {
 	return err
 }
 
-func clearLines(cursor *terminal.Cursor, num int) {
-	cursor.HorizontalAbsolute(0)
-	terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+func clearLines(num int) {
+	c.HorizontalAbsolute(0)
+	terminal.EraseLine(c.Out, terminal.ERASE_LINE_ALL)
 	for i := 0; i < num-1; i++ {
-		cursor.PreviousLine(1)
-		terminal.EraseLine(cursor.Out, terminal.ERASE_LINE_ALL)
+		c.PreviousLine(1)
+		terminal.EraseLine(c.Out, terminal.ERASE_LINE_ALL)
 	}
 }
 
@@ -61,6 +65,9 @@ func Run(*cobra.Command, []string) {
 	}
 	fmt.Println()
 
+	s.Suffix = " Authenticating..."
+	s.Start()
+
 	// Authenticate the passcode and get a list of accounts.
 	session := ibmcloud.Authenticate(otp)
 	accounts := session.GetAccounts()
@@ -78,12 +85,17 @@ func Run(*cobra.Command, []string) {
 		accountNames = append(accountNames, name)
 	}
 
+	s.Stop()
+
 	// Ask for an account.
 	accountIndex := 0
 	if err := talkdirtytome.ImportantList("Account", accountNames, &accountIndex); err != nil {
 		return
 	}
 	fmt.Println()
+
+	s.Suffix = " Loading resources..."
+	s.Start()
 
 	// Bind the chosen account to the session.
 	accountSession := session.BindAccountToToken(accounts.Resources[accountIndex])
@@ -103,6 +115,8 @@ func Run(*cobra.Command, []string) {
 		machineLearningNames = append(machineLearningNames, element.Name)
 	}
 
+	s.Stop()
+
 	// Ask for an object storage instace.
 	objectStorageIndex := 0
 	if err := talkdirtytome.ImportantList("Object Storage Instance", objectStorageNames, &objectStorageIndex); err != nil {
@@ -110,8 +124,7 @@ func Run(*cobra.Command, []string) {
 	}
 
 	// Delete a few lines to be flush with the last question.
-	cursor := &terminal.Cursor{In: os.Stdin, Out: os.Stdout}
-	clearLines(cursor, 3)
+	clearLines(3)
 	fmt.Println("Object Storage Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(objectStorageNames[objectStorageIndex]))
 	fmt.Println()
 
@@ -122,32 +135,32 @@ func Run(*cobra.Command, []string) {
 	}
 
 	// Delete a few lines to be flush with the last question.
-	clearLines(cursor, 3)
+	clearLines(3)
 	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
+	fmt.Println()
 
-	// TODO: can we bind the credential methods to the resource objects?
-	// we would need a way to keep the account session. i.e. we need to bind the
-	// session to all resources returned...
-	// maybe we shouldn't force this because it's not a restriction on the service.
+	s.Suffix = " Verifying..."
+	s.Start()
+
 	creds := accountSession.GetCredentials(ibmcloud.GetCredentialsParams{
 		Name: "cloud-annotations-binding",
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
 	})
 
-	spew.Dump(creds)
+	if len(creds.Resources) == 0 {
+		accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
+			Name:   "cloud-annotations-binding",
+			Source: objectStorage.Resources[objectStorageIndex].GUID,
+			Role:   "writer",
+			Parameters: ibmcloud.HMACParameters{
+				HMAC: true,
+			},
+		})
+	}
 
-	createdCred := accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
-		Name:   "cloud-annotations-binding",
-		Source: objectStorage.Resources[objectStorageIndex].GUID,
-		Role:   "writer",
-		Parameters: ibmcloud.HMACParameters{
-			HMAC: true,
-		},
-	})
+	s.Stop()
 
-	spew.Dump(createdCred)
-
-	//TODO: add spinners.
+	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")
 }
 
 // TODO: ibmcloud not logged in example.
