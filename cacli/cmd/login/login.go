@@ -143,4 +143,74 @@ func Run(*cobra.Command, []string) {
 	})
 
 	spew.Dump(createdCred)
+
+	//TODO: add spinners.
 }
+
+// TODO: ibmcloud not logged in example.
+// $RED(FAILED)
+// Not logged in. Use '$YELLOW(ibmcloud login)' to log in.
+
+////////////////////////////////////////////////////////////////////////////////
+// TODO: theoretical login examples:
+////////////////////////////////////////////////////////////////////////////////
+
+// interaction required:
+// ```
+// cacli login
+// ```
+
+// zero interaction: (general case flags)
+// ```
+// cacli login \
+//   --apikey GLOBAL_IBM_API_KEY \
+//   --wmlinstanceid YOUR_WML_INSTANCE_ID /* I think we can use the instance to find the proper region */
+//   --cosinstanceid YOUR_COS_INSTANCE_ID
+//   --account ACCOUNT_TO_TARGET
+// ```
+
+// Maybe we want the option to log in, with no account targeted?
+// ```
+// export IBMCLOUD_API_KEY=GLOBAL_IBM_API_KEY
+// cacli login --no-interaction
+// cacli train \
+//   --wmlinstanceid YOUR_WML_INSTANCE_ID \
+//   --cosinstanceid YOUR_COS_INSTANCE_ID \
+//   --account ACCOUNT_TO_TARGET \
+//   --bucket MY_BUCKET \
+//   --steps 1000 \
+//   --gpu k80 \
+//   --output MY_OTHER_BUCKET
+// ```
+
+// Maybe we want the option to log in, with no account targeted?
+// ```
+// export IBMCLOUD_API_KEY=GLOBAL_IBM_API_KEY
+// cacli login --no-interaction /* do we even need to run login? */
+// cacli train \
+//   --account ACCOUNT_TO_TARGET \
+//   --wmlinstanceid YOUR_WML_INSTANCE_ID \
+//   --cosinstanceid YOUR_COS_INSTANCE_ID \
+//   --bucket MY_BUCKET \
+//   --steps 1000 \
+//   --gpu k80 \
+//   --output MY_OTHER_BUCKET
+// ```
+
+// Allow HMAC to allow for targeting random stuff
+// ```
+// export IBMCLOUD_API_KEY=GLOBAL_IBM_API_KEY
+// cacli train \
+//   --account ACCOUNT_TO_TARGET \
+//   --wmlinstanceid YOUR_WML_INSTANCE_ID \
+//   --bucket MY_BUCKET \
+//   --bucketcreds MY_ID:MY_key \
+//   --steps 1000 \
+//   --gpu k80 \
+//   --output MY_OTHER_BUCKET
+//   --outputcreds MY_ID:MY_key \
+// ```
+
+////////////////////////////////////////////////////////////////////////////////
+// TODO: easily switch instances without re-login
+////////////////////////////////////////////////////////////////////////////////
