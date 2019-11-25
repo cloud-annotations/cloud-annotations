@@ -164,8 +164,8 @@ func Run(*cobra.Command, []string) {
 // ```
 // cacli login \
 //   --apikey GLOBAL_IBM_API_KEY \
-//   --wmlinstanceid YOUR_WML_INSTANCE_ID /* I think we can use the instance to find the proper region */
-//   --cosinstanceid YOUR_COS_INSTANCE_ID
+//   --wmlinstanceid YOUR_WML_INSTANCE_ID \ /* I think we can use the instance to find the proper region */
+//   --cosinstanceid YOUR_COS_INSTANCE_ID \
 //   --account ACCOUNT_TO_TARGET
 // ```
 
@@ -203,14 +203,24 @@ func Run(*cobra.Command, []string) {
 // cacli train \
 //   --account ACCOUNT_TO_TARGET \
 //   --wmlinstanceid YOUR_WML_INSTANCE_ID \
+//   --cosinstanceid YOUR_COS_INSTANCE_ID \ /* this will be overridden if any bucket creds are specified */
 //   --bucket MY_BUCKET \
 //   --bucketcreds MY_ID:MY_key \
 //   --steps 1000 \
 //   --gpu k80 \
-//   --output MY_OTHER_BUCKET
-//   --outputcreds MY_ID:MY_key \
+//   --output MY_OTHER_BUCKET \
+//   --outputcreds MY_ID:MY_key
 // ```
 
 ////////////////////////////////////////////////////////////////////////////////
 // TODO: easily switch instances without re-login
 ////////////////////////////////////////////////////////////////////////////////
+// This could get funky because you might need to change account to use the
+// resource you want.
+// might be best to just have a `cacli target` interactive command.
+// ```
+// cacli target \
+//   --account YOUR_ACCOUNT_ID \
+//   --wml YOUR_WML_INSTANCE_ID \
+//   --cos YOUR_COS_INSTANCE_ID
+// ```
