@@ -53,8 +53,8 @@ func Run(*cobra.Command, []string) {
 
 	fmt.Println()
 
-	ibmcloud.Authenticate(otp)
-	accounts := ibmcloud.GetAccounts()
+	session := ibmcloud.Authenticate(otp)
+	accounts := session.GetAccounts()
 
 	var accountNames []string
 	for _, account := range accounts.Resources {
@@ -75,10 +75,10 @@ func Run(*cobra.Command, []string) {
 
 	fmt.Println()
 
-	ibmcloud.BindAccountToToken(accounts.Resources[accountIndex])
+	accountSession := session.BindAccountToToken(accounts.Resources[accountIndex])
 
-	objectStorage := ibmcloud.GetObjectStorageResources()
-	machineLearning := ibmcloud.GetMachineLearningResources()
+	objectStorage := accountSession.GetObjectStorageResources()
+	machineLearning := accountSession.GetMachineLearningResources()
 
 	var objectStorageNames []string
 	var machineLearningNames []string
@@ -123,14 +123,14 @@ func Run(*cobra.Command, []string) {
 	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
 
 	// TODO: can we bind the credential methods to the resource objects?
-	creds := ibmcloud.GetCredentials(ibmcloud.CredentialParams{
+	creds := accountSession.GetCredentials(ibmcloud.CredentialParams{
 		Name: "cloud-annotations-binding",
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
 	})
 
 	spew.Dump(creds)
 
-	createdCred := ibmcloud.CreateCredential(objectStorage.Resources[objectStorageIndex].GUID)
+	createdCred := accountSession.CreateCredential(objectStorage.Resources[objectStorageIndex].GUID)
 
 	spew.Dump(createdCred)
 }

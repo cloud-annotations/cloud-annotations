@@ -4,8 +4,6 @@ package ibmcloud
 
 var endpoints IdentityEndpoints
 var endpointSet = false // idk how to null/undefined check...
-var token Token
-var tokenSet = false
 
 func cacheIdentityEndpoints() {
 	if !endpointSet {
@@ -19,20 +17,18 @@ func GetIdentityEndpoints() IdentityEndpoints {
 	return endpoints
 }
 
-func Authenticate(otp string) Token {
-	if !tokenSet {
-		cacheIdentityEndpoints()
-		token = getToken(endpoints.TokenEndpoint, otp)
-		tokenSet = true
-	}
-	return token
+type Session struct {
+	Token Token
 }
 
-func GetAccounts() Accounts {
-	if !tokenSet {
-		panic("boom")
-	}
-	accounts := getAccounts(token.AccessToken)
+func Authenticate(otp string) Session {
+	cacheIdentityEndpoints()
+	token := getToken(endpoints.TokenEndpoint, otp)
+	return Session{Token: token}
+}
+
+func (s *Session) GetAccounts() Accounts {
+	accounts := getAccounts(s.Token.AccessToken)
 	if accounts.NextURL != nil {
 		// TODO: get the rest of the accounts.
 		panic("boom")
@@ -40,33 +36,43 @@ func GetAccounts() Accounts {
 	return accounts
 }
 
-func BindAccountToToken(account Account) Token {
-	if !tokenSet {
-		panic("boom")
-	}
+type AccountSession struct {
+	Token Token
+}
+
+func (s *Session) BindAccountToToken(account Account) AccountSession {
 	cacheIdentityEndpoints()
-	token = upgradeToken(endpoints.TokenEndpoint, token.RefreshToken, account.Metadata.GUID)
-	return token
+	token := upgradeToken(endpoints.TokenEndpoint, s.Token.RefreshToken, account.Metadata.GUID)
+	return AccountSession{Token: token}
 }
 
-func GetObjectStorageResources() Resources {
-	if !tokenSet {
+func (s *AccountSession) GetObjectStorageResources() Resources {
+	resources := getResources(s.Token.AccessToken, "dff97f5c-bc5e-4455-b470-411c3edbe49c")
+	if resources.NextURL != nil {
+		// TODO: get the rest of the resources.
 		panic("boom")
 	}
-	return getResources(token.AccessToken, "dff97f5c-bc5e-4455-b470-411c3edbe49c")
+	return resources
 }
 
-func GetMachineLearningResources() Resources {
-	if !tokenSet {
+func (s *AccountSession) GetMachineLearningResources() Resources {
+	resources := getResources(s.Token.AccessToken, "51c53b72-918f-4869-b834-2d99eb28422a")
+	if resources.NextURL != nil {
+		// TODO: get the rest of the resources.
 		panic("boom")
 	}
-	return getResources(token.AccessToken, "51c53b72-918f-4869-b834-2d99eb28422a")
+	return resources
 }
 
-func GetCredentials(params CredentialParams) Credentials {
-	return getCredentials(token.AccessToken, params)
+func (s *AccountSession) GetCredentials(params CredentialParams) Credentials {
+	credentials := getCredentials(s.Token.AccessToken, params)
+	if credentials.NextURL != nil {
+		// TODO: this should normally only ever return 1, but we should still get the rest.
+		panic("boom")
+	}
+	return credentials
 }
 
-func CreateCredential(objectStorageID string) Credential {
-	return createCredential(token.AccessToken, objectStorageID)
+func (s *AccountSession) CreateCredential(objectStorageID string) Credential {
+	return createCredential(s.Token.AccessToken, objectStorageID)
 }
