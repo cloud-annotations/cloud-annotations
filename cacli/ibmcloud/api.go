@@ -119,7 +119,9 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) Token 
 	form := url.Values{}
 	form.Add("grant_type", refreshTokenGrantType)
 	form.Add("refresh_token", refreshToken)
-	form.Add("bss_account", accountID)
+	if accountID != "" {
+		form.Add("bss_account", accountID)
+	}
 
 	var result Token
 	err := postForm(endpoint, basicAuth, form, &result)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"runtime"
@@ -173,37 +174,37 @@ func Run(*cobra.Command, []string) {
 	// Get the users home directory.
 	home, err := homedir.Dir()
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	// Persist Token.
 	tokenFile, err := json.MarshalIndent(accountSession.Token, "", "\t") // is it worth pretty printing?
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	err = ioutil.WriteFile(home+"/.cacli/credentials.json", tokenFile, 0644)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	// Persist object storage info.
 	cosFile, err := json.MarshalIndent(objectStorage.Resources[objectStorageIndex], "", "\t")
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	err = ioutil.WriteFile(home+"/.cacli/cos.json", cosFile, 0644)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	// Persist machine learning info.
 	wmlFile, err := json.MarshalIndent(machineLearning.Resources[machineLearningIndex], "", "\t")
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	err = ioutil.WriteFile(home+"/.cacli/wml.json", wmlFile, 0644)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")

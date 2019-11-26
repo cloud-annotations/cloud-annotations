@@ -14,7 +14,7 @@ import (
 
 func Run(_ *cobra.Command, args []string) {
 	if len(args) != 1 {
-		panic("aahhhh")
+		panic("WHY AM I PANICING")
 	}
 
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)

@@ -1,5 +1,12 @@
 package ibmcloud
 
+import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"os"
+)
+
 var endpoints IdentityEndpoints
 var endpointSet = false // idk how to null/undefined check...
 
@@ -23,6 +30,27 @@ func Authenticate(otp string) Session {
 	cacheIdentityEndpoints()
 	token := getToken(endpoints.TokenEndpoint, otp)
 	return Session{Token: token}
+}
+
+func AuthenticateFromFile(filepath string) AccountSession {
+	cacheIdentityEndpoints()
+
+	jsonFile, err := os.Open(filepath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	var token Token
+	json.Unmarshal(byteValue, &token)
+
+	upgradedToken := upgradeToken(endpoints.TokenEndpoint, token.RefreshToken, "")
+	return AccountSession{Token: upgradedToken}
 }
 
 func (s *Session) GetAccounts() Accounts {
