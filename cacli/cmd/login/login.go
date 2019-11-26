@@ -59,8 +59,11 @@ func Run(*cobra.Command, []string) {
 
 	shouldOpenInBrowser := false
 	if err := talkdirtytome.YesOrNah("open the URL in the default browser?", &shouldOpenInBrowser); err != nil {
-		//TODO: test command c
-		log.Fatalln(err)
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			log.Fatalln(err)
+		}
 	}
 
 	if shouldOpenInBrowser {
@@ -70,7 +73,11 @@ func Run(*cobra.Command, []string) {
 	// Ask for the one-time passcode.
 	otp := ""
 	if err := talkdirtytome.IWantStringCheese("One-Time Passcode", &otp); err != nil {
-		log.Fatalln(err)
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			log.Fatalln(err)
+		}
 	}
 	fmt.Println()
 
@@ -106,7 +113,11 @@ func Run(*cobra.Command, []string) {
 	// Ask for an account.
 	accountIndex := 0
 	if err := talkdirtytome.ImportantList("Account", accountNames, &accountIndex); err != nil {
-		log.Fatalln(err)
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			log.Fatalln(err)
+		}
 	}
 	fmt.Println()
 
@@ -143,7 +154,11 @@ func Run(*cobra.Command, []string) {
 	// Ask for an object storage instace.
 	objectStorageIndex := 0
 	if err := talkdirtytome.ImportantList("Object Storage Instance", objectStorageNames, &objectStorageIndex); err != nil {
-		log.Fatalln(err)
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			log.Fatalln(err)
+		}
 	}
 
 	// Delete a few lines to be flush with the last question.
@@ -154,7 +169,11 @@ func Run(*cobra.Command, []string) {
 	// Ask for a watson machine learning instace.
 	machineLearningIndex := 0
 	if err := talkdirtytome.ImportantList("Machine Learning Instance", machineLearningNames, &machineLearningIndex); err != nil {
-		log.Fatalln(err)
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			log.Fatalln(err)
+		}
 	}
 
 	// Delete a few lines to be flush with the last question.

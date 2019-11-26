@@ -10,29 +10,19 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 )
 
-func AssertLoggedIn() {
-	// Only refresh the persisted token.
+func AssertLoggedIn() ibmcloud.AccountSession {
 	home, err := homedir.Dir()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// TODO: use some sort of global config for this path.
-	_, err = ibmcloud.AuthenticateFromFile(home + "/.cacli/credentials.json")
+	accountSession, err := ibmcloud.AuthenticateFromFile(home + "/.cacli/credentials.json")
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(text.Colors{text.FgRed, text.Bold}.Sprintf("FAILED"))
+		fmt.Println("Not logged in. Use '" + text.Colors{text.FgCyan, text.Bold}.Sprintf("cacli login") + "' to log in.")
+		os.Exit(1)
 	}
 
-	// most common sense issue: the watson machine learning instance was deleted since log in.
-	// QUESTION: should we waste time checking?
-	// QUESTION: should we even get the hmac credentials here?
-	// - it would be awkward to pass them back...
-	// - we don't need them for most commands.
-	// CONCLUSION: let's not check.
-
-	fmt.Println(text.Colors{text.FgRed, text.Bold}.Sprintf("FAILED"))
-	fmt.Println("Not logged in. Use '" + text.Colors{text.FgCyan, text.Bold}.Sprintf("cacli login") + "' to log in.")
-	os.Exit(1)
-
-	// return an account session.
+	return accountSession
 }
