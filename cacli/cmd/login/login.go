@@ -156,18 +156,15 @@ func Run(*cobra.Command, []string) {
 	})
 
 	// If there isn't one, create one.
-	var credential ibmcloud.CosHmacKeys
-	if len(creds.Resources) > 0 {
-		credential = creds.Resources[0].Credentials.CosHmacKeys
-	} else {
-		credential = accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
+	if len(creds.Resources) == 0 {
+		accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
 			Name:   "cloud-annotations-binding",
 			Source: objectStorage.Resources[objectStorageIndex].GUID,
 			Role:   "writer",
 			Parameters: ibmcloud.HMACParameters{
 				HMAC: true,
 			},
-		}).Credentials.CosHmacKeys
+		})
 	}
 
 	s.Stop()
@@ -209,34 +206,22 @@ func Run(*cobra.Command, []string) {
 		panic(err)
 	}
 
-	// QUESTION: Should we persist object storage credentials?
-	// - gut instinct is no.
-	// - we don't want to persist any sensitive info.
-	// - we should still check and create the credentials when logging in though.
-	credentialFile, err := json.MarshalIndent(credential, "", "\t")
-	if err != nil {
-		panic(err)
-	}
-	err = ioutil.WriteFile(home+"/.cacli/hmac.json", credentialFile, 0644)
-	if err != nil {
-		panic(err)
-	}
-
-	// machine learning doesn't need a separate credential.
-
 	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")
 }
 
 // QUESTION: Do we want to make users re-choose resources when session expires?
 // - if yes we should at least have the item scrolled to as a sort of "default"
 
-// TODO: ibmcloud not logged in example.
-// $RED(FAILED)
-// Not logged in. Use '$YELLOW(ibmcloud login)' to log in.
-
 ////////////////////////////////////////////////////////////////////////////////
 // TODO: theoretical login examples:
 ////////////////////////////////////////////////////////////////////////////////
+// SCRATCH EVERYTHING...
+// we should just use legacy credentials for loging in with no interaction.
+// ie the credentials.json from the ibmcloud GUI.
+// ```
+// cacli login --wml @wml.json --cos @cos.json --non-interactive
+// ```
+
 // NOTE: the account id is tied to the resource responce json.
 // QUESTION: do we need the user to provide an account id?
 // - YES, we need the account id to get the WML region and generate credentials
