@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"runtime"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/survey/terminal"
+	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/cloud-annotations/training/cacli/talkdirtytome"
 
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
@@ -53,7 +53,7 @@ func Run(*cobra.Command, []string) {
 	// Get the login endpoint and ask to open the browser.
 	identityEndpoints, err := ibmcloud.GetIdentityEndpoints()
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 	fmt.Printf("receive a One-Time Passcode from %s to proceed.\n", text.Colors{text.Bold, text.FgCyan}.Sprintf(identityEndpoints.PasscodeEndpoint))
 
@@ -62,7 +62,7 @@ func Run(*cobra.Command, []string) {
 		if err.Error() == "interrupt" {
 			os.Exit(1)
 		} else {
-			log.Fatalln(err)
+			e.Exit(err)
 		}
 	}
 
@@ -76,7 +76,7 @@ func Run(*cobra.Command, []string) {
 		if err.Error() == "interrupt" {
 			os.Exit(1)
 		} else {
-			log.Fatalln(err)
+			e.Exit(err)
 		}
 	}
 	fmt.Println()
@@ -88,11 +88,11 @@ func Run(*cobra.Command, []string) {
 	// Authenticate the passcode and get a list of accounts.
 	session, err := ibmcloud.Authenticate(otp)
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 	accounts, err := session.GetAccounts()
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// Loop through all the accounts and create a list of names in the form of:
@@ -116,7 +116,7 @@ func Run(*cobra.Command, []string) {
 		if err.Error() == "interrupt" {
 			os.Exit(1)
 		} else {
-			log.Fatalln(err)
+			e.Exit(err)
 		}
 	}
 	fmt.Println()
@@ -131,11 +131,11 @@ func Run(*cobra.Command, []string) {
 	// Get lists of resources.
 	objectStorage, err := accountSession.GetObjectStorageResources()
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 	machineLearning, err := accountSession.GetMachineLearningResources()
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// Generate resource names.
@@ -157,7 +157,7 @@ func Run(*cobra.Command, []string) {
 		if err.Error() == "interrupt" {
 			os.Exit(1)
 		} else {
-			log.Fatalln(err)
+			e.Exit(err)
 		}
 	}
 
@@ -172,7 +172,7 @@ func Run(*cobra.Command, []string) {
 		if err.Error() == "interrupt" {
 			os.Exit(1)
 		} else {
-			log.Fatalln(err)
+			e.Exit(err)
 		}
 	}
 
@@ -191,7 +191,7 @@ func Run(*cobra.Command, []string) {
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
 	})
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// If there isn't one, create one.
@@ -205,7 +205,7 @@ func Run(*cobra.Command, []string) {
 			},
 		})
 		if err != nil {
-			log.Fatalln(err)
+			e.Exit(err)
 		}
 	}
 
@@ -215,37 +215,37 @@ func Run(*cobra.Command, []string) {
 	// Get the users home directory.
 	home, err := homedir.Dir()
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// Persist Token.
 	tokenFile, err := json.MarshalIndent(accountSession.Token, "", "\t") // is it worth pretty printing?
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 	err = ioutil.WriteFile(home+"/.cacli/credentials.json", tokenFile, 0644)
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// Persist object storage info.
 	cosFile, err := json.MarshalIndent(objectStorage.Resources[objectStorageIndex], "", "\t")
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 	err = ioutil.WriteFile(home+"/.cacli/cos.json", cosFile, 0644)
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// Persist machine learning info.
 	wmlFile, err := json.MarshalIndent(machineLearning.Resources[machineLearningIndex], "", "\t")
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 	err = ioutil.WriteFile(home+"/.cacli/wml.json", wmlFile, 0644)
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")

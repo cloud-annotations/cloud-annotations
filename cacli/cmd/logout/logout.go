@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -14,16 +15,14 @@ func Run(*cobra.Command, []string) {
 
 	home, err := homedir.Dir()
 	if err != nil {
-		fmt.Println(text.Colors{text.FgRed}.Sprintf("error") + " " + err.Error())
-		os.Exit(1)
+		e.Exit(err)
 	}
 
 	// TODO: use some sort of global config for this path.
 	if err := os.Remove(home + "/.cacli/credentials.json"); err != nil {
-		e, _ := err.(*os.PathError)
-		if e.Err.Error() != "no such file or directory" {
-			fmt.Println(text.Colors{text.FgRed}.Sprintf("error") + " " + err.Error())
-			os.Exit(1)
+		err, _ := err.(*os.PathError)
+		if err.Err.Error() != "no such file or directory" {
+			e.Exit(err)
 		}
 	}
 

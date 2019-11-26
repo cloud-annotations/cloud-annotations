@@ -2,9 +2,9 @@ package login
 
 import (
 	"fmt"
-	"log"
 	"os"
 
+	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
 	"github.com/jedib0t/go-pretty/text"
 	homedir "github.com/mitchellh/go-homedir"
@@ -13,7 +13,7 @@ import (
 func AssertLoggedIn() ibmcloud.AccountSession {
 	home, err := homedir.Dir()
 	if err != nil {
-		log.Fatalln(err)
+		e.Exit(err)
 	}
 
 	// TODO: use some sort of global config for this path.
