@@ -65,6 +65,7 @@ func Run(*cobra.Command, []string) {
 	}
 	fmt.Println()
 
+	// Waiting...
 	s.Suffix = " Authenticating..."
 	s.Start()
 
@@ -94,6 +95,7 @@ func Run(*cobra.Command, []string) {
 	}
 	fmt.Println()
 
+	// Waiting...
 	s.Suffix = " Loading resources..."
 	s.Start()
 
@@ -139,14 +141,17 @@ func Run(*cobra.Command, []string) {
 	fmt.Println("Machine Learning Instance " + text.Colors{text.Bold, text.FgCyan}.Sprintf(machineLearningNames[machineLearningIndex]))
 	fmt.Println()
 
+	// Waiting...
 	s.Suffix = " Verifying..."
 	s.Start()
 
+	// Try to find a binding to object storage.
 	creds := accountSession.GetCredentials(ibmcloud.GetCredentialsParams{
 		Name: "cloud-annotations-binding",
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
 	})
 
+	// If there isn't one, create one.
 	if len(creds.Resources) == 0 {
 		accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
 			Name:   "cloud-annotations-binding",
@@ -159,6 +164,8 @@ func Run(*cobra.Command, []string) {
 	}
 
 	s.Stop()
+
+	// TODO: persist tokens.
 
 	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")
 }
