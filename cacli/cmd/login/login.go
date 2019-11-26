@@ -51,12 +51,16 @@ func clearLines(num int) {
 
 func Run(*cobra.Command, []string) {
 	// Get the login endpoint and ask to open the browser.
-	identityEndpoints := ibmcloud.GetIdentityEndpoints()
+	identityEndpoints, err := ibmcloud.GetIdentityEndpoints()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	fmt.Printf("receive a One-Time Passcode from %s to proceed.\n", text.Colors{text.Bold, text.FgCyan}.Sprintf(identityEndpoints.PasscodeEndpoint))
 
 	shouldOpenInBrowser := false
 	if err := talkdirtytome.YesOrNah("open the URL in the default browser?", &shouldOpenInBrowser); err != nil {
-		return
+		//TODO: test command c
+		log.Fatalln(err)
 	}
 
 	if shouldOpenInBrowser {
@@ -66,7 +70,7 @@ func Run(*cobra.Command, []string) {
 	// Ask for the one-time passcode.
 	otp := ""
 	if err := talkdirtytome.IWantStringCheese("One-Time Passcode", &otp); err != nil {
-		return
+		log.Fatalln(err)
 	}
 	fmt.Println()
 
@@ -75,8 +79,14 @@ func Run(*cobra.Command, []string) {
 	s.Start()
 
 	// Authenticate the passcode and get a list of accounts.
-	session := ibmcloud.Authenticate(otp)
-	accounts := session.GetAccounts()
+	session, err := ibmcloud.Authenticate(otp)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	accounts, err := session.GetAccounts()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// Loop through all the accounts and create a list of names in the form of:
 	// ACCOUNT_NAME (ACCOUNT_ID) <-> (SOFTLAYER_ID)
@@ -96,7 +106,7 @@ func Run(*cobra.Command, []string) {
 	// Ask for an account.
 	accountIndex := 0
 	if err := talkdirtytome.ImportantList("Account", accountNames, &accountIndex); err != nil {
-		return
+		log.Fatalln(err)
 	}
 	fmt.Println()
 
@@ -105,11 +115,17 @@ func Run(*cobra.Command, []string) {
 	s.Start()
 
 	// Bind the chosen account to the session.
-	accountSession := session.BindAccountToToken(accounts.Resources[accountIndex])
+	accountSession, err := session.BindAccountToToken(accounts.Resources[accountIndex])
 
 	// Get lists of resources.
-	objectStorage := accountSession.GetObjectStorageResources()
-	machineLearning := accountSession.GetMachineLearningResources()
+	objectStorage, err := accountSession.GetObjectStorageResources()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	machineLearning, err := accountSession.GetMachineLearningResources()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// Generate resource names.
 	var objectStorageNames []string
@@ -127,7 +143,7 @@ func Run(*cobra.Command, []string) {
 	// Ask for an object storage instace.
 	objectStorageIndex := 0
 	if err := talkdirtytome.ImportantList("Object Storage Instance", objectStorageNames, &objectStorageIndex); err != nil {
-		return
+		log.Fatalln(err)
 	}
 
 	// Delete a few lines to be flush with the last question.
@@ -138,7 +154,7 @@ func Run(*cobra.Command, []string) {
 	// Ask for a watson machine learning instace.
 	machineLearningIndex := 0
 	if err := talkdirtytome.ImportantList("Machine Learning Instance", machineLearningNames, &machineLearningIndex); err != nil {
-		return
+		log.Fatalln(err)
 	}
 
 	// Delete a few lines to be flush with the last question.
@@ -151,14 +167,17 @@ func Run(*cobra.Command, []string) {
 	s.Start()
 
 	// Try to find a binding to object storage.
-	creds := accountSession.GetCredentials(ibmcloud.GetCredentialsParams{
+	creds, err := accountSession.GetCredentials(ibmcloud.GetCredentialsParams{
 		Name: "cloud-annotations-binding",
 		Crn:  objectStorage.Resources[objectStorageIndex].Crn,
 	})
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// If there isn't one, create one.
 	if len(creds.Resources) == 0 {
-		accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
+		_, err := accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
 			Name:   "cloud-annotations-binding",
 			Source: objectStorage.Resources[objectStorageIndex].GUID,
 			Role:   "writer",
@@ -166,6 +185,9 @@ func Run(*cobra.Command, []string) {
 				HMAC: true,
 			},
 		})
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 
 	s.Stop()

@@ -1,11 +1,8 @@
 package ibmcloud
 
-// TODO: return errors
-
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -45,6 +42,9 @@ var client = http.Client{
 	Timeout: time.Duration(0 * time.Second),
 }
 
+// TODO: return interface instead of side effects.
+// QUESTION: How do we handle Decoding if we don't have the struct passed in?
+
 func postForm(endpoint string, authString string, form url.Values, res interface{}) error {
 	request, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(form.Encode()))
 	if err != nil {
@@ -67,8 +67,28 @@ func postForm(endpoint string, authString string, form url.Values, res interface
 	return nil
 }
 
-// TODO: return interface instead of side effects.
-// How do we handle Decoding if we don't have the struct passed in?
+func postBody(endpoint string, authString string, jsonValue []byte, res interface{}) error {
+	request, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(jsonValue))
+	if err != nil {
+		return err
+	}
+
+	request.Header.Add("Authorization", authString)
+
+	resp, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func fetch(endpoint string, authString string, res interface{}) error {
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -93,16 +113,16 @@ func fetch(endpoint string, authString string, res interface{}) error {
 	return nil
 }
 
-func getIdentityEndpoints() IdentityEndpoints {
+func getIdentityEndpoints() (IdentityEndpoints, error) {
 	var result IdentityEndpoints
 	err := fetch(identityEndpoint, "", &result)
 	if err != nil {
-		log.Fatalln(err)
+		return IdentityEndpoints{}, err
 	}
-	return result
+	return result, nil
 }
 
-func getToken(endpoint string, otp string) Token {
+func getToken(endpoint string, otp string) (Token, error) {
 	form := url.Values{}
 	form.Add("grant_type", passcodeGrantType)
 	form.Add("passcode", otp)
@@ -110,12 +130,12 @@ func getToken(endpoint string, otp string) Token {
 	var result Token
 	err := postForm(endpoint, basicAuth, form, &result)
 	if err != nil {
-		log.Fatalln(err)
+		return Token{}, err
 	}
-	return result
+	return result, nil
 }
 
-func upgradeToken(endpoint string, refreshToken string, accountID string) Token {
+func upgradeToken(endpoint string, refreshToken string, accountID string) (Token, error) {
 	form := url.Values{}
 	form.Add("grant_type", refreshTokenGrantType)
 	form.Add("refresh_token", refreshToken)
@@ -126,62 +146,51 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) Token 
 	var result Token
 	err := postForm(endpoint, basicAuth, form, &result)
 	if err != nil {
-		log.Fatalln(err)
+		return Token{}, err
 	}
-	return result
+	return result, nil
 }
 
-func getAccounts(token string) Accounts {
+func getAccounts(token string) (Accounts, error) {
 	var result Accounts
 	err := fetch(accountsEndpoint, "Bearer "+token, &result)
 	if err != nil {
-		log.Fatalln(err)
+		return Accounts{}, err
 	}
-	return result
+	return result, nil
 }
 
 // TODO: better way to pass url encoded params.
-func getResources(token string, resourceID string) Resources {
+func getResources(token string, resourceID string) (Resources, error) {
 	endpoint := resourcesEndpoint + "?resource_id=" + resourceID
 	var result Resources
 	err := fetch(endpoint, "Bearer "+token, &result)
 	if err != nil {
-		log.Fatalln(err)
+		return Resources{}, err
 	}
-	return result
+	return result, nil
 }
 
-func getCredentials(token string, params GetCredentialsParams) Credentials {
+func getCredentials(token string, params GetCredentialsParams) (Credentials, error) {
 	endpoint := resourceKeysEndpoint + "?name=" + params.Name + "&source_crn=" + params.Crn
 	var result Credentials
 	err := fetch(endpoint, "Bearer "+token, &result)
 	if err != nil {
-		log.Fatalln(err)
+		return Credentials{}, err
 	}
-	return result
+	return result, nil
 }
 
-func createCredential(token string, params CreateCredentialParams) Credential {
+func createCredential(token string, params CreateCredentialParams) (Credential, error) {
 	jsonValue, err := json.Marshal(params)
 	if err != nil {
-		log.Fatalln(err)
+		return Credential{}, err
 	}
-	request, err := http.NewRequest(http.MethodPost, resourceKeysEndpoint, bytes.NewBuffer(jsonValue))
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	request.Header.Add("Authorization", "Bearer "+token)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer resp.Body.Close()
 
 	var result Credential
-	if err = json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		log.Fatalln(err)
+	err = postBody(resourceKeysEndpoint, "Bearer "+token, jsonValue, &result)
+	if err != nil {
+		return Credential{}, err
 	}
-	return result
+	return result, nil
 }

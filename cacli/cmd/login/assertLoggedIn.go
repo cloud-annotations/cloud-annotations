@@ -16,7 +16,12 @@ func AssertLoggedIn() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	ibmcloud.AuthenticateFromFile(home + "/.cacli/credentials.json")
+
+	// TODO: use some sort of global config for this path.
+	_, err = ibmcloud.AuthenticateFromFile(home + "/.cacli/credentials.json")
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	// most common sense issue: the watson machine learning instance was deleted since log in.
 	// QUESTION: should we waste time checking?
