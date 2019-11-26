@@ -7,14 +7,13 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/survey"
+	"github.com/cloud-annotations/training/cacli/cmd/login"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
 
 func Run(cmd *cobra.Command, args []string) {
-	fmt.Println(text.Colors{text.FgRed, text.Bold}.Sprintf("FAILED"))
-	fmt.Println("Not logged in. Use '" + text.Colors{text.FgCyan, text.Bold}.Sprintf("cacli login") + "' to log in.")
-	return
+	login.AssertLoggedIn()
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
 	s.Suffix = " Checking login..."
 	s.Start()

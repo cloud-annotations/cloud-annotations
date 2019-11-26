@@ -1,11 +1,15 @@
 package login
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"time"
+
+	homedir "github.com/mitchellh/go-homedir"
 
 	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/survey/terminal"
@@ -152,23 +156,79 @@ func Run(*cobra.Command, []string) {
 	})
 
 	// If there isn't one, create one.
-	if len(creds.Resources) == 0 {
-		accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
+	var credential ibmcloud.CosHmacKeys
+	if len(creds.Resources) > 0 {
+		credential = creds.Resources[0].Credentials.CosHmacKeys
+	} else {
+		credential = accountSession.CreateCredential(ibmcloud.CreateCredentialParams{
 			Name:   "cloud-annotations-binding",
 			Source: objectStorage.Resources[objectStorageIndex].GUID,
 			Role:   "writer",
 			Parameters: ibmcloud.HMACParameters{
 				HMAC: true,
 			},
-		})
+		}).Credentials.CosHmacKeys
 	}
 
 	s.Stop()
 
-	// TODO: persist tokens.
+	// TODO: clean this.
+	// Get the users home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		panic(err)
+	}
+
+	// Persist Token.
+	tokenFile, err := json.MarshalIndent(accountSession.Token, "", "\t") // is it worth pretty printing?
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(home+"/.cacli/credentials.json", tokenFile, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	// Persist object storage info.
+	cosFile, err := json.MarshalIndent(objectStorage.Resources[objectStorageIndex], "", "\t")
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(home+"/.cacli/cos.json", cosFile, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	// Persist machine learning info.
+	wmlFile, err := json.MarshalIndent(machineLearning.Resources[machineLearningIndex], "", "\t")
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(home+"/.cacli/wml.json", wmlFile, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	// QUESTION: Should we persist object storage credentials?
+	// - gut instinct is no.
+	// - we don't want to persist any sensitive info.
+	// - we should still check and create the credentials when logging in though.
+	credentialFile, err := json.MarshalIndent(credential, "", "\t")
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(home+"/.cacli/hmac.json", credentialFile, 0644)
+	if err != nil {
+		panic(err)
+	}
+
+	// machine learning doesn't need a separate credential.
 
 	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")
 }
+
+// QUESTION: Do we want to make users re-choose resources when session expires?
+// - if yes we should at least have the item scrolled to as a sort of "default"
 
 // TODO: ibmcloud not logged in example.
 // $RED(FAILED)
@@ -177,6 +237,15 @@ func Run(*cobra.Command, []string) {
 ////////////////////////////////////////////////////////////////////////////////
 // TODO: theoretical login examples:
 ////////////////////////////////////////////////////////////////////////////////
+// NOTE: the account id is tied to the resource responce json.
+// QUESTION: do we need the user to provide an account id?
+// - YES, we need the account id to get the WML region and generate credentials
+// - I meannnnnn technically we could brute force all the listed accounts to find
+//   the right one.
+// - We should also test if we can list resources via a ibmcloud apikey. it might
+//   already have account context.
+
+// QUESTION: Should we even make them choose a COS instance at login?
 
 // interaction required:
 // ```
