@@ -10,7 +10,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 )
 
-func AssertLoggedIn() ibmcloud.AccountSession {
+func AssertLoggedIn() *ibmcloud.AccountSession {
 	home, err := homedir.Dir()
 	if err != nil {
 		e.Exit(err)

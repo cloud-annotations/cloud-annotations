@@ -1,83 +1,40 @@
 package wml
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
+
+	"github.com/cloud-annotations/training/cacli/ibmcloud"
 )
 
-var timeout = time.Duration(5 * time.Second)
 var client = http.Client{
-	Timeout: timeout,
+	Timeout: time.Duration(10 * time.Second),
 }
 
-// Authenticate authenticates against the api key from a users ibmcloud credentials
-func Authenticate(apikey string) string {
-	form := url.Values{}
-	form.Add("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
-	form.Add("apikey", apikey)
-	request, err := http.NewRequest("POST", "https://iam.bluemix.net/identity/token", strings.NewReader(form.Encode()))
-	if err != nil {
-		log.Fatalln(err)
+func getModel(url string, token string, instanceID string, modelID string) (*Model, error) {
+	var result = &Model{}
+	header := map[string]string{
+		"Authorization":  "Bearer " + token,
+		"ML-Instance-ID": instanceID,
 	}
-
-	resp, err := client.Do(request)
+	err := ibmcloud.Fetch(url+"/v3/models/"+modelID, header, result)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
-	defer resp.Body.Close()
-
-	var result map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return result["access_token"].(string)
+	return result, nil
 }
 
-func GetModel(url, token, instanceId, modelId string) Model {
-	request, err := http.NewRequest("GET", url+"/v3/models/"+modelId, nil)
-	if err != nil {
-		log.Fatalln(err)
+func getModels(url string, token string, instanceID string) (*Models, error) {
+	var result = &Models{}
+	header := map[string]string{
+		"Authorization":  "Bearer " + token,
+		"ML-Instance-ID": instanceID,
 	}
-	bearer := "Bearer " + token
-	request.Header.Add("Authorization", bearer)
-	request.Header.Add("ML-Instance-ID", instanceId)
-
-	resp, err := client.Do(request)
+	err := ibmcloud.Fetch(url+"/v3/models", header, result)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
-	var result Model
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return result
-}
-
-func GetModels(url, token, instanceId string) Models {
-	request, err := http.NewRequest("GET", url+"/v3/models", nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	bearer := "Bearer " + token
-	request.Header.Add("Authorization", bearer)
-	request.Header.Add("ML-Instance-ID", instanceId)
-
-	resp, err := client.Do(request)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	var result Models
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return result
+	return result, nil
 }
 
 func PostModel(url, token string) {
