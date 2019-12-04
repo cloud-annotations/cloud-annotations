@@ -46,16 +46,11 @@ func Run(cmd *cobra.Command, args []string) {
 
 	fmt.Println()
 
-	s.Suffix = " Checking bucket..."
-	s.Start()
-	// TODO: we shouldn't need to check buckets
-	time.Sleep(500 * time.Millisecond)
-	s.Stop()
-
 	s.Suffix = " Starting training run..."
 	s.Start()
 	// TODO: allow passing path to training zip.
-	model, err := session.StartTraining("")
+	// TODO: allow custom step and gpu
+	model, err := session.StartTraining("", bucketList.Buckets[bucketIndex], 500, "k80")
 	if err != nil {
 		e.Exit(err)
 	}

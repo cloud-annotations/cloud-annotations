@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
 
 	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
@@ -16,6 +18,51 @@ import (
 	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
 )
+
+var regionMap = map[string]string{
+	"us":         "us",
+	"us-geo":     "us",
+	"dal.us":     "dal.us",
+	"dal-us-geo": "dal.us",
+	"wdc.us":     "wdc.us",
+	"wdc-us-geo": "wdc.us",
+	"sjc.us":     "sjc.us",
+	"sjc-us-geo": "sjc.us",
+	"eu":         "eu",
+	"eu-geo":     "eu",
+	"ams.eu":     "ams.eu",
+	"ams-eu-geo": "ams.eu",
+	"fra.eu":     "fra.eu",
+	"fra-eu-geo": "fra.eu",
+	"mil.eu":     "mil.eu",
+	"mil-eu-geo": "mil.eu",
+	"ap":         "ap",
+	"ap-geo":     "ap",
+	"tok.ap":     "tok.ap",
+	"tok-ap-geo": "tok.ap",
+	"seo.ap":     "seo.ap",
+	"seo-ap-geo": "seo.ap",
+	"hkg.ap":     "hkg.ap",
+	"hkg-ap-geo": "hkg.ap",
+	"us-south":   "us-south",
+	"us-east":    "us-east",
+	"eu-gb":      "eu-gb",
+	"eu-de":      "eu-de",
+	"jp-tok":     "jp-tok",
+	"au-syd":     "au-syd",
+	"ams03":      "ams03",
+	"che01":      "che01",
+	"mel01":      "mel01",
+	"osl01":      "osl01",
+	"tor01":      "tor01",
+	"sao01":      "sao01",
+	"seo01":      "seo01",
+	"mon01":      "mon01",
+	"mex01":      "mex01",
+	"sjc04":      "sjc04",
+	"mil01":      "mil01",
+	"hkg02":      "hkg02",
+}
 
 var endpoints *IdentityEndpoints
 
@@ -154,7 +201,7 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 	return credential, nil
 }
 
-func (s *AccountSession) StartTraining(trainingZip string) (*Model, error) {
+func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
 	home, err := homedir.Dir()
 	if err != nil {
 		return nil, err
@@ -219,7 +266,16 @@ func (s *AccountSession) StartTraining(trainingZip string) (*Model, error) {
 		Crn:  cosResource.Crn,
 	})
 
-	// TODO: we need a custom training run struct...
+	locationWithType := *bucket.LocationConstraint
+
+	re, err := regexp.Compile("-standard$|-vault$|-cold$|-flex$")
+	if err != nil {
+		return nil, err
+	}
+
+	location := re.ReplaceAllString(locationWithType, "")
+	cosEndpoint := "https://s3.private." + regionMap[location] + ".cloud-object-storage.appdomain.cloud"
+
 	trainingRun := &run.TrainingRun{
 		ModelDefinition: &run.ModelDefinition{
 			Framework: &run.Framework{
@@ -230,31 +286,31 @@ func (s *AccountSession) StartTraining(trainingZip string) (*Model, error) {
 			Author:         &run.Author{},
 			DefinitionHref: res.Metadata.URL,
 			Execution: &run.Execution{
-				Command: `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && chmod 777 ./start.sh && ./start.sh 500`,
+				Command: `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && chmod 777 ./start.sh && ./start.sh ` + strconv.Itoa(steps),
 				ComputeConfiguration: &run.ComputeConfiguration{
-					Name: "k80",
+					Name: gpu,
 				},
 			},
 		},
 		TrainingDataReference: &run.TrainingDataReference{
 			Connection: &run.Connection{
-				EndpointURL:     "https://s3.us.cloud-object-storage.appdomain.cloud",
+				EndpointURL:     cosEndpoint,
 				AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
 				SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
 			},
 			Source: &run.Source{
-				Bucket: "thumbs-up-down",
+				Bucket: *bucket.Name,
 			},
 			Type: "s3",
 		},
 		TrainingResultsReference: &run.TrainingResultsReference{
 			Connection: &run.Connection{
-				EndpointURL:     "https://s3.us.cloud-object-storage.appdomain.cloud",
+				EndpointURL:     cosEndpoint,
 				AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
 				SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
 			},
 			Target: &run.Target{
-				Bucket: "thumbs-up-down",
+				Bucket: *bucket.Name,
 			},
 			Type: "s3",
 		},
