@@ -14,14 +14,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var s = spinner.New(spinner.CharSets[14], 60*time.Millisecond)
+
 // This is kinda gross.
 func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, args []string) {
-		s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
-		s.Suffix = " Checking login..."
-		s.Start()
 		session := login.AssertLoggedIn()
-		s.Stop()
 
 		s.Suffix = " Loading buckets..."
 		s.Start()

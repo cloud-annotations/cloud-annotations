@@ -1,6 +1,7 @@
 package progress
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -9,12 +10,13 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/cheggaaa/pb"
+	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/spf13/cobra"
 )
 
 func Run(_ *cobra.Command, args []string) {
-	if len(args) != 1 {
-		panic("WHY AM I PANICING")
+	if len(args) < 1 {
+		e.Exit(errors.New("No Model ID provided\nUsage: cacli progress <model_id>"))
 	}
 
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)

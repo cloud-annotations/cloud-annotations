@@ -3,7 +3,9 @@ package login
 import (
 	"fmt"
 	"os"
+	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
 	"github.com/jedib0t/go-pretty/text"
@@ -11,6 +13,11 @@ import (
 )
 
 func AssertLoggedIn() *ibmcloud.AccountSession {
+	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
+	s.Suffix = " Checking login..."
+	s.Start()
+	defer s.Stop()
+
 	home, err := homedir.Dir()
 	if err != nil {
 		e.Exit(err)
