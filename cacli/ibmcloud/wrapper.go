@@ -397,3 +397,31 @@ func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) 
 	}
 	return list, nil
 }
+
+func (s *AccountSession) ListTrainingRuns() (*Models, error) {
+	home, err := homedir.Dir()
+	if err != nil {
+		return nil, err
+	}
+	jsonFile, err := os.Open(home + "/.cacli/wml.json")
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+
+	wmlResource := &Resource{}
+	json.Unmarshal(byteValue, wmlResource)
+	// TODO: look into actual url from regionID
+	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
+
+	models, err := getModels(endpoint, s.Token.AccessToken, wmlResource.GUID)
+	if err != nil {
+		return nil, err
+	}
+	return models, nil
+}

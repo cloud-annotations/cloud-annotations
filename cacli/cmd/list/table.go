@@ -4,8 +4,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/cloud-annotations/training/cacli/ibmcloud"
+
 	"github.com/cloud-annotations/training/cacli/date"
-	"github.com/cloud-annotations/training/cacli/mockwml"
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/jedib0t/go-pretty/text"
 	"golang.org/x/sys/unix"
@@ -39,7 +40,7 @@ func getWindowWidth() int {
 	return int(ws.Col)
 }
 
-func render(runs mockwml.TrainingRuns) {
+func render(runs *ibmcloud.Models) {
 
 	maxTableWidth := min(getWindowWidth(), 90)
 	modelIDWidth := 14

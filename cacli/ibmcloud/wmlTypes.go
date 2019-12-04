@@ -1,5 +1,7 @@
 package ibmcloud
 
+import "time"
+
 // NOTE: some of the timestamps are malformed and we don't care about dates, so parse them as strings.
 
 type ComputeConfiguration struct {
@@ -44,7 +46,7 @@ type TrainingResultsReference struct {
 type Status struct {
 	State       string        `json:"state"`
 	FinishedAt  string        `json:"finished_at"`
-	SubmittedAt string        `json:"submitted_at"`
+	SubmittedAt time.Time     `json:"submitted_at"`
 	RunningAt   string        `json:"running_at"`
 	Message     string        `json:"message"`
 	Metrics     []interface{} `json:"metrics"`
