@@ -26,7 +26,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var gpu string = "poop"
+var gpu string
 var steps int
 
 // trainCmd represents the train command

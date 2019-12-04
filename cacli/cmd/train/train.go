@@ -88,8 +88,7 @@ func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 		}
 
 		if shouldMonitor {
-			fmt.Println()
-			// start monitor.
+			fmt.Println("// TODO: monitor the run.")
 		}
 	}
 }
