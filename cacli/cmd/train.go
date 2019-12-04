@@ -26,6 +26,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var gpu string = "poop"
+var steps int
+
 // trainCmd represents the train command
 var trainCmd = &cobra.Command{
 	Use:   "train",
@@ -36,19 +39,12 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: train.Run,
+	Run: train.Run(&steps, &gpu),
 }
 
 func init() {
 	rootCmd.AddCommand(trainCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// trainCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// trainCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	trainCmd.Flags().StringVar(&gpu, "gpu", "k80", "Specify GPU: k80 | k80x2 | k80x4 | v100 | v100x2")
+	trainCmd.Flags().IntVar(&steps, "steps", 1000, "Number of training steps")
 }
