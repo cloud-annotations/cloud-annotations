@@ -67,29 +67,6 @@ func postModel(url string, token string, instanceID string, trainingRun *run.Tra
 		return nil, err
 	}
 
-	// request, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(jsonValue))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// for key, value := range header {
-	// 	request.Header.Add(key, value)
-	// }
-
-	// resp, err := client.Do(request)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// defer resp.Body.Close()
-
-	// bodyBytes, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// bodyString := string(bodyBytes)
-	// fmt.Println(bodyString)
-
 	return result, nil
 }
 

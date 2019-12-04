@@ -19,6 +19,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
+// TODO: make a helper function for loading in config files.
+
 var regionMap = map[string]string{
 	"us":         "us",
 	"us-geo":     "us",
