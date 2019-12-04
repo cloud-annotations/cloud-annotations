@@ -9,6 +9,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/IBM/ibm-cos-sdk-go/aws"
+	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
+	"github.com/IBM/ibm-cos-sdk-go/aws/session"
+	"github.com/IBM/ibm-cos-sdk-go/service/s3"
 	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
 )
@@ -296,4 +300,44 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 	}
 
 	return res, nil
+}
+
+func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) {
+	// TODO: get all buckets.
+	// TODO: cache the credentials.
+	home, err := homedir.Dir()
+	if err != nil {
+		return nil, err
+	}
+	jsonFile, err := os.Open(home + "/.cacli/cos.json")
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+
+	cosResource := &Resource{}
+	json.Unmarshal(byteValue, cosResource)
+
+	creds, err := s.GetCredentials(GetCredentialsParams{
+		Name: "cloud-annotations-binding",
+		Crn:  cosResource.Crn,
+	})
+
+	sess := session.Must(session.NewSession())
+	client := s3.New(sess, &aws.Config{
+		Region:           aws.String("none"), // sdk is dumb and needs this...
+		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
+		S3ForcePathStyle: aws.Bool(true),
+		Credentials:      credentials.NewStaticCredentials(creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID, creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey, ""),
+	})
+	list, err := client.ListBucketsExtended(&s3.ListBucketsExtendedInput{})
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
 }

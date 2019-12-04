@@ -2,13 +2,14 @@ package train
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/briandowns/spinner"
-	"github.com/cloud-annotations/survey"
 	"github.com/cloud-annotations/training/cacli/cmd/login"
 	"github.com/cloud-annotations/training/cacli/e"
+	"github.com/cloud-annotations/training/cacli/talkdirtytome"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
@@ -22,40 +23,32 @@ func Run(cmd *cobra.Command, args []string) {
 
 	s.Suffix = " Loading buckets..."
 	s.Start()
-	time.Sleep(500 * time.Millisecond)
+	bucketList, err := session.ListAllBucket()
+	if err != nil {
+		e.Exit(err)
+	}
 	s.Stop()
 
-	color := ""
-	survey.SelectQuestionTemplate = `
-{{- if .ShowAnswer}}
-	{{- color "default"}}{{ .Message }}{{color "reset"}}{{color "cyan+b"}} {{.Answer}}{{color "reset"}}{{"\n"}}
-{{- else}}
-	{{- color "default+b"}}{{ .Message }}s{{color "reset"}}{{- color "default"}}{{ .FilterMessage }}{{color "reset"}}
-  {{- color "default+d"}} (Use arrow keys and enter to choose){{color "reset"}}
-  {{- "\n"}}
-  {{- range $ix, $choice := .PageEntries}}
-    {{- if eq $ix $.SelectedIndex }}{{color "cyan+b" }}❯ {{else}}{{color "default"}}  {{end}}
-    {{- $choice.Value}}
-    {{- color "reset"}}{{"\n"}}
-  {{- end}}
-{{- end}}`
-
-	//TODO: talk dirty to me
-	prompt3 := &survey.Select{
-		Message:  "Bucket",
-		Options:  []string{"red", "blue", "green", "red", "blue", "green", "red", "blue", "green", "red", "blue", "green", "red", "blue", "green"},
-		PageSize: 11,
+	// Ask for a bucket.
+	var bucketNames []string
+	for _, element := range bucketList.Buckets {
+		bucketNames = append(bucketNames, *element.Name)
 	}
 
-	err := survey.AskOne(prompt3, &color)
-	if err != nil {
-		return
+	bucketIndex := 0
+	if err := talkdirtytome.ImportantList("Bucket", bucketNames, &bucketIndex); err != nil {
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			e.Exit(err)
+		}
 	}
 
 	fmt.Println()
 
 	s.Suffix = " Checking bucket..."
 	s.Start()
+	// TODO: we shouldn't need to check buckets
 	time.Sleep(500 * time.Millisecond)
 	s.Stop()
 
@@ -68,7 +61,7 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 	s.Stop()
 
-	// TODO: the spinner can be a bit buggy and do this:
+	// NOTE: the spinner can be a bit buggy and do this:
 	//
 	// success Training run submitted.
 	//
@@ -89,20 +82,13 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Println()
 
 	shouldMonitor := false
-	survey.ConfirmQuestionTemplate = `
-{{- if .ShowHelp }}{{- color .Config.Icons.Help.Format }}{{ .Config.Icons.Help.Text }} {{ .Help }}{{color "reset"}}{{"\n"}}{{end}}
-{{- color "default"}}{{ .Message }} {{color "reset"}}
-{{- if .Answer}}
-  {{- color "cyan+b"}}{{.Answer}}{{color "reset"}}{{"\n"}}
-{{- else }}
-  {{- if and .Help (not .ShowHelp)}}{{color "cyan"}}[{{ .Config.HelpInput }} for help]{{color "reset"}} {{end}}
-  {{- color "default"}}{{if .Default}}(yes) {{else}}(no) {{end}}{{color "reset"}}
-{{- end}}`
-	prompt2 := &survey.Confirm{
-		Message: "Would you like to monitor progress?",
-		Default: true,
+	if err := talkdirtytome.YesOrNah("would you like to monitor progress?", &shouldMonitor); err != nil {
+		if err.Error() == "interrupt" {
+			os.Exit(1)
+		} else {
+			e.Exit(err)
+		}
 	}
-	survey.AskOne(prompt2, &shouldMonitor)
 
 	if shouldMonitor {
 		fmt.Println()

@@ -3,6 +3,7 @@ module github.com/cloud-annotations/training/cacli
 go 1.13
 
 require (
+	github.com/IBM/ibm-cos-sdk-go v1.3.0
 	github.com/briandowns/spinner v1.8.0
 	github.com/cheggaaa/pb v2.0.7+incompatible
 	github.com/cloud-annotations/survey v1.8.10
