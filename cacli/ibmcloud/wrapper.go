@@ -2,14 +2,17 @@ package ibmcloud
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
+	"time"
 
 	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
@@ -17,6 +20,9 @@ import (
 	"github.com/IBM/ibm-cos-sdk-go/service/s3"
 	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
+	"golang.org/x/time/rate"
+	"nhooyr.io/websocket"
+	"nhooyr.io/websocket/wsjson"
 )
 
 // TODO: make a helper function for loading in config files.
@@ -426,4 +432,55 @@ func (s *AccountSession) ListTrainingRuns() (*Models, error) {
 		return nil, err
 	}
 	return models, nil
+}
+
+func (s *AccountSession) Sockittoome(modelID string) {
+	home, err := homedir.Dir()
+	if err != nil {
+		panic(err)
+	}
+	jsonFile, err := os.Open(home + "/.cacli/wml.json")
+	if err != nil {
+		panic(err)
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		panic(err)
+	}
+
+	wmlResource := &Resource{}
+	json.Unmarshal(byteValue, wmlResource)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	endpoint := "wss://" + wmlResource.RegionID + ".ml.cloud.ibm.com/v3/models/" + modelID + "/monitor"
+	c, _, err := websocket.Dial(ctx, endpoint, &websocket.DialOptions{
+		HTTPHeader: http.Header{
+			"Authorization":  {"bearer " + s.Token.AccessToken},
+			"ML-Instance-ID": {wmlResource.GUID},
+		},
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer c.Close(websocket.StatusInternalError, "the sky is falling")
+
+	l := rate.NewLimiter(rate.Every(time.Millisecond*100), 10)
+	for {
+		err = l.Wait(ctx)
+		if err != nil {
+			panic(err)
+		}
+
+		var v interface{}
+		err = wsjson.Read(ctx, c, &v)
+		if err != nil {
+			panic(err)
+		}
+		log.Printf("received: %v", v)
+	}
+	// c.Close(websocket.StatusNormalClosure, "")
 }
