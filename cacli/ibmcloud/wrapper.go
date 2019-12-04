@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/IBM/ibm-cos-sdk-go/aws"
@@ -232,7 +232,7 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
 
 	trainingDefinition := &TrainingDefinition{
-		Name: "my-first-go",
+		Name: *bucket.Name + " " + strconv.Itoa(steps) + " steps",
 		Framework: Framework{
 			Name:    "tensorflow",
 			Version: "1.12",
@@ -434,7 +434,35 @@ func (s *AccountSession) ListTrainingRuns() (*Models, error) {
 	return models, nil
 }
 
-func (s *AccountSession) Sockittoome(modelID string) {
+func (s *AccountSession) GetTrainingRun(modelID string) (*Model, error) {
+	home, err := homedir.Dir()
+	if err != nil {
+		return nil, err
+	}
+	jsonFile, err := os.Open(home + "/.cacli/wml.json")
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+
+	wmlResource := &Resource{}
+	json.Unmarshal(byteValue, wmlResource)
+	// TODO: look into actual url from regionID
+	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
+
+	model, err := getModel(endpoint, s.Token.AccessToken, wmlResource.GUID, modelID)
+	if err != nil {
+		return nil, err
+	}
+	return model, nil
+}
+
+func (s *AccountSession) SocketToMe(modelID string) {
 	home, err := homedir.Dir()
 	if err != nil {
 		panic(err)
@@ -453,7 +481,8 @@ func (s *AccountSession) Sockittoome(modelID string) {
 	wmlResource := &Resource{}
 	json.Unmarshal(byteValue, wmlResource)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	endpoint := "wss://" + wmlResource.RegionID + ".ml.cloud.ibm.com/v3/models/" + modelID + "/monitor"
@@ -475,12 +504,12 @@ func (s *AccountSession) Sockittoome(modelID string) {
 			panic(err)
 		}
 
-		var v interface{}
-		err = wsjson.Read(ctx, c, &v)
+		results := &SocketMessage{}
+		err = wsjson.Read(ctx, c, &results)
 		if err != nil {
 			panic(err)
 		}
-		log.Printf("received: %v", v)
+		fmt.Println(strings.TrimSuffix(results.Status.Message, "\n"))
 	}
 	// c.Close(websocket.StatusNormalClosure, "")
 }

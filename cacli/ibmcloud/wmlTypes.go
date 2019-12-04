@@ -110,3 +110,14 @@ type TrainingDefinitionRes struct {
 type TrainingScriptRes struct {
 	Ok string `json:"ok"`
 }
+
+type SocketMessage struct {
+	Status SocketMessageStatus `json:"status"`
+}
+
+type SocketMessageStatus struct {
+	CurrentAt   time.Time `json:"current_at"`
+	SubmittedAt time.Time `json:"submitted_at"`
+	State       string    `json:"state"`
+	Message     string    `json:"message"`
+}

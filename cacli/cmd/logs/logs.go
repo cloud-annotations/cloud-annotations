@@ -2,6 +2,7 @@ package logs
 
 import (
 	"errors"
+	"os"
 
 	"github.com/cloud-annotations/training/cacli/e"
 
@@ -17,5 +18,16 @@ func Run(cmd *cobra.Command, args []string) {
 
 	session := login.AssertLoggedIn()
 
-	session.Sockittoome(modelID)
+	model, err := session.GetTrainingRun(modelID)
+	if err != nil {
+		e.Exit(err)
+	}
+
+	switch model.Entity.Status.State {
+	case "completed", "error", "failed", "canceled":
+		// TODO: pull from object storage.
+		os.Exit(0)
+	}
+
+	session.SocketToMe(modelID)
 }
