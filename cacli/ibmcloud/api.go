@@ -154,7 +154,7 @@ func Fetch(endpoint string, header map[string]string, res interface{}) error {
 func getIdentityEndpoints() (*IdentityEndpoints, error) {
 	header := map[string]string{}
 
-	var result = &IdentityEndpoints{}
+	result := &IdentityEndpoints{}
 	err := Fetch(identityEndpoint, header, result)
 	if err != nil {
 		return nil, err
@@ -172,7 +172,7 @@ func getToken(endpoint string, otp string) (*Token, error) {
 	form.Add("grant_type", passcodeGrantType)
 	form.Add("passcode", otp)
 
-	var result = &Token{}
+	result := &Token{}
 	err := PostForm(endpoint, header, form, result)
 	if err != nil {
 		return nil, err
@@ -193,7 +193,7 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) (*Toke
 		form.Add("bss_account", accountID)
 	}
 
-	var result = &Token{}
+	result := &Token{}
 	err := PostForm(endpoint, header, form, result)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func getAccounts(token string) (*Accounts, error) {
 		"Authorization": "Bearer " + token,
 	}
 
-	var result = &Accounts{}
+	result := &Accounts{}
 	err := Fetch(accountsEndpoint, header, result)
 	if err != nil {
 		return nil, err
@@ -224,7 +224,7 @@ func getResources(token string, resourceID string) (*Resources, error) {
 		"Authorization": "Bearer " + token,
 	}
 
-	var result = &Resources{}
+	result := &Resources{}
 	err := Fetch(endpoint, header, result)
 	if err != nil {
 		return nil, err
@@ -240,7 +240,7 @@ func getCredentials(token string, params GetCredentialsParams) (*Credentials, er
 		"Authorization": "Bearer " + token,
 	}
 
-	var result = &Credentials{}
+	result := &Credentials{}
 	err := Fetch(endpoint, header, result)
 	if err != nil {
 		return nil, err
@@ -259,7 +259,7 @@ func createCredential(token string, params CreateCredentialParams) (*Credential,
 		return nil, err
 	}
 
-	var result = &Credential{}
+	result := &Credential{}
 	err = PostBody(resourceKeysEndpoint, header, jsonValue, result)
 	if err != nil {
 		return nil, err

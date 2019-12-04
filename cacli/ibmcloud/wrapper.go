@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/cloud-annotations/training/cacli/e"
-	"github.com/davecgh/go-spew/spew"
+	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
 )
 
@@ -167,11 +167,11 @@ func (s *AccountSession) StartTraining(trainingZip string) {
 		panic(err)
 	}
 
-	var resource = &Resource{}
-	json.Unmarshal(byteValue, resource)
+	wmlResource := &Resource{}
+	json.Unmarshal(byteValue, wmlResource)
 
 	// TODO: look into actual url from regionID
-	var endpoint = "https://" + resource.RegionID + ".ml.cloud.ibm.com"
+	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
 
 	trainingDefinition := &TrainingDefinition{
 		Name: "my-first-go",
@@ -187,17 +187,82 @@ func (s *AccountSession) StartTraining(trainingZip string) {
 		},
 	}
 
-	res, err := postTrainingDefinition(endpoint, s.Token.AccessToken, resource.GUID, trainingDefinition)
+	res, err := postTrainingDefinition(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingDefinition)
 	if err != nil {
 		panic(err)
 	}
 
-	xxx, err := AddTrainingScript(res.Entity.TrainingDefinitionVersion.ContentURL, s.Token.AccessToken, resource.GUID, trainingZip)
+	_, err = AddTrainingScript(res.Entity.TrainingDefinitionVersion.ContentURL, s.Token.AccessToken, wmlResource.GUID, trainingZip)
 	if err != nil {
 		panic(err)
 	}
 
-	spew.Dump(xxx)
+	jsonFile, err = os.Open(home + "/.cacli/cos.json")
+	if err != nil {
+		panic(err)
+	}
+	defer jsonFile.Close()
+
+	byteValue, err = ioutil.ReadAll(jsonFile)
+	if err != nil {
+		panic(err)
+	}
+
+	cosResource := &Resource{}
+	json.Unmarshal(byteValue, cosResource)
+
+	creds, err := s.GetCredentials(GetCredentialsParams{
+		Name: "cloud-annotations-binding",
+		Crn:  cosResource.Crn,
+	})
+
+	// TODO: we need a custom training run struct...
+	trainingRun := &run.TrainingRun{
+		ModelDefinition: &run.ModelDefinition{
+			Framework: &run.Framework{
+				Name:    res.Entity.Framework.Name,
+				Version: res.Entity.Framework.Version,
+			},
+			Name:           res.Entity.Name,
+			Author:         &run.Author{},
+			DefinitionHref: res.Metadata.URL,
+			Execution: &run.Execution{
+				Command: `cd "$(dirname "$(find . -name "start.sh" -maxdepth 2 | head -1)")" && chmod 777 ./start.sh && ./start.sh 500`,
+				ComputeConfiguration: &run.ComputeConfiguration{
+					Name: "k80",
+				},
+			},
+		},
+		TrainingDataReference: &run.TrainingDataReference{
+			Connection: &run.Connection{
+				EndpointURL:     "https://s3.us.cloud-object-storage.appdomain.cloud",
+				AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
+				SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
+			},
+			Source: &run.Source{
+				Bucket: "thumbs-up-down",
+			},
+			Type: "s3",
+		},
+		TrainingResultsReference: &run.TrainingResultsReference{
+			Connection: &run.Connection{
+				EndpointURL:     "https://s3.us.cloud-object-storage.appdomain.cloud",
+				AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
+				SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
+			},
+			Target: &run.Target{
+				Bucket: "thumbs-up-down",
+			},
+			Type: "s3",
+		},
+	}
+
+	_, err = postModel(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingRun)
+	if err != nil {
+		panic(err)
+	}
+
+	// spew.Dump(model)
 }
 
 func AddTrainingScript(endpoint string, token string, instanceID string, trainingZip string) (*TrainingScriptRes, error) {
