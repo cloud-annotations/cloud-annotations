@@ -1,18 +1,6 @@
-package wml
+package ibmcloud
 
-import "time"
-
-type Metadata struct {
-	GUID       string    `json:"guid"`
-	URL        string    `json:"url"`
-	CreatedAt  time.Time `json:"created_at"`
-	ModifiedAt time.Time `json:"modified_at"`
-}
-
-type Framework struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-}
+// NOTE: some of the timestamps are malformed and we don't care about dates, so parse them as strings.
 
 type ComputeConfiguration struct {
 	Name string `json:"name"`
@@ -55,15 +43,15 @@ type TrainingResultsReference struct {
 
 type Status struct {
 	State       string        `json:"state"`
-	FinishedAt  time.Time     `json:"finished_at"`
-	SubmittedAt time.Time     `json:"submitted_at"`
-	RunningAt   time.Time     `json:"running_at"`
+	FinishedAt  string        `json:"finished_at"`
+	SubmittedAt string        `json:"submitted_at"`
+	RunningAt   string        `json:"running_at"`
 	Message     string        `json:"message"`
 	Metrics     []interface{} `json:"metrics"`
-	CurrentAt   time.Time     `json:"current_at"`
+	CurrentAt   string        `json:"current_at"`
 }
 
-type Entity struct {
+type TrainingRun struct {
 	ModelDefinition          ModelDefinition          `json:"model_definition"`
 	TrainingDataReference    TrainingDataReference    `json:"training_data_reference"`
 	TrainingResultsReference TrainingResultsReference `json:"training_results_reference"`
@@ -71,10 +59,52 @@ type Entity struct {
 }
 
 type Model struct {
-	Metadata Metadata `json:"metadata"`
-	Entity   Entity   `json:"entity"`
+	Metadata Metadata    `json:"metadata"`
+	Entity   TrainingRun `json:"entity"`
 }
 
 type Models struct {
 	Resources []Model `json:"resources"`
+}
+
+type TrainingDefinition struct {
+	Framework Framework `json:"framework"`
+	Name      string    `json:"name"`
+}
+
+type Runtimes struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+type Framework struct {
+	Name     string     `json:"name"`
+	Version  string     `json:"version"`
+	Runtimes []Runtimes `json:"runtimes"`
+}
+
+type ContentStatus struct {
+	State string `json:"state"`
+}
+
+type TrainingDefinitionVersion struct {
+	GUID          string        `json:"guid"`
+	URL           string        `json:"url"`
+	ContentURL    string        `json:"content_url"`
+	ContentStatus ContentStatus `json:"content_status"`
+}
+
+type TrainingDef struct {
+	Name                      string                    `json:"name"`
+	Framework                 Framework                 `json:"framework"`
+	TrainingDefinitionVersion TrainingDefinitionVersion `json:"training_definition_version"`
+}
+
+type TrainingDefinitionRes struct {
+	Metadata Metadata    `json:"metadata"`
+	Entity   TrainingDef `json:"entity"`
+}
+
+type TrainingScriptRes struct {
+	Ok string `json:"ok"`
 }

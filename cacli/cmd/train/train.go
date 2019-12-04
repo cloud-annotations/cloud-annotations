@@ -13,7 +13,9 @@ import (
 )
 
 func Run(cmd *cobra.Command, args []string) {
-	login.AssertLoggedIn()
+	session := login.AssertLoggedIn()
+	session.StartTraining("/Users/niko/Downloads/model_web.zip")
+	return
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
 	s.Suffix = " Checking login..."
 	s.Start()

@@ -3,6 +3,7 @@ package ibmcloud
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -38,12 +39,45 @@ const (
 
 const basicAuth = "Basic Yng6Yng="
 
+// TODO: logical timeout
 var client = http.Client{
-	Timeout: time.Duration(10 * time.Second),
+	Timeout: time.Duration(0 * time.Second),
 }
 
 // TODO: return interface instead of side effects.
 // QUESTION: How do we handle Decoding if we don't have the struct passed in?
+////
+// bodyBytes, err := ioutil.ReadAll(resp.Body)
+// if err != nil {
+// 	panic(err)
+// }
+// bodyString := string(bodyBytes)
+// fmt.Println(bodyString)
+////
+
+func FileUpload(endpoint string, header map[string]string, body io.Reader, res interface{}) error {
+	request, err := http.NewRequest(http.MethodPut, endpoint, body)
+	if err != nil {
+		return err
+	}
+
+	for key, value := range header {
+		request.Header.Add(key, value)
+	}
+
+	resp, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func PostForm(endpoint string, header map[string]string, form url.Values, res interface{}) error {
 	request, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(form.Encode()))
