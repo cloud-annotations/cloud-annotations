@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
 )
@@ -151,20 +150,20 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 	return credential, nil
 }
 
-func (s *AccountSession) StartTraining(trainingZip string) {
+func (s *AccountSession) StartTraining(trainingZip string) (*Model, error) {
 	home, err := homedir.Dir()
 	if err != nil {
-		e.Exit(err)
+		return nil, err
 	}
 	jsonFile, err := os.Open(home + "/.cacli/wml.json")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer jsonFile.Close()
 
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	wmlResource := &Resource{}
@@ -189,23 +188,23 @@ func (s *AccountSession) StartTraining(trainingZip string) {
 
 	res, err := postTrainingDefinition(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingDefinition)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	_, err = AddTrainingScript(res.Entity.TrainingDefinitionVersion.ContentURL, s.Token.AccessToken, wmlResource.GUID, trainingZip)
+	_, err = addTrainingScript(res.Entity.TrainingDefinitionVersion.ContentURL, s.Token.AccessToken, wmlResource.GUID, trainingZip)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	jsonFile, err = os.Open(home + "/.cacli/cos.json")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer jsonFile.Close()
 
 	byteValue, err = ioutil.ReadAll(jsonFile)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	cosResource := &Resource{}
@@ -257,15 +256,15 @@ func (s *AccountSession) StartTraining(trainingZip string) {
 		},
 	}
 
-	_, err = postModel(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingRun)
+	model, err := postModel(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingRun)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	// spew.Dump(model)
+	return model, nil
 }
 
-func AddTrainingScript(endpoint string, token string, instanceID string, trainingZip string) (*TrainingScriptRes, error) {
+func addTrainingScript(endpoint string, token string, instanceID string, trainingZip string) (*TrainingScriptRes, error) {
 	var body io.Reader
 	if trainingZip != "" {
 		file, err := os.Open(trainingZip)

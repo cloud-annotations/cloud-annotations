@@ -8,19 +8,16 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/survey"
 	"github.com/cloud-annotations/training/cacli/cmd/login"
+	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
 
 func Run(cmd *cobra.Command, args []string) {
-	session := login.AssertLoggedIn()
-	session.StartTraining("")
-	// session.StartTraining("/Users/niko/Downloads/model_web.zip")
-	return
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
 	s.Suffix = " Checking login..."
 	s.Start()
-	time.Sleep(500 * time.Millisecond)
+	session := login.AssertLoggedIn()
 	s.Stop()
 
 	s.Suffix = " Loading buckets..."
@@ -43,6 +40,7 @@ func Run(cmd *cobra.Command, args []string) {
   {{- end}}
 {{- end}}`
 
+	//TODO: talk dirty to me
 	prompt3 := &survey.Select{
 		Message:  "Bucket",
 		Options:  []string{"red", "blue", "green", "red", "blue", "green", "red", "blue", "green", "red", "blue", "green", "red", "blue", "green"},
@@ -63,7 +61,11 @@ func Run(cmd *cobra.Command, args []string) {
 
 	s.Suffix = " Starting training run..."
 	s.Start()
-	time.Sleep(500 * time.Millisecond)
+	// TODO: allow passing path to training zip.
+	model, err := session.StartTraining("")
+	if err != nil {
+		e.Exit(err)
+	}
 	s.Stop()
 
 	// TODO: the spinner can be a bit buggy and do this:
@@ -78,7 +80,7 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Println(text.FgGreen.Sprintf("success"), "Training run submitted.")
 	fmt.Println()
 
-	modelID := "model-iaa0w3y9"
+	modelID := model.Metadata.GUID
 	border := strings.Repeat("─", len(modelID))
 	fmt.Println("Model ID:")
 	fmt.Printf("┌─%s─┐\n", border)

@@ -39,11 +39,12 @@ const (
 
 const basicAuth = "Basic Yng6Yng="
 
-// TODO: logical timeout
+// TODO: logical timeout, 10 seconds wasn't long enough.
 var client = http.Client{
 	Timeout: time.Duration(0 * time.Second),
 }
 
+// TODO: We need to check the response for errors.
 // TODO: return interface instead of side effects.
 // QUESTION: How do we handle Decoding if we don't have the struct passed in?
 ////
