@@ -16,7 +16,7 @@ import (
 
 func Run(_ *cobra.Command, args []string) {
 	if len(args) < 1 {
-		e.Exit(errors.New("No Model ID provided\nUsage: cacli progress <model_id>"))
+		e.Exit(errors.New("no `Model ID` provided\nUsage: cacli progress <model_id>"))
 	}
 
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)

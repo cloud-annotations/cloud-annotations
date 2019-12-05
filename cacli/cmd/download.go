@@ -22,10 +22,13 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/cloud-annotations/training/cacli/cmd/download"
 	"github.com/spf13/cobra"
 )
+
+var tensorflowJS bool
+var tensorflowlite bool
+var coreML bool
 
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
@@ -37,9 +40,7 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("download called")
-	},
+	Run: download.Run(&tensorflowJS, &tensorflowlite, &coreML),
 }
 
 func init() {
@@ -53,5 +54,7 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// downloadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	downloadCmd.Flags().BoolVar(&tensorflowJS, "tfjs", false, "Help message for toggle")
+	downloadCmd.Flags().BoolVar(&tensorflowlite, "tflite", false, "Help message for toggle")
+	downloadCmd.Flags().BoolVar(&coreML, "coreml", false, "Help message for toggle")
 }

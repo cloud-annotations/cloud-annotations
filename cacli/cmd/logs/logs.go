@@ -12,7 +12,7 @@ import (
 
 func Run(cmd *cobra.Command, args []string) {
 	if len(args) < 1 {
-		e.Exit(errors.New("No Model ID provided\nUsage: cacli logs <model_id>"))
+		e.Exit(errors.New("no `Model ID` provided\nUsage: cacli logs <model_id>"))
 	}
 	modelID := args[0]
 
@@ -27,6 +27,10 @@ func Run(cmd *cobra.Command, args []string) {
 	case "completed", "error", "failed", "canceled":
 		// TODO: pull from object storage.
 		os.Exit(0)
+	case "pending", "running":
+		// do nothing
+	default:
+		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 
 	session.SocketToMe(modelID)

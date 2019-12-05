@@ -74,6 +74,31 @@ var regionMap = map[string]string{
 
 var endpoints *IdentityEndpoints
 
+func getResourceConfig(path string) (*Resource, error) {
+	home, err := homedir.Dir()
+	if err != nil {
+		return nil, err
+	}
+	jsonFile, err := os.Open(home + path)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
+
+	resource := &Resource{}
+	err = json.Unmarshal(byteValue, resource)
+	if err != nil {
+		return nil, err
+	}
+
+	return resource, nil
+}
+
 func cacheIdentityEndpoints() error {
 	if endpoints == nil {
 		var err error
@@ -127,7 +152,10 @@ func AuthenticateFromFile(filepath string) (*AccountSession, error) {
 	}
 
 	var token Token
-	json.Unmarshal(byteValue, &token)
+	err = json.Unmarshal(byteValue, &token)
+	if err != nil {
+		return nil, err
+	}
 
 	upgradedToken, err := upgradeToken(endpoints.TokenEndpoint, token.RefreshToken, "")
 	if err != nil {
@@ -210,23 +238,10 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 }
 
 func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
-	home, err := homedir.Dir()
+	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
 		return nil, err
 	}
-	jsonFile, err := os.Open(home + "/.cacli/wml.json")
-	if err != nil {
-		return nil, err
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return nil, err
-	}
-
-	wmlResource := &Resource{}
-	json.Unmarshal(byteValue, wmlResource)
 
 	// TODO: look into actual url from regionID
 	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
@@ -255,19 +270,10 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 		return nil, err
 	}
 
-	jsonFile, err = os.Open(home + "/.cacli/cos.json")
+	cosResource, err := getResourceConfig("/.cacli/cos.json")
 	if err != nil {
 		return nil, err
 	}
-	defer jsonFile.Close()
-
-	byteValue, err = ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return nil, err
-	}
-
-	cosResource := &Resource{}
-	json.Unmarshal(byteValue, cosResource)
 
 	creds, err := s.GetCredentials(GetCredentialsParams{
 		Name: "cloud-annotations-binding",
@@ -369,23 +375,10 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) {
 	// TODO: get all buckets.
 	// TODO: cache the credentials.
-	home, err := homedir.Dir()
+	cosResource, err := getResourceConfig("/.cacli/cos.json")
 	if err != nil {
 		return nil, err
 	}
-	jsonFile, err := os.Open(home + "/.cacli/cos.json")
-	if err != nil {
-		return nil, err
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return nil, err
-	}
-
-	cosResource := &Resource{}
-	json.Unmarshal(byteValue, cosResource)
 
 	creds, err := s.GetCredentials(GetCredentialsParams{
 		Name: "cloud-annotations-binding",
@@ -407,23 +400,10 @@ func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) 
 }
 
 func (s *AccountSession) ListTrainingRuns() (*Models, error) {
-	home, err := homedir.Dir()
+	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
 		return nil, err
 	}
-	jsonFile, err := os.Open(home + "/.cacli/wml.json")
-	if err != nil {
-		return nil, err
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return nil, err
-	}
-
-	wmlResource := &Resource{}
-	json.Unmarshal(byteValue, wmlResource)
 	// TODO: look into actual url from regionID
 	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
 
@@ -435,23 +415,11 @@ func (s *AccountSession) ListTrainingRuns() (*Models, error) {
 }
 
 func (s *AccountSession) GetTrainingRun(modelID string) (*Model, error) {
-	home, err := homedir.Dir()
-	if err != nil {
-		return nil, err
-	}
-	jsonFile, err := os.Open(home + "/.cacli/wml.json")
-	if err != nil {
-		return nil, err
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
 		return nil, err
 	}
 
-	wmlResource := &Resource{}
-	json.Unmarshal(byteValue, wmlResource)
 	// TODO: look into actual url from regionID
 	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
 
@@ -463,25 +431,11 @@ func (s *AccountSession) GetTrainingRun(modelID string) (*Model, error) {
 }
 
 func (s *AccountSession) SocketToMe(modelID string) {
-	home, err := homedir.Dir()
-	if err != nil {
-		panic(err)
-	}
-	jsonFile, err := os.Open(home + "/.cacli/wml.json")
-	if err != nil {
-		panic(err)
-	}
-	defer jsonFile.Close()
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
+	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
 		panic(err)
 	}
 
-	wmlResource := &Resource{}
-	json.Unmarshal(byteValue, wmlResource)
-
-	// ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -511,5 +465,4 @@ func (s *AccountSession) SocketToMe(modelID string) {
 		}
 		fmt.Println(strings.TrimSuffix(results.Status.Message, "\n"))
 	}
-	// c.Close(websocket.StatusNormalClosure, "")
 }
