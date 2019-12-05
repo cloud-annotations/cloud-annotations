@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
 	"github.com/IBM/ibm-cos-sdk-go/aws/session"
 	"github.com/IBM/ibm-cos-sdk-go/service/s3"
+	"github.com/IBM/ibm-cos-sdk-go/service/s3/s3manager"
 	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
 	"golang.org/x/time/rate"
@@ -373,7 +375,6 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 }
 
 func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) {
-	// TODO: get all buckets.
 	// TODO: cache the credentials.
 	cosResource, err := getResourceConfig("/.cacli/cos.json")
 	if err != nil {
@@ -384,15 +385,29 @@ func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) 
 		Name: "cloud-annotations-binding",
 		Crn:  cosResource.Crn,
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	sess := session.Must(session.NewSession())
-	client := s3.New(sess, &aws.Config{
+	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("none"), // sdk is dumb and needs this...
 		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
 		S3ForcePathStyle: aws.Bool(true),
 		Credentials:      credentials.NewStaticCredentials(creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID, creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey, ""),
 	})
-	list, err := client.ListBucketsExtended(&s3.ListBucketsExtendedInput{})
+	if err != nil {
+		return nil, err
+	}
+
+	client := s3.New(sess)
+
+	list := &s3.ListBucketsExtendedOutput{}
+	err = client.ListBucketsExtendedPages(&s3.ListBucketsExtendedInput{},
+		func(page *s3.ListBucketsExtendedOutput, lastPage bool) bool {
+			list.Buckets = append(list.Buckets, page.Buckets...)
+			return !lastPage
+		})
+
 	if err != nil {
 		return nil, err
 	}
@@ -430,8 +445,94 @@ func (s *AccountSession) GetTrainingRun(modelID string) (*Model, error) {
 	return model, nil
 }
 
-func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) {
+func shouldDownloadFile(fileName string, modelsToDownload []string) bool {
+	if len(modelsToDownload) > 0 {
+		shouldDownload := false
+		// if the current file is in one of the folders download it.
+		for _, folder := range modelsToDownload {
+			shouldDownload = shouldDownload || strings.HasPrefix(fileName, folder)
+		}
+		return shouldDownload
+	}
+	// if no models listed download all.
+	return true
+}
 
+func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) error {
+	cosResource, err := getResourceConfig("/.cacli/cos.json")
+	if err != nil {
+		return err
+	}
+
+	creds, err := s.GetCredentials(GetCredentialsParams{
+		Name: "cloud-annotations-binding",
+		Crn:  cosResource.Crn,
+	})
+	if err != nil {
+		return err
+	}
+
+	sess, err := session.NewSession(&aws.Config{
+		Region:           aws.String("none"), // sdk is dumb and needs this...
+		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
+		S3ForcePathStyle: aws.Bool(true),
+		Credentials:      credentials.NewStaticCredentials(creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID, creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey, ""),
+	})
+	if err != nil {
+		return err
+	}
+
+	client := s3.New(sess)
+	downloader := s3manager.NewDownloader(sess)
+
+	objects := &s3.ListObjectsV2Output{}
+	err = client.ListObjectsV2Pages(&s3.ListObjectsV2Input{
+		Bucket: aws.String(bucket),
+		Prefix: aws.String(modelLocation),
+	},
+		func(page *s3.ListObjectsV2Output, lastPage bool) bool {
+			objects.Contents = append(objects.Contents, page.Contents...)
+			return !lastPage
+		})
+	if err != nil {
+		return err
+	}
+
+	for _, object := range objects.Contents {
+		re, err := regexp.Compile("^" + modelLocation)
+		if err != nil {
+			return err
+		}
+
+		fileName := re.ReplaceAllString(*object.Key, "")
+		if !strings.HasSuffix(fileName, "/") && shouldDownloadFile(fileName, modelsToDownload) {
+			fileName := "./" + modelID + "/" + fileName
+			dirName := filepath.Dir(fileName)
+			if _, err := os.Stat(dirName); err != nil {
+				err := os.MkdirAll(dirName, os.ModePerm)
+				if err != nil {
+					return err
+				}
+			}
+			file, err := os.Create(fileName)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			// TODO: DownloadWithIterator should be faster.
+			_, err = downloader.Download(file,
+				&s3.GetObjectInput{
+					Bucket: aws.String(bucket),
+					Key:    object.Key,
+				})
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func (s *AccountSession) SocketToMe(modelID string) {

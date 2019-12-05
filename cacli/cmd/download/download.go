@@ -47,19 +47,22 @@ func Run(tensorflowJS *bool, tensorflowlite *bool, coreML *bool) func(*cobra.Com
 
 		modelsToDownload := []string{}
 		if *tensorflowJS {
-			modelsToDownload = append(modelsToDownload, "model_web")
+			modelsToDownload = append(modelsToDownload, "/model_web")
 		}
 		if *tensorflowlite {
-			modelsToDownload = append(modelsToDownload, "model_android")
+			modelsToDownload = append(modelsToDownload, "/model_android")
 		}
 		if *coreML {
-			modelsToDownload = append(modelsToDownload, "model_ios")
+			modelsToDownload = append(modelsToDownload, "/model_ios")
 		}
 
 		location := model.Entity.TrainingResultsReference.Location
 		bucket := location.Bucket
 		modelLocation := location.ModelLocation
-		session.DownloadDirs(bucket, modelLocation, modelID, modelsToDownload)
+		err = session.DownloadDirs(bucket, modelLocation, modelID, modelsToDownload)
+		if err != nil {
+			e.Exit(err)
+		}
 
 		s.Stop()
 		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " download complete")
