@@ -45,41 +45,21 @@ func Run(tensorflowJS *bool, tensorflowlite *bool, coreML *bool) func(*cobra.Com
 		s.Suffix = " Downloading model..."
 		s.Start()
 
-		// location := model.Entity.TrainingResultsReference.Location
-		// bucket := location.Bucket
-		// modelLocation := location.ModelLocation
+		modelsToDownload := []string{}
+		if *tensorflowJS {
+			modelsToDownload = append(modelsToDownload, "model_web")
+		}
+		if *tensorflowlite {
+			modelsToDownload = append(modelsToDownload, "model_android")
+		}
+		if *coreML {
+			modelsToDownload = append(modelsToDownload, "model_ios")
+		}
 
-		// const { region, access_key_id, secret_access_key } = config.credentials.cos
-		// const cosConfig = {
-		//   endpoint: cosEndpointBuilder(region, true),
-		//   accessKeyId: access_key_id,
-		//   secretAccessKey: secret_access_key
-		// }
-		// const cos = new COS.S3(cosConfig)
-		// let downloads = []
-
-		// if (ops.coreml) {
-		//   downloads.push(
-		//     downloadDir(cos, bucket, model_location, ops.model_id, 'model_ios')
-		//   )
-		// }
-		// if (ops.tflite) {
-		//   downloads.push(
-		//     downloadDir(cos, bucket, model_location, ops.model_id, 'model_android')
-		//   )
-		// }
-		// if (ops.tfjs) {
-		//   downloads.push(
-		//     downloadDir(cos, bucket, model_location, ops.model_id, 'model_web')
-		//   )
-		// }
-
-		// // Default, download everything.
-		// if (downloads.length === 0) {
-		//   downloads.push(downloadDir(cos, bucket, model_location, ops.model_id, ''))
-		// }
-
-		// await Promise.all(downloads)
+		location := model.Entity.TrainingResultsReference.Location
+		bucket := location.Bucket
+		modelLocation := location.ModelLocation
+		session.DownloadDirs(bucket, modelLocation, modelID, modelsToDownload)
 
 		s.Stop()
 		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " download complete")

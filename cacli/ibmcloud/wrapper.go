@@ -430,6 +430,10 @@ func (s *AccountSession) GetTrainingRun(modelID string) (*Model, error) {
 	return model, nil
 }
 
+func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) {
+
+}
+
 func (s *AccountSession) SocketToMe(modelID string) {
 	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
