@@ -498,6 +498,7 @@ func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, model
 		return err
 	}
 
+	objectsToDownload := []s3manager.BatchDownloadObject{}
 	for _, object := range objects.Contents {
 		re, err := regexp.Compile("^" + modelLocation)
 		if err != nil {
@@ -520,16 +521,19 @@ func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, model
 			}
 			defer file.Close()
 
-			// TODO: DownloadWithIterator should be faster.
-			_, err = downloader.Download(file,
-				&s3.GetObjectInput{
+			objectsToDownload = append(objectsToDownload, s3manager.BatchDownloadObject{
+				Object: &s3.GetObjectInput{
 					Bucket: aws.String(bucket),
 					Key:    object.Key,
-				})
-			if err != nil {
-				return err
-			}
+				},
+				Writer: file,
+			})
 		}
+	}
+
+	iter := &s3manager.DownloadObjectsIterator{Objects: objectsToDownload}
+	if err := downloader.DownloadWithIterator(aws.BackgroundContext(), iter); err != nil {
+		return err
 	}
 
 	return nil

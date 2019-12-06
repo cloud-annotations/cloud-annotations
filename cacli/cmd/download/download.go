@@ -3,7 +3,6 @@ package download
 import (
 	"errors"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -32,8 +31,7 @@ func Run(tensorflowJS *bool, tensorflowlite *bool, coreML *bool) func(*cobra.Com
 
 		switch model.Entity.Status.State {
 		case "pending", "running":
-			fmt.Println("model is still training")
-			os.Exit(0)
+			e.Exit(errors.New("model is still training"))
 		case "completed":
 			// do nothing
 		case "error", "failed", "canceled":
