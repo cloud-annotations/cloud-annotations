@@ -32,6 +32,7 @@ var coreML bool
 
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
+	// TODO: update usage for all commands that require a model id
 	Use:   "download",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples

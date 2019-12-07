@@ -248,7 +248,7 @@ func Run(*cobra.Command, []string) {
 		e.Exit(err)
 	}
 
-	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " You are now logged in.")
+	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " you are now logged in")
 }
 
 // QUESTION: Do we want to make users re-choose resources when session expires?

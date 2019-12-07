@@ -49,7 +49,6 @@ func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 		s.Suffix = " Starting training run..."
 		s.Start()
 		// TODO: allow passing path to training zip.
-		// TODO: allow custom step and gpu
 		model, err := session.StartTraining("", bucketList.Buckets[bucketIndex], *steps, *gpu)
 		if err != nil {
 			e.Exit(err)
@@ -65,9 +64,6 @@ func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 		// ⠦ Starting training run... │ model-iaa0w3y9 │
 		// └────────────────┘
 
-		fmt.Println(text.FgGreen.Sprintf("success"), "Training run submitted.")
-		fmt.Println()
-
 		modelID := model.Metadata.GUID
 		border := strings.Repeat("─", len(modelID))
 		fmt.Println("Model ID:")
@@ -76,17 +72,6 @@ func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 		fmt.Printf("└─%s─┘\n", border)
 		fmt.Println()
 
-		shouldMonitor := false
-		if err := talkdirtytome.YesOrNah("would you like to monitor progress?", &shouldMonitor); err != nil {
-			if err.Error() == "interrupt" {
-				os.Exit(1)
-			} else {
-				e.Exit(err)
-			}
-		}
-
-		if shouldMonitor {
-			fmt.Println("// TODO: monitor the run.")
-		}
+		fmt.Println(text.FgGreen.Sprintf("success"), "training run submitted")
 	}
 }
