@@ -248,8 +248,15 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 	// TODO: look into actual url from regionID
 	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
 
+	// if non default steps, include it in project name.
+	// TODO: we shouldn't use a magic number.
+	projectName := *bucket.Name
+	if steps != 1000 {
+		projectName = projectName + " (" + strconv.Itoa(steps) + ")"
+	}
+
 	trainingDefinition := &TrainingDefinition{
-		Name: *bucket.Name + " " + strconv.Itoa(steps) + " steps",
+		Name: projectName,
 		Framework: Framework{
 			Name:    "tensorflow",
 			Version: "1.12",

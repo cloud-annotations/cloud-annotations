@@ -49,6 +49,7 @@ func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 		s.Suffix = " Starting training run..."
 		s.Start()
 		// TODO: allow passing path to training zip.
+		// TODO: allow name, training bucket and output bucket.
 		model, err := session.StartTraining("", bucketList.Buckets[bucketIndex], *steps, *gpu)
 		if err != nil {
 			e.Exit(err)

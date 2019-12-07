@@ -7,47 +7,59 @@ import (
 	"time"
 )
 
-func s(x float64) string {
-	if int(x) == 1 {
-		return ""
-	}
-	return "s"
-}
-
 func TimeElapsed(now time.Time, then time.Time, full bool) string {
 	var parts []string
 	var text string
 
 	year2, month2, day2 := now.Date()
-	hour2, minute2, _ := now.Clock()
-
 	year1, month1, day1 := then.Date()
-	hour1, minute1, _ := then.Clock()
 
 	year := math.Abs(float64(int(year2 - year1)))
 	month := math.Abs(float64(int(month2 - month1)))
 	day := math.Abs(float64(int(day2 - day1)))
-	hour := math.Abs(float64(int(hour2 - hour1)))
-	minute := math.Abs(float64(int(minute2 - minute1)))
+
+	diff := now.Sub(then)
+	hour := float64(int(diff.Hours()))
+	minute := float64(int(diff.Minutes()))
 
 	if year > 0 {
-		parts = append(parts, strconv.Itoa(int(year))+" year"+s(year))
+		if int(year) == 1 {
+			parts = append(parts, "a year")
+		} else {
+			parts = append(parts, strconv.Itoa(int(day))+" years")
+		}
 	}
 
 	if month > 0 {
-		parts = append(parts, strconv.Itoa(int(month))+" month"+s(month))
+		if int(month) == 1 {
+			parts = append(parts, "a month")
+		} else {
+			parts = append(parts, strconv.Itoa(int(day))+" months")
+		}
 	}
 
 	if day > 0 {
-		parts = append(parts, strconv.Itoa(int(day))+" day"+s(day))
+		if int(day) == 1 {
+			parts = append(parts, "a day")
+		} else {
+			parts = append(parts, strconv.Itoa(int(day))+" days")
+		}
 	}
 
 	if hour > 0 {
-		parts = append(parts, strconv.Itoa(int(hour))+" hour"+s(hour))
+		if int(hour) == 1 {
+			parts = append(parts, "an hour")
+		} else {
+			parts = append(parts, strconv.Itoa(int(hour))+" hours")
+		}
 	}
 
 	if minute > 0 {
-		parts = append(parts, strconv.Itoa(int(minute))+" minute"+s(minute))
+		if int(minute) == 1 {
+			parts = append(parts, "a minute")
+		} else {
+			parts = append(parts, strconv.Itoa(int(minute))+" minutes")
+		}
 	}
 
 	if now.After(then) {
