@@ -28,7 +28,7 @@ import (
 
 // progressCmd represents the progress command
 var progressCmd = &cobra.Command{
-	Use:   "progress",
+	Use:   "progress <model-id>",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
