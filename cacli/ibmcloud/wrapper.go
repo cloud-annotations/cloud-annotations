@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
@@ -22,7 +21,6 @@ import (
 	"github.com/IBM/ibm-cos-sdk-go/service/s3/s3manager"
 	"github.com/cloud-annotations/training/cacli/ibmcloud/run"
 	"github.com/mitchellh/go-homedir"
-	"golang.org/x/time/rate"
 	"nhooyr.io/websocket"
 	"nhooyr.io/websocket/wsjson"
 )
@@ -546,10 +544,10 @@ func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, model
 	return nil
 }
 
-func (s *AccountSession) SocketToMe(modelID string) {
+func (s *AccountSession) MonitorRun(modelID string, cb func(string)) error {
 	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -563,22 +561,16 @@ func (s *AccountSession) SocketToMe(modelID string) {
 		},
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer c.Close(websocket.StatusInternalError, "the sky is falling")
 
-	l := rate.NewLimiter(rate.Every(time.Millisecond*100), 10)
 	for {
-		err = l.Wait(ctx)
-		if err != nil {
-			panic(err)
-		}
-
 		results := &SocketMessage{}
 		err = wsjson.Read(ctx, c, &results)
 		if err != nil {
-			panic(err)
+			return err
 		}
-		fmt.Println(strings.TrimSuffix(results.Status.Message, "\n"))
+		cb(strings.TrimSuffix(results.Status.Message, "\n"))
 	}
 }

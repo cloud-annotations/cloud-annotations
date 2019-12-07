@@ -2,6 +2,7 @@ package logs
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/cloud-annotations/training/cacli/e"
@@ -33,5 +34,9 @@ func Run(cmd *cobra.Command, args []string) {
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 
-	session.SocketToMe(modelID)
+	// session.SocketToMe(modelID)
+
+	session.MonitorRun(modelID, func(message string) {
+		fmt.Println(message)
+	})
 }
