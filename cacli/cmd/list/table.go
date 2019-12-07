@@ -2,6 +2,7 @@ package list
 
 import (
 	"os"
+	"sort"
 	"time"
 
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
@@ -140,12 +141,15 @@ func render(runs *ibmcloud.Models) {
 		},
 	})
 
+	sort.Slice(runs.Resources, func(a, b int) bool {
+		return runs.Resources[a].Entity.Status.SubmittedAt.Before(runs.Resources[b].Entity.Status.SubmittedAt)
+	})
+
 	for _, run := range runs.Resources {
 		name := run.Entity.ModelDefinition.Name
 		guid := run.Metadata.GUID
 		status := run.Entity.Status.State
 		submitted := run.Entity.Status.SubmittedAt
-
 		t.AppendRow([]interface{}{tableItem{Name: name, Status: status}, tableItem{Name: guid, Status: status}, tableItem{Name: status, Status: status}, tableItem{Name: date.TimeElapsed(time.Now(), submitted, false), Status: status}})
 	}
 	t.Render()
