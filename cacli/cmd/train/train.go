@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/IBM/ibm-cos-sdk-go/service/s3"
 	"github.com/briandowns/spinner"
 	"github.com/cloud-annotations/training/cacli/cmd/login"
 	"github.com/cloud-annotations/training/cacli/e"
@@ -17,7 +18,7 @@ import (
 var s = spinner.New(spinner.CharSets[14], 60*time.Millisecond)
 
 // This is kinda gross.
-func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
+func Run(bucket *string, steps *int, gpu *string) func(*cobra.Command, []string) {
 	return func(cmd *cobra.Command, args []string) {
 		session := login.AssertLoggedIn()
 
@@ -29,28 +30,37 @@ func Run(steps *int, gpu *string) func(*cobra.Command, []string) {
 		}
 		s.Stop()
 
-		// Ask for a bucket.
-		var bucketNames []string
+		var trainingBucket *s3.BucketExtended = nil
 		for _, element := range bucketList.Buckets {
-			bucketNames = append(bucketNames, *element.Name)
-		}
-
-		bucketIndex := 0
-		if err := talkdirtytome.ImportantList("Bucket", bucketNames, &bucketIndex); err != nil {
-			if err.Error() == "interrupt" {
-				os.Exit(1)
-			} else {
-				e.Exit(err)
+			if *element.Name == *bucket {
+				trainingBucket = element
 			}
 		}
 
-		fmt.Println()
+		// Ask for a bucket.
+		if trainingBucket == nil {
+			var bucketNames []string
+			for _, element := range bucketList.Buckets {
+				bucketNames = append(bucketNames, *element.Name)
+			}
+			bucketIndex := 0
+			if err := talkdirtytome.ImportantList("Bucket", bucketNames, &bucketIndex); err != nil {
+				if err.Error() == "interrupt" {
+					os.Exit(1)
+				} else {
+					e.Exit(err)
+				}
+			}
+
+			fmt.Println()
+			trainingBucket = bucketList.Buckets[bucketIndex]
+		}
 
 		s.Suffix = " Starting training run..."
 		s.Start()
 		// TODO: allow passing path to training zip.
-		// TODO: allow name, training bucket and output bucket.
-		model, err := session.StartTraining("", bucketList.Buckets[bucketIndex], *steps, *gpu)
+		// TODO: allow project name and output bucket.
+		model, err := session.StartTraining("", trainingBucket, *steps, *gpu)
 		if err != nil {
 			e.Exit(err)
 		}

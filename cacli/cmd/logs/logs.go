@@ -34,9 +34,10 @@ func Run(cmd *cobra.Command, args []string) {
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 
-	// session.SocketToMe(modelID)
-
-	session.MonitorRun(modelID, func(message string) {
+	err = session.MonitorRun(modelID, func(message string) {
 		fmt.Println(message)
 	})
+	if err != nil {
+		e.Exit(err)
+	}
 }
