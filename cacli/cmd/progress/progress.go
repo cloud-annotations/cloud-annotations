@@ -4,12 +4,15 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/signal"
 	"regexp"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/cheggaaa/pb"
 	"github.com/cloud-annotations/training/cacli/cmd/login"
 	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/spf13/cobra"
@@ -46,6 +49,11 @@ func Run(_ *cobra.Command, args []string) {
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 
+	count := 1000 //TODO: get step count
+	bar := pb.New(count)
+	template := `{{ bar . "[" "#" "-" "-" "]"}} {{counters . "%s/%s"}} {{rtime . "| ETA: %s"}}`
+	bar.SetTemplateString(template)
+
 	//     const classificationStepRegex = /Step (\d*): Train accuracy/gm
 	//     const rateRegex = /tensorflow:global_step\/sec: ([\d.]*)/gm
 	//     const successRegex = /CACLI-TRAINING-SUCCESS/gm
@@ -63,7 +71,6 @@ func Run(_ *cobra.Command, args []string) {
 	hasStartedTraining := false
 	startTime := time.Now()
 	err = session.MonitorRun(modelID, func(message string) {
-		fmt.Println(message)
 		if !hasStartedPreparing {
 			// If we haven't gotten any training messages yet, check to see if we do now.
 			regRes := trainingRegex.FindStringSubmatch(message)
@@ -92,12 +99,32 @@ func Run(_ *cobra.Command, args []string) {
 			// disregard output until we know there wasn't an error.
 			trainingSteps = tmpTrainingSteps
 			hasStartedTraining = true
+			s.Stop()
+
+			fmt.Print("\033[?25l")
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+			go func() {
+				<-c
+				fmt.Print("\033[?25h")
+				os.Exit(1)
+			}()
+			bar.Start()
 		}
 
 		// if there are training steps, update progress.
 		if hasStartedTraining {
-			s.Stop()
-			fmt.Println(trainingSteps)
+			// avoids to many state calculations.
+			if bar.Current() < int64(trainingSteps) {
+				bar.SetCurrent(int64(trainingSteps))
+			}
+			fmt.Println()
+			fmt.Println(model.Entity.Status.RunningAt)
+			fmt.Println(time.Now())
+			elapsedSeconds := int(time.Now().Sub(model.Entity.Status.RunningAt).Seconds())
+			fmt.Println(elapsedSeconds)
+			fmt.Println((elapsedSeconds / trainingSteps) * (1000 - trainingSteps))
+			// TODO: somehow apply rate information from started at date.
 			return
 		}
 
@@ -110,26 +137,6 @@ func Run(_ *cobra.Command, args []string) {
 		e.Exit(err)
 	}
 
-	// fmt.Print("\033[?25l")
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	// go func() {
-	// 	<-c
-	// 	fmt.Print("\033[?25h")
-	// 	os.Exit(1)
-	// }()
-
-	// template := `{{ bar . "[" "#" "-" "-" "]"}} {{counters . "%s/%s"}} {{rtime . "| ETA: %s"}}`
-	// count := 10000
-	// bar := pb.New(count)
-	// bar.SetTemplateString(template)
-	// bar.Start()
-
-	// for i := 0; i < count; i++ {
-	// 	bar.Increment()
-	// 	time.Sleep(time.Millisecond)
-	// }
-
-	// bar.Finish()
-	// fmt.Print("\033[?25h")
+	bar.Finish()
+	fmt.Print("\033[?25h")
 }

@@ -22,7 +22,11 @@ func Run(bucket *string, steps *int, gpu *string) func(*cobra.Command, []string)
 	return func(cmd *cobra.Command, args []string) {
 		session := login.AssertLoggedIn()
 
-		s.Suffix = " Loading buckets..."
+		if *bucket == "" {
+			s.Suffix = " Loading buckets..."
+		} else {
+			s.Suffix = " Checking bucket..."
+		}
 		s.Start()
 		bucketList, err := session.ListAllBucket()
 		if err != nil {

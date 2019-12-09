@@ -45,9 +45,9 @@ type TrainingResultsReference struct {
 
 type Status struct {
 	State       string        `json:"state"`
-	FinishedAt  string        `json:"finished_at"`
+	FinishedAt  time.Time     `json:"finished_at"`
 	SubmittedAt time.Time     `json:"submitted_at"`
-	RunningAt   string        `json:"running_at"`
+	RunningAt   time.Time     `json:"running_at"`
 	Message     string        `json:"message"`
 	Metrics     []interface{} `json:"metrics"`
 	CurrentAt   string        `json:"current_at"`
