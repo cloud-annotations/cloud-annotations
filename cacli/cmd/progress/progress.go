@@ -17,6 +17,7 @@ import (
 	"github.com/cloud-annotations/training/cacli/e"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
+	"nhooyr.io/websocket"
 )
 
 var s = spinner.New(spinner.CharSets[14], 60*time.Millisecond)
@@ -193,13 +194,14 @@ func Run(_ *cobra.Command, args []string) {
 		s.Start()
 		return
 	})
+	if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
+		// TODO test this.
+		fmt.Print("\033[?25h")
+		s.Stop()
+		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " model files saved to bucket")
+		return
+	}
 	if err != nil {
 		e.Exit(err)
 	}
-
-	// TODO websocket onClose {
-	fmt.Print("\033[?25h")
-	s.Stop()
-	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " model files saved to bucket")
-	// }
 }
