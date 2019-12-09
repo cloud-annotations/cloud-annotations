@@ -49,8 +49,37 @@ func Run(_ *cobra.Command, args []string) {
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 
-	count := 1000 //TODO: get step count
-	bar := pb.New(count)
+	totalStepCount := 10000 //TODO: get step count
+
+	// GROSSSSSS, but okay...
+	var theRate float64
+	pointerToTheRate := &theRate
+	var ElementRemainingTime pb.ElementFunc = func(state *pb.State, args ...string) string {
+		baseString := "| ETA: "
+		sp := *pointerToTheRate
+		if !state.IsFinished() {
+			if sp > 0 {
+				remain := float64(state.Total() - state.Value())
+				remainDur := time.Duration(remain/sp) * time.Second
+				rts := remainDur
+
+				hours := int(rts.Hours())
+				minutes := int(rts.Minutes())
+				seconds := int(rts.Seconds())
+				if hours > 0 {
+					return baseString + strconv.Itoa(hours) + " hrs"
+				}
+				if minutes > 0 {
+					return baseString + strconv.Itoa(minutes) + " mins"
+				}
+				return baseString + strconv.Itoa(seconds) + " sec"
+			}
+		}
+		return baseString + "???"
+	}
+	pb.RegisterElement("rtime", ElementRemainingTime, false)
+
+	bar := pb.New(totalStepCount)
 	template := `{{ bar . "[" "#" "-" "-" "]"}} {{counters . "%s/%s"}} {{rtime . "| ETA: %s"}}`
 	bar.SetTemplateString(template)
 
@@ -69,7 +98,9 @@ func Run(_ *cobra.Command, args []string) {
 	trainingSteps := 0
 	hasStartedPreparing := model.Entity.Status.State == "running"
 	hasStartedTraining := false
-	startTime := time.Now()
+	timeWeStartedToMonitor := time.Now()
+
+	// TODO: we need to break when this finishes...
 	err = session.MonitorRun(modelID, func(message string) {
 		if !hasStartedPreparing {
 			// If we haven't gotten any training messages yet, check to see if we do now.
@@ -81,7 +112,7 @@ func Run(_ *cobra.Command, args []string) {
 			} else {
 				// If it's been 10 seconds of nothing, show waiting for GPU message.
 				nowTime := time.Now()
-				if nowTime.Sub(startTime).Seconds() > 10 {
+				if nowTime.Sub(timeWeStartedToMonitor).Seconds() > 10 {
 					s.Suffix = " Waiting for an available GPU (this may take a while)..."
 					s.Start()
 				}
@@ -97,19 +128,21 @@ func Run(_ *cobra.Command, args []string) {
 				return // ignore, not fatal.
 			}
 			// disregard output until we know there wasn't an error.
-			trainingSteps = tmpTrainingSteps
-			hasStartedTraining = true
-			s.Stop()
+			trainingSteps = tmpTrainingSteps + 1 // indexed by zero.
 
-			fmt.Print("\033[?25l")
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-			go func() {
-				<-c
-				fmt.Print("\033[?25h")
-				os.Exit(1)
-			}()
-			bar.Start()
+			if !hasStartedTraining {
+				hasStartedTraining = true
+				s.Stop()
+				fmt.Print("\033[?25l")
+				c := make(chan os.Signal, 1)
+				signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+				go func() {
+					<-c
+					fmt.Print("\033[?25h")
+					os.Exit(1)
+				}()
+				bar.Start()
+			}
 		}
 
 		// if there are training steps, update progress.
@@ -118,18 +151,18 @@ func Run(_ *cobra.Command, args []string) {
 			if bar.Current() < int64(trainingSteps) {
 				bar.SetCurrent(int64(trainingSteps))
 			}
-			fmt.Println()
-			fmt.Println(model.Entity.Status.RunningAt)
-			fmt.Println(time.Now())
-			elapsedSeconds := int(time.Now().Sub(model.Entity.Status.RunningAt).Seconds())
-			fmt.Println(elapsedSeconds)
-			fmt.Println((elapsedSeconds / trainingSteps) * (1000 - trainingSteps))
-			// TODO: somehow apply rate information from started at date.
+
+			startedAt := model.Entity.Status.RunningAt
+			now := time.Now().UTC()
+			elapsedSeconds := float64(now.Sub(startedAt).Seconds())
+			if elapsedSeconds > 0 {
+				theRate = float64(trainingSteps) / elapsedSeconds
+			}
 			return
 		}
 
 		// otherwise show preparing to train message.
-		s.Suffix = " Training has starting, waiting for step information..."
+		s.Suffix = " Training has starting, waiting for a progress update..."
 		s.Start()
 		return
 	})
@@ -137,6 +170,5 @@ func Run(_ *cobra.Command, args []string) {
 		e.Exit(err)
 	}
 
-	bar.Finish()
 	fmt.Print("\033[?25h")
 }

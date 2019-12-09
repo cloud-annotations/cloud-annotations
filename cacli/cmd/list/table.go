@@ -151,7 +151,7 @@ func render(runs *ibmcloud.Models) {
 		status := run.Entity.Status.State
 		submitted := run.Entity.Status.SubmittedAt
 
-		t.AppendRow([]interface{}{tableItem{Name: name, Status: status}, tableItem{Name: guid, Status: status}, tableItem{Name: status, Status: status}, tableItem{Name: date.TimeElapsed(time.Now(), submitted, false), Status: status}})
+		t.AppendRow([]interface{}{tableItem{Name: name, Status: status}, tableItem{Name: guid, Status: status}, tableItem{Name: status, Status: status}, tableItem{Name: date.TimeElapsed(time.Now().UTC(), submitted, false), Status: status}})
 	}
 	t.Render()
 }

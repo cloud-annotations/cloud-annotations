@@ -9,6 +9,8 @@ require (
 	github.com/cloud-annotations/survey v1.8.10
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-openapi/strfmt v0.19.3 // indirect
+	github.com/gosuri/uilive v0.0.3 // indirect
+	github.com/gosuri/uiprogress v0.0.1
 	github.com/jedib0t/go-pretty v4.3.0+incompatible
 	github.com/mattn/go-runewidth v0.0.6 // indirect
 	github.com/mitchellh/go-homedir v1.1.0

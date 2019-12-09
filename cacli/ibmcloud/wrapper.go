@@ -544,6 +544,8 @@ func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, model
 	return nil
 }
 
+// TODO: listen for close()
+// error failed to read json: failed to get reader: received close: status = StatusNormalClosure and reason = ""
 func (s *AccountSession) MonitorRun(modelID string, cb func(string)) error {
 	wmlResource, err := getResourceConfig("/.cacli/wml.json")
 	if err != nil {
