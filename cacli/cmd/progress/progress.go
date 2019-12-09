@@ -15,6 +15,7 @@ import (
 	"github.com/cheggaaa/pb"
 	"github.com/cloud-annotations/training/cacli/cmd/login"
 	"github.com/cloud-annotations/training/cacli/e"
+	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
 
@@ -38,10 +39,13 @@ func Run(_ *cobra.Command, args []string) {
 	}
 
 	switch model.Entity.Status.State {
-	case "completed", "error", "failed", "canceled":
+	case "completed":
 		s.Stop()
-		fmt.Println("✨ Done.")
+		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " training complete")
 		os.Exit(0)
+	case "error", "failed", "canceled":
+		s.Stop()
+		e.Exit(errors.New("training failed or canceled"))
 	case "pending", "running":
 		// do nothing
 	default:
@@ -83,13 +87,11 @@ func Run(_ *cobra.Command, args []string) {
 	template := `{{ bar . "[" "#" "-" "-" "]"}} {{counters . "%s/%s"}} {{rtime . "| ETA: %s"}}`
 	bar.SetTemplateString(template)
 
-	//     const classificationStepRegex = /Step (\d*): Train accuracy/gm
-	//     const rateRegex = /tensorflow:global_step\/sec: ([\d.]*)/gm
-	//     const successRegex = /CACLI-TRAINING-SUCCESS/gm
-	//     const trainingFailedRegex = /CACLI-TRAINING-FAILED/gm
-	//     const conversionFailedRegex = /CACLI-CONVERSION-FAILED/gm
-	//const totalStepsRegex = /\.\/start\.sh (\d*)$/
+	// const classificationStepRegex = /Step (\d*): Train accuracy/gm
 	objectDetectionStepRegex, err := regexp.Compile(`tensorflow:loss = [\d.]*, step = (\d*)`)
+	successRegex, err := regexp.Compile(`CACLI-TRAINING-SUCCESS`)
+	trainingFailedRegex, err := regexp.Compile(`CACLI-TRAINING-FAILED`)
+	conversionFailedRegex, err := regexp.Compile(`CACLI-CONVERSION-FAILED`)
 	trainingRegex, err := regexp.Compile(`^training-[^:]*:(.*)`)
 	if err != nil {
 		e.Exit(err)
@@ -145,6 +147,31 @@ func Run(_ *cobra.Command, args []string) {
 			}
 		}
 
+		isSuccess := len(successRegex.FindStringSubmatch(message)) > 2
+		if isSuccess {
+			// TODO: wipe bar and start checking for new regex
+			bar.Finish()
+			fmt.Print("\033[?25h")
+			fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " training complete")
+			s.Suffix = " Generating model files..."
+			s.Start()
+			return
+		}
+
+		isTrainingFail := len(trainingFailedRegex.FindStringSubmatch(message)) > 2
+		if isTrainingFail {
+			bar.Finish()
+			fmt.Print("\033[?25h")
+			e.Exit(errors.New("training failed"))
+		}
+
+		isConversionFail := len(conversionFailedRegex.FindStringSubmatch(message)) > 2
+		if isConversionFail {
+			bar.Finish()
+			fmt.Print("\033[?25h")
+			e.Exit(errors.New("conversion failed"))
+		}
+
 		// if there are training steps, update progress.
 		if hasStartedTraining {
 			// avoids to many state calculations.
@@ -170,5 +197,9 @@ func Run(_ *cobra.Command, args []string) {
 		e.Exit(err)
 	}
 
+	// TODO websocket onClose {
 	fmt.Print("\033[?25h")
+	s.Stop()
+	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " model files saved to bucket")
+	// }
 }
