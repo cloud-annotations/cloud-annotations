@@ -18,9 +18,16 @@ import (
 var s = spinner.New(spinner.CharSets[14], 60*time.Millisecond)
 
 func Run(cmd *cobra.Command, args []string) {
-	bucket, err := cmd.Flags().GetString("bucket")
+	bucket := ""
+	if len(args) >= 1 {
+		bucket = args[0]
+	}
+	// TODO: finish other flags
+	// projectName, err := cmd.Flags().GetString("name")
+	// output, err := cmd.Flags().GetString("output")
 	steps, err := cmd.Flags().GetInt("steps")
 	gpu, err := cmd.Flags().GetString("gpu")
+	// script, err := cmd.Flags().GetString("script")
 	if err != nil {
 		e.Exit(err)
 	}

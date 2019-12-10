@@ -42,7 +42,9 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(trainCmd)
 
-	trainCmd.Flags().String("bucket", "", "Training bucket")
-	trainCmd.Flags().String("gpu", "k80", "GPU: k80 | k80x2 | k80x4 | v100 | v100x2")
+	trainCmd.Flags().String("name", "", "Optional project name")
+	trainCmd.Flags().String("output", "", "Optional output bucket")
 	trainCmd.Flags().Int("steps", 1000, "Number of training steps")
+	trainCmd.Flags().String("gpu", "k80", "k80 | k80x2 | k80x4 | v100 | v100x2")
+	trainCmd.Flags().String("script", "", "Custom training script.zip")
 }
