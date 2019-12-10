@@ -55,8 +55,17 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	// TODO: set up viper
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cacli.yaml)")
+	rootCmd.PersistentFlags().String("wml-api-key", "", "Watson Machine Learning api key")
+	rootCmd.PersistentFlags().String("wml-instance-id", "", "Watson Machine Learning instance id")
+	rootCmd.PersistentFlags().String("wml-url", "", "Watson Machine Learning url")
+	rootCmd.PersistentFlags().String("cos-access-key", "", "Cloud Object Storage access key id")
+	rootCmd.PersistentFlags().String("cos-secret-key", "", "Cloud Object Storage secret access key")
+	viper.BindPFlag("wml_api_key", rootCmd.PersistentFlags().Lookup("wml-api-key"))
+	viper.BindPFlag("wml_instance_id", rootCmd.PersistentFlags().Lookup("wml-instance-id"))
+	viper.BindPFlag("wml_url", rootCmd.PersistentFlags().Lookup("wml-url"))
+	viper.BindPFlag("cos_access_key", rootCmd.PersistentFlags().Lookup("cos-access-key"))
+	viper.BindPFlag("cos_secret_key", rootCmd.PersistentFlags().Lookup("cos-secret-key"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -77,6 +86,7 @@ func initConfig() {
 		viper.SetConfigName(".cacli")
 	}
 
+	viper.SetEnvPrefix("cacli")
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.

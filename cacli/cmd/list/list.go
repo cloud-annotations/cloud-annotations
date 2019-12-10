@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Run(*cobra.Command, []string) {
+func Run(cmd *cobra.Command, args []string) {
 	session := login.AssertLoggedIn()
 
 	models, err := session.ListTrainingRuns()
