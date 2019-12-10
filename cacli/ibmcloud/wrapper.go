@@ -25,8 +25,6 @@ import (
 	"nhooyr.io/websocket/wsjson"
 )
 
-// TODO: make a helper function for loading in config files.
-
 var regionMap = map[string]string{
 	"us":         "us",
 	"us-geo":     "us",
@@ -355,7 +353,7 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 		defer file.Close()
 		body = bufio.NewReader(file)
 	} else {
-		// TODO: get actual version.
+		// TODO: get actual version of the github training.zip release.
 		version := "1.2.1"
 		endpoint := fmt.Sprintf("https://github.com/cloud-annotations/training/releases/download/v%s/training.zip", version)
 		request, err := http.NewRequest(http.MethodGet, endpoint, nil)
@@ -380,7 +378,7 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 }
 
 func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) {
-	// TODO: cache the credentials.
+	// TODO: cache the HMAC credentials.
 	cosResource, err := getResourceConfig("/.cacli/cos.json")
 	if err != nil {
 		return nil, err

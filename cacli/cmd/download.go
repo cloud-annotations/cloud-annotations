@@ -26,10 +26,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var tensorflowJS bool
-var tensorflowlite bool
-var coreML bool
-
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
 	Use:   "download <model-id>",
@@ -40,21 +36,13 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: download.Run(&tensorflowJS, &tensorflowlite, &coreML),
+	Run: download.Run,
 }
 
 func init() {
 	rootCmd.AddCommand(downloadCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// downloadCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	downloadCmd.Flags().BoolVar(&tensorflowJS, "tfjs", false, "Help message for toggle")
-	downloadCmd.Flags().BoolVar(&tensorflowlite, "tflite", false, "Help message for toggle")
-	downloadCmd.Flags().BoolVar(&coreML, "coreml", false, "Help message for toggle")
+	downloadCmd.Flags().Bool("tfjs", false, "Help message for toggle")
+	downloadCmd.Flags().Bool("tflite", false, "Help message for toggle")
+	downloadCmd.Flags().Bool("coreml", false, "Help message for toggle")
 }

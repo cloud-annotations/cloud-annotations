@@ -195,7 +195,7 @@ func Run(_ *cobra.Command, args []string) {
 		return
 	})
 	if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
-		// TODO test this.
+		// TODO: test this.
 		fmt.Print("\033[?25h")
 		s.Stop()
 		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " model files saved to bucket")

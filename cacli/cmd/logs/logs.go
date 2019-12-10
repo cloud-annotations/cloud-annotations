@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/cloud-annotations/training/cacli/e"
+	"github.com/jedib0t/go-pretty/text"
+	"nhooyr.io/websocket"
 
 	"github.com/cloud-annotations/training/cacli/cmd/login"
 	"github.com/spf13/cobra"
@@ -37,6 +39,10 @@ func Run(cmd *cobra.Command, args []string) {
 	err = session.MonitorRun(modelID, func(message string) {
 		fmt.Println(message)
 	})
+	if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
+		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " log monitor done")
+		return
+	}
 	if err != nil {
 		e.Exit(err)
 	}
