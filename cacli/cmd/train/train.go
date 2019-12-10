@@ -46,15 +46,12 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 	s.Stop()
 
+	fmt.Println()
+
 	var trainingBucket *s3.BucketExtended = nil
-	for _, element := range bucketList.Buckets {
-		if *element.Name == bucket {
-			trainingBucket = element
-		}
-	}
 
 	// Ask for a bucket.
-	if trainingBucket == nil {
+	if bucket == "" {
 		var bucketNames []string
 		for _, element := range bucketList.Buckets {
 			bucketNames = append(bucketNames, *element.Name)
@@ -70,6 +67,18 @@ func Run(cmd *cobra.Command, args []string) {
 
 		fmt.Println()
 		trainingBucket = bucketList.Buckets[bucketIndex]
+	} else {
+		// check the provided bucket
+		for _, element := range bucketList.Buckets {
+			if *element.Name == bucket {
+				trainingBucket = element
+			}
+		}
+		if trainingBucket == nil {
+			e.Exit(fmt.Errorf("%s: bucket does not exist", text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket)))
+		}
+		fmt.Println("Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket))
+		fmt.Println()
 	}
 
 	s.Suffix = " Starting training run..."
