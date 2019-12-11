@@ -34,6 +34,7 @@ const (
 // grant types
 const (
 	passcodeGrantType     = "urn:ibm:params:oauth:grant-type:passcode"
+	apikeyGrantType       = "urn:ibm:params:oauth:grant-type:apikey"
 	refreshTokenGrantType = "refresh_token"
 )
 
@@ -172,6 +173,24 @@ func getToken(endpoint string, otp string) (*Token, error) {
 	form := url.Values{}
 	form.Add("grant_type", passcodeGrantType)
 	form.Add("passcode", otp)
+
+	result := &Token{}
+	err := PostForm(endpoint, header, form, result)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func getTokenFromIAM(endpoint string, apikey string) (*Token, error) {
+	header := map[string]string{
+		"Authorization": basicAuth,
+	}
+
+	form := url.Values{}
+	form.Add("grant_type", apikeyGrantType)
+	form.Add("apikey", apikey)
 
 	result := &Token{}
 	err := PostForm(endpoint, header, form, result)

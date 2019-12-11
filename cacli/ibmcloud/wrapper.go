@@ -25,6 +25,22 @@ import (
 	"nhooyr.io/websocket/wsjson"
 )
 
+type Session struct {
+	Token *Token
+}
+
+type AccountSession struct {
+	Token *Token
+}
+
+type CredentialSession struct {
+	Token           *Token
+	AccessKeyID     string
+	SecretAccessKey string
+	InstanceID      string
+	URL             string
+}
+
 var regionMap = map[string]string{
 	"us":         "us",
 	"us-geo":     "us",
@@ -72,6 +88,19 @@ var regionMap = map[string]string{
 
 var endpoints *IdentityEndpoints
 
+func shouldDownloadFile(fileName string, modelsToDownload []string) bool {
+	if len(modelsToDownload) > 0 {
+		shouldDownload := false
+		// if the current file is in one of the folders download it.
+		for _, folder := range modelsToDownload {
+			shouldDownload = shouldDownload || strings.HasPrefix(fileName, folder)
+		}
+		return shouldDownload
+	}
+	// if no models listed download all.
+	return true
+}
+
 func getResourceConfig(path string) (*Resource, error) {
 	home, err := homedir.Dir()
 	if err != nil {
@@ -116,10 +145,6 @@ func GetIdentityEndpoints() (*IdentityEndpoints, error) {
 	return endpoints, nil
 }
 
-type Session struct {
-	Token *Token
-}
-
 func Authenticate(otp string) (*Session, error) {
 	err := cacheIdentityEndpoints()
 	if err != nil {
@@ -132,7 +157,7 @@ func Authenticate(otp string) (*Session, error) {
 	return &Session{Token: token}, nil
 }
 
-func AuthenticateFromFile(filepath string) (*AccountSession, error) {
+func AuthenticateFromFile(filepath string) (*CredentialSession, error) {
 	err := cacheIdentityEndpoints()
 	if err != nil {
 		return nil, err
@@ -159,7 +184,57 @@ func AuthenticateFromFile(filepath string) (*AccountSession, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &AccountSession{Token: upgradedToken}, nil
+
+	s := &AccountSession{Token: upgradedToken}
+
+	// Get HMAC credentials.
+	cosResource, err := getResourceConfig("/.cacli/cos.json")
+	if err != nil {
+		return nil, err
+	}
+
+	creds, err := s.GetCredentials(GetCredentialsParams{
+		Name: "cloud-annotations-binding",
+		Crn:  cosResource.Crn,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Get WML info.
+	wmlResource, err := getResourceConfig("/.cacli/wml.json")
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: look into actual url from regionID.
+	// TODO: check if there is at least 1 resource so we don't crash.
+	credentialSession := &CredentialSession{
+		Token:           upgradedToken,
+		AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
+		SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
+		InstanceID:      wmlResource.GUID,
+		URL:             "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com",
+	}
+	return credentialSession, nil
+}
+
+func AuthenticateFromCredentials(wmlInstanceID, wmlAPIKey, wmlURL, cosAccessKey, cosSecretKey string) (*CredentialSession, error) {
+	err := cacheIdentityEndpoints()
+	if err != nil {
+		return nil, err
+	}
+	token, err := getTokenFromIAM(endpoints.TokenEndpoint, wmlAPIKey)
+	if err != nil {
+		return nil, err
+	}
+	credentialSession := &CredentialSession{Token: token,
+		AccessKeyID:     cosAccessKey,
+		SecretAccessKey: cosSecretKey,
+		InstanceID:      wmlInstanceID,
+		URL:             wmlURL, // TODO: we should make sure this doesn't end in "/".
+	}
+	return credentialSession, nil
 }
 
 func (s *Session) GetAccounts() (*Accounts, error) {
@@ -172,10 +247,6 @@ func (s *Session) GetAccounts() (*Accounts, error) {
 		panic("boom")
 	}
 	return accounts, nil
-}
-
-type AccountSession struct {
-	Token *Token
 }
 
 func (s *Session) BindAccountToToken(account Account) (*AccountSession, error) {
@@ -235,15 +306,7 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 	return credential, nil
 }
 
-func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
-	wmlResource, err := getResourceConfig("/.cacli/wml.json")
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: look into actual url from regionID
-	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
-
+func (s *CredentialSession) StartTraining(trainingZip string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
 	// if non default steps, include it in project name.
 	// TODO: we shouldn't use a magic number.
 	projectName := *bucket.Name
@@ -265,25 +328,15 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 		},
 	}
 
-	res, err := postTrainingDefinition(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingDefinition)
+	res, err := postTrainingDefinition(s.URL, s.Token.AccessToken, s.InstanceID, trainingDefinition)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = addTrainingScript(res.Entity.TrainingDefinitionVersion.ContentURL, s.Token.AccessToken, wmlResource.GUID, trainingZip)
+	_, err = s.addTrainingScript(res.Entity.TrainingDefinitionVersion.ContentURL, trainingZip)
 	if err != nil {
 		return nil, err
 	}
-
-	cosResource, err := getResourceConfig("/.cacli/cos.json")
-	if err != nil {
-		return nil, err
-	}
-
-	creds, err := s.GetCredentials(GetCredentialsParams{
-		Name: "cloud-annotations-binding",
-		Crn:  cosResource.Crn,
-	})
 
 	locationWithType := *bucket.LocationConstraint
 
@@ -314,8 +367,8 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 		TrainingDataReference: &run.TrainingDataReference{
 			Connection: &run.Connection{
 				EndpointURL:     cosEndpoint,
-				AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
-				SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
+				AccessKeyID:     s.AccessKeyID,
+				SecretAccessKey: s.SecretAccessKey,
 			},
 			Source: &run.Source{
 				Bucket: *bucket.Name,
@@ -325,8 +378,8 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 		TrainingResultsReference: &run.TrainingResultsReference{
 			Connection: &run.Connection{
 				EndpointURL:     cosEndpoint,
-				AccessKeyID:     creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID,
-				SecretAccessKey: creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey,
+				AccessKeyID:     s.AccessKeyID,
+				SecretAccessKey: s.SecretAccessKey,
 			},
 			Target: &run.Target{
 				Bucket: *bucket.Name,
@@ -335,7 +388,7 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 		},
 	}
 
-	model, err := postModel(endpoint, s.Token.AccessToken, wmlResource.GUID, trainingRun)
+	model, err := postModel(s.URL, s.Token.AccessToken, s.InstanceID, trainingRun)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +396,7 @@ func (s *AccountSession) StartTraining(trainingZip string, bucket *s3.BucketExte
 	return model, nil
 }
 
-func addTrainingScript(endpoint string, token string, instanceID string, trainingZip string) (*TrainingScriptRes, error) {
+func (s *CredentialSession) addTrainingScript(endpoint string, trainingZip string) (*TrainingScriptRes, error) {
 	var body io.Reader
 	if trainingZip != "" {
 		file, err := os.Open(trainingZip)
@@ -369,7 +422,7 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 		body = resp.Body
 	}
 
-	res, err := putTrainingDefinition(endpoint, token, instanceID, body)
+	res, err := putTrainingDefinition(endpoint, s.Token.AccessToken, s.InstanceID, body)
 	if err != nil {
 		return nil, err
 	}
@@ -377,26 +430,12 @@ func addTrainingScript(endpoint string, token string, instanceID string, trainin
 	return res, nil
 }
 
-func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) {
-	// TODO: cache the HMAC credentials.
-	cosResource, err := getResourceConfig("/.cacli/cos.json")
-	if err != nil {
-		return nil, err
-	}
-
-	creds, err := s.GetCredentials(GetCredentialsParams{
-		Name: "cloud-annotations-binding",
-		Crn:  cosResource.Crn,
-	})
-	if err != nil {
-		return nil, err
-	}
-
+func (s *CredentialSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("none"), // sdk is dumb and needs this...
 		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
 		S3ForcePathStyle: aws.Bool(true),
-		Credentials:      credentials.NewStaticCredentials(creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID, creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey, ""),
+		Credentials:      credentials.NewStaticCredentials(s.AccessKeyID, s.SecretAccessKey, ""),
 	})
 	if err != nil {
 		return nil, err
@@ -417,69 +456,28 @@ func (s *AccountSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, error) 
 	return list, nil
 }
 
-func (s *AccountSession) ListTrainingRuns() (*Models, error) {
-	wmlResource, err := getResourceConfig("/.cacli/wml.json")
-	if err != nil {
-		return nil, err
-	}
-	// TODO: look into actual url from regionID
-	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
-
-	models, err := getModels(endpoint, s.Token.AccessToken, wmlResource.GUID)
+func (s *CredentialSession) ListTrainingRuns() (*Models, error) {
+	models, err := getModels(s.URL, s.Token.AccessToken, s.InstanceID)
 	if err != nil {
 		return nil, err
 	}
 	return models, nil
 }
 
-func (s *AccountSession) GetTrainingRun(modelID string) (*Model, error) {
-	wmlResource, err := getResourceConfig("/.cacli/wml.json")
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: look into actual url from regionID
-	endpoint := "https://" + wmlResource.RegionID + ".ml.cloud.ibm.com"
-
-	model, err := getModel(endpoint, s.Token.AccessToken, wmlResource.GUID, modelID)
+func (s *CredentialSession) GetTrainingRun(modelID string) (*Model, error) {
+	model, err := getModel(s.URL, s.Token.AccessToken, s.InstanceID, modelID)
 	if err != nil {
 		return nil, err
 	}
 	return model, nil
 }
 
-func shouldDownloadFile(fileName string, modelsToDownload []string) bool {
-	if len(modelsToDownload) > 0 {
-		shouldDownload := false
-		// if the current file is in one of the folders download it.
-		for _, folder := range modelsToDownload {
-			shouldDownload = shouldDownload || strings.HasPrefix(fileName, folder)
-		}
-		return shouldDownload
-	}
-	// if no models listed download all.
-	return true
-}
-
-func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) error {
-	cosResource, err := getResourceConfig("/.cacli/cos.json")
-	if err != nil {
-		return err
-	}
-
-	creds, err := s.GetCredentials(GetCredentialsParams{
-		Name: "cloud-annotations-binding",
-		Crn:  cosResource.Crn,
-	})
-	if err != nil {
-		return err
-	}
-
+func (s *CredentialSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) error {
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("none"), // sdk is dumb and needs this...
 		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
 		S3ForcePathStyle: aws.Bool(true),
-		Credentials:      credentials.NewStaticCredentials(creds.Resources[0].Credentials.CosHmacKeys.AccessKeyID, creds.Resources[0].Credentials.CosHmacKeys.SecretAccessKey, ""),
+		Credentials:      credentials.NewStaticCredentials(s.AccessKeyID, s.SecretAccessKey, ""),
 	})
 	if err != nil {
 		return err
@@ -542,22 +540,16 @@ func (s *AccountSession) DownloadDirs(bucket string, modelLocation string, model
 	return nil
 }
 
-// TODO: listen for close()
-// error failed to read json: failed to get reader: received close: status = StatusNormalClosure and reason = ""
-func (s *AccountSession) MonitorRun(modelID string, cb func(string)) error {
-	wmlResource, err := getResourceConfig("/.cacli/wml.json")
-	if err != nil {
-		return err
-	}
-
+func (s *CredentialSession) MonitorRun(modelID string, cb func(string)) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	endpoint := "wss://" + wmlResource.RegionID + ".ml.cloud.ibm.com/v3/models/" + modelID + "/monitor"
+	endpoint := strings.Replace(s.URL+"/v3/models/"+modelID+"/monitor", "https", "wss", 1)
+
 	c, _, err := websocket.Dial(ctx, endpoint, &websocket.DialOptions{
 		HTTPHeader: http.Header{
 			"Authorization":  {"bearer " + s.Token.AccessToken},
-			"ML-Instance-ID": {wmlResource.GUID},
+			"ML-Instance-ID": {s.InstanceID},
 		},
 	})
 	if err != nil {
