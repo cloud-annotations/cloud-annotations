@@ -54,7 +54,19 @@ func Run(_ *cobra.Command, args []string) {
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 
-	totalStepCount := 10000 //TODO: get step count
+	totalStepsRegex, err := regexp.Compile(`\.\/start\.sh (\d*)$`)
+	if err != nil {
+		e.Exit(err)
+	}
+	trainingCommand := model.Entity.ModelDefinition.Execution.Command
+	totalStepCount := 0
+	stepRegRes := totalStepsRegex.FindStringSubmatch(trainingCommand)
+	if len(stepRegRes) >= 2 {
+		totalStepCount, err = strconv.Atoi(stepRegRes[1])
+		if err != nil {
+			e.Exit(err)
+		}
+	}
 
 	// GROSSSSSS, but okay...
 	var theRate float64
