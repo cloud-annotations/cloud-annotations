@@ -398,7 +398,19 @@ func (s *CredentialSession) StartTraining(trainingZip string, bucket *s3.BucketE
 
 func (s *CredentialSession) addTrainingScript(endpoint string, trainingZip string) (*TrainingScriptRes, error) {
 	var body io.Reader
-	if trainingZip != "" {
+	if strings.HasPrefix(trainingZip, "http") {
+		request, err := http.NewRequest(http.MethodGet, trainingZip, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		resp, err := client.Do(request)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+		body = resp.Body
+	} else if trainingZip != "" {
 		file, err := os.Open(trainingZip)
 		if err != nil {
 			return nil, err

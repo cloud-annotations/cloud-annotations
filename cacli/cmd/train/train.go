@@ -27,7 +27,7 @@ func Run(cmd *cobra.Command, args []string) {
 	// output, err := cmd.Flags().GetString("output")
 	steps, err := cmd.Flags().GetInt("steps")
 	gpu, err := cmd.Flags().GetString("gpu")
-	// script, err := cmd.Flags().GetString("script")
+	script, err := cmd.Flags().GetString("script")
 	if err != nil {
 		e.Exit(err)
 	}
@@ -83,9 +83,8 @@ func Run(cmd *cobra.Command, args []string) {
 
 	s.Suffix = " Starting training run..."
 	s.Start()
-	// TODO: allow passing path to training zip.
 	// TODO: allow project name and output bucket.
-	model, err := session.StartTraining("", trainingBucket, steps, gpu)
+	model, err := session.StartTraining(script, trainingBucket, steps, gpu)
 	if err != nil {
 		e.Exit(err)
 	}
