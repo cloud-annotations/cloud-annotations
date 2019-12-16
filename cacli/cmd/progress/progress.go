@@ -192,6 +192,14 @@ func Run(_ *cobra.Command, args []string) {
 				bar.SetCurrent(int64(trainingSteps))
 			}
 
+			// We have old information, update it.
+			if model.Entity.Status.State != "running" {
+				model, err = session.GetTrainingRun(modelID)
+				if err != nil {
+					e.Exit(err)
+				}
+			}
+
 			startedAt := model.Entity.Status.RunningAt
 			now := time.Now().UTC()
 			elapsedSeconds := float64(now.Sub(startedAt).Seconds())
