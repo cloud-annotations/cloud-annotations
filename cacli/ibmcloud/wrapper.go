@@ -306,10 +306,12 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 	return credential, nil
 }
 
-func (s *CredentialSession) StartTraining(trainingZip string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
+func (s *CredentialSession) StartTraining(trainingZip string, projectName string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
 	// if non default steps, include it in project name.
 	// TODO: we shouldn't use a magic number.
-	projectName := *bucket.Name
+	if projectName == "" {
+		projectName = *bucket.Name
+	}
 	if steps != 1000 {
 		projectName = projectName + " (" + strconv.Itoa(steps) + ")"
 	}
