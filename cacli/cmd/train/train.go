@@ -105,15 +105,6 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 	s.Stop()
 
-	// NOTE: the spinner can be a bit buggy and do this:
-	//
-	// success Training run submitted.
-	//
-	// Model ID:
-	// ┌────────────────┐
-	// ⠦ Starting training run... │ model-iaa0w3y9 │
-	// └────────────────┘
-
 	modelID := model.Metadata.GUID
 	border := strings.Repeat("─", len(modelID))
 	fmt.Println("Model ID:")
