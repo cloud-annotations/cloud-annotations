@@ -78,7 +78,7 @@ func Run(cmd *cobra.Command, args []string) {
 		if trainingBucket == nil {
 			e.Exit(fmt.Errorf("%s: bucket does not exist", text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket)))
 		}
-		fmt.Println("Training Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket))
+		fmt.Println("Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket))
 		fmt.Println()
 	}
 
@@ -92,7 +92,7 @@ func Run(cmd *cobra.Command, args []string) {
 		if outputBucket == nil {
 			e.Exit(fmt.Errorf("%s: bucket does not exist", text.Colors{text.FgCyan, text.Bold}.Sprintf(output)))
 		}
-		fmt.Println("Output Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(output))
+		fmt.Println("Output " + text.Colors{text.FgCyan, text.Bold}.Sprintf(output))
 		fmt.Println()
 	}
 
