@@ -241,3 +241,20 @@ type Credential struct {
 	ResourceInstanceURL string        `json:"resource_instance_url"`
 	ResourceAliasURL    interface{}   `json:"resource_alias_url"`
 }
+
+type Target struct {
+	Type string `json:"type"`
+	Name string `json:"name"`
+}
+type Error struct {
+	Code     string `json:"code"`
+	Message  string `json:"message"`
+	MoreInfo string `json:"more_info"`
+	Target   Target `json:"target"`
+}
+type ErrorMessage struct {
+	ErrorDescription string  `json:"error_description"`
+	Trace            string  `json:"trace"`
+	Error            []Error `json:"error"`
+	Errors           []Error `json:"errors"`
+}

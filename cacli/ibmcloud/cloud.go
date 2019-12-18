@@ -3,6 +3,7 @@ package ibmcloud
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -57,6 +58,20 @@ var client = http.Client{
 // fmt.Println(bodyString)
 ////
 
+func getError(resp *http.Response) error {
+	var errorTemplate ErrorMessage
+	if err := json.NewDecoder(resp.Body).Decode(&errorTemplate); err != nil {
+		return err
+	}
+	if errorTemplate.Error != nil {
+		return errors.New(errorTemplate.Error[0].Message)
+	}
+	if errorTemplate.Errors != nil {
+		return errors.New(errorTemplate.Errors[0].Message)
+	}
+	return errors.New("unknown")
+}
+
 func FileUpload(endpoint string, header map[string]string, body io.Reader, res interface{}) error {
 	request, err := http.NewRequest(http.MethodPut, endpoint, body)
 	if err != nil {
@@ -73,6 +88,10 @@ func FileUpload(endpoint string, header map[string]string, body io.Reader, res i
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return getError(resp)
+	}
 
 	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return err
@@ -98,6 +117,10 @@ func PostForm(endpoint string, header map[string]string, form url.Values, res in
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		return getError(resp)
+	}
+
 	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return err
 	}
@@ -122,6 +145,10 @@ func PostBody(endpoint string, header map[string]string, jsonValue []byte, res i
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		return getError(resp)
+	}
+
 	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return err
 	}
@@ -145,6 +172,10 @@ func Fetch(endpoint string, header map[string]string, res interface{}) error {
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return getError(resp)
+	}
 
 	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
 		return err
