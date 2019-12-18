@@ -24,7 +24,7 @@ func Run(cmd *cobra.Command, args []string) {
 	}
 	// TODO: finish other flags
 	projectName, err := cmd.Flags().GetString("name")
-	// output, err := cmd.Flags().GetString("output")
+	output, err := cmd.Flags().GetString("output")
 	steps, err := cmd.Flags().GetInt("steps")
 	gpu, err := cmd.Flags().GetString("gpu")
 	script, err := cmd.Flags().GetString("script")
@@ -49,6 +49,7 @@ func Run(cmd *cobra.Command, args []string) {
 	fmt.Println()
 
 	var trainingBucket *s3.BucketExtended = nil
+	var outputBucket *s3.BucketExtended = nil
 
 	// Ask for a bucket.
 	if bucket == "" {
@@ -77,14 +78,28 @@ func Run(cmd *cobra.Command, args []string) {
 		if trainingBucket == nil {
 			e.Exit(fmt.Errorf("%s: bucket does not exist", text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket)))
 		}
-		fmt.Println("Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket))
+		fmt.Println("Training Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(bucket))
+		fmt.Println()
+	}
+
+	if output != "" {
+		// check the provided bucket
+		for _, element := range bucketList.Buckets {
+			if *element.Name == output {
+				outputBucket = element
+			}
+		}
+		if outputBucket == nil {
+			e.Exit(fmt.Errorf("%s: bucket does not exist", text.Colors{text.FgCyan, text.Bold}.Sprintf(output)))
+		}
+		fmt.Println("Output Bucket " + text.Colors{text.FgCyan, text.Bold}.Sprintf(output))
 		fmt.Println()
 	}
 
 	s.Suffix = " Starting training run..."
 	s.Start()
 	// TODO: allow project name and output bucket.
-	model, err := session.StartTraining(script, projectName, trainingBucket, steps, gpu)
+	model, err := session.StartTraining(script, projectName, trainingBucket, outputBucket, steps, gpu)
 	if err != nil {
 		e.Exit(err)
 	}

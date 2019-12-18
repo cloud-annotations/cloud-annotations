@@ -306,7 +306,7 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 	return credential, nil
 }
 
-func (s *CredentialSession) StartTraining(trainingZip string, projectName string, bucket *s3.BucketExtended, steps int, gpu string) (*Model, error) {
+func (s *CredentialSession) StartTraining(trainingZip string, projectName string, bucket *s3.BucketExtended, output *s3.BucketExtended, steps int, gpu string) (*Model, error) {
 	// if non default steps, include it in project name.
 	// TODO: we shouldn't use a magic number.
 	if projectName == "" {
@@ -340,15 +340,22 @@ func (s *CredentialSession) StartTraining(trainingZip string, projectName string
 		return nil, err
 	}
 
-	locationWithType := *bucket.LocationConstraint
-
 	re, err := regexp.Compile("-standard$|-vault$|-cold$|-flex$")
 	if err != nil {
 		return nil, err
 	}
 
+	locationWithType := *bucket.LocationConstraint
 	location := re.ReplaceAllString(locationWithType, "")
 	cosEndpoint := "https://s3.private." + regionMap[location] + ".cloud-object-storage.appdomain.cloud"
+
+	if output == nil {
+		output = bucket
+	}
+
+	outputLocationWithType := *output.LocationConstraint
+	outputLocation := re.ReplaceAllString(outputLocationWithType, "")
+	outputCosEndpoint := "https://s3.private." + regionMap[outputLocation] + ".cloud-object-storage.appdomain.cloud"
 
 	trainingRun := &run.TrainingRun{
 		ModelDefinition: &run.ModelDefinition{
@@ -379,12 +386,12 @@ func (s *CredentialSession) StartTraining(trainingZip string, projectName string
 		},
 		TrainingResultsReference: &run.TrainingResultsReference{
 			Connection: &run.Connection{
-				EndpointURL:     cosEndpoint,
+				EndpointURL:     outputCosEndpoint,
 				AccessKeyID:     s.AccessKeyID,
 				SecretAccessKey: s.SecretAccessKey,
 			},
 			Target: &run.Target{
-				Bucket: *bucket.Name,
+				Bucket: *output.Name,
 			},
 			Type: "s3",
 		},

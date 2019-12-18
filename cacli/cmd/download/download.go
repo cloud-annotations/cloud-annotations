@@ -41,7 +41,8 @@ func Run(cmd *cobra.Command, args []string) {
 	case "completed":
 		// do nothing
 	case "error", "failed", "canceled":
-		e.Exit(errors.New("training was canceled or failed"))
+		fmt.Println(text.Colors{text.FgYellow}.Sprintf("warning") + " training was canceled or failed")
+		// e.Exit(errors.New("training was canceled or failed"))
 	default:
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
