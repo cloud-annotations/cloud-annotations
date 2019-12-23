@@ -27,9 +27,11 @@ const api = "cloud.ibm.com"
 // endpoints
 const (
 	identityEndpoint     = protocol + subdomainIAM + api + "/identity/.well-known/openid-configuration"
-	accountsEndpoint     = protocol + subdomainAccounts + api + "/coe/v2/accounts"
-	resourcesEndpoint    = protocol + subdomainResourceController + api + "/v2/resource_instances"
-	resourceKeysEndpoint = protocol + subdomainResourceController + api + "/v2/resource_keys"
+	accountsRoot         = protocol + subdomainAccounts + api
+	resourcesRoot        = protocol + subdomainResourceController + api
+	accountsEndpoint     = accountsRoot + "/coe/v2/accounts"
+	resourcesEndpoint    = resourcesRoot + "/v2/resource_instances"
+	resourceKeysEndpoint = resourcesRoot + "/v2/resource_keys"
 )
 
 // grant types
@@ -57,6 +59,10 @@ var client = http.Client{
 // bodyString := string(bodyBytes)
 // fmt.Println(bodyString)
 ////
+
+func isSuccess(code int) bool {
+	return code >= 200 && code < 300
+}
 
 func getError(resp *http.Response) error {
 	var errorTemplate ErrorMessage
@@ -89,7 +95,7 @@ func FileUpload(endpoint string, header map[string]string, body io.Reader, res i
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if !isSuccess(resp.StatusCode) {
 		return getError(resp)
 	}
 
@@ -117,7 +123,7 @@ func PostForm(endpoint string, header map[string]string, form url.Values, res in
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if !isSuccess(resp.StatusCode) {
 		return getError(resp)
 	}
 
@@ -145,7 +151,7 @@ func PostBody(endpoint string, header map[string]string, jsonValue []byte, res i
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if !isSuccess(resp.StatusCode) {
 		return getError(resp)
 	}
 
@@ -173,7 +179,7 @@ func Fetch(endpoint string, header map[string]string, res interface{}) error {
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if !isSuccess(resp.StatusCode) {
 		return getError(resp)
 	}
 
@@ -253,13 +259,21 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) (*Toke
 	return result, nil
 }
 
-func getAccounts(token string) (*Accounts, error) {
+func getAccounts(endpoint *string, token string) (*Accounts, error) {
+	if endpoint == nil {
+		endpointString := accountsEndpoint
+		endpoint = &endpointString
+	} else {
+		endpointString := accountsEndpoint + *endpoint
+		endpoint = &endpointString
+	}
+
 	header := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
 
 	result := &Accounts{}
-	err := Fetch(accountsEndpoint, header, result)
+	err := Fetch(*endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -268,15 +282,21 @@ func getAccounts(token string) (*Accounts, error) {
 }
 
 // TODO: better way to pass url encoded params.
-func getResources(token string, resourceID string) (*Resources, error) {
-	endpoint := resourcesEndpoint + "?resource_id=" + resourceID
+func getResources(endpoint *string, token string, resourceID string) (*Resources, error) {
+	if endpoint == nil {
+		endpointString := resourcesEndpoint + "?resource_id=" + resourceID
+		endpoint = &endpointString
+	} else {
+		endpointString := resourcesRoot + *endpoint
+		endpoint = &endpointString
+	}
 
 	header := map[string]string{
 		"Authorization": "Bearer " + token,
 	}
 
 	result := &Resources{}
-	err := Fetch(endpoint, header, result)
+	err := Fetch(*endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}

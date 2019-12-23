@@ -44,9 +44,9 @@ type Token struct {
 }
 
 type Accounts struct {
-	NextURL      interface{} `json:"next_url"`
-	TotalResults int         `json:"total_results"`
-	Resources    []Account   `json:"resources"`
+	NextURL      *string   `json:"next_url"`
+	TotalResults int       `json:"total_results"`
+	Resources    []Account `json:"resources"`
 }
 
 type Metadata struct {
@@ -149,9 +149,9 @@ type Account struct {
 }
 
 type Resources struct {
-	RowsCount int         `json:"rows_count"`
-	NextURL   interface{} `json:"next_url"`
-	Resources []Resource  `json:"resources"`
+	RowsCount int        `json:"rows_count"`
+	NextURL   *string    `json:"next_url"`
+	Resources []Resource `json:"resources"`
 }
 
 type PlanHistory struct {
