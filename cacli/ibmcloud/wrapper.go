@@ -494,6 +494,7 @@ func (s *CredentialSession) GetTrainingRun(modelID string) (*Model, error) {
 }
 
 func (s *CredentialSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) error {
+	// TODO: we need to get the location of the bucket!!!!!
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("none"), // sdk is dumb and needs this...
 		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
@@ -586,4 +587,28 @@ func (s *CredentialSession) MonitorRun(modelID string, cb func(string)) error {
 		}
 		cb(strings.TrimSuffix(results.Status.Message, "\n"))
 	}
+}
+
+func (s *CredentialSession) GetObject(bucket string, key string) (*s3.GetObjectOutput, error) {
+	// TODO: we need to get the location of the bucket!!!!!
+	sess, err := session.NewSession(&aws.Config{
+		Region:           aws.String("none"), // sdk is dumb and needs this...
+		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
+		S3ForcePathStyle: aws.Bool(true),
+		Credentials:      credentials.NewStaticCredentials(s.AccessKeyID, s.SecretAccessKey, ""),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	client := s3.New(sess)
+
+	res, err := client.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(key),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 }

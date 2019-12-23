@@ -89,7 +89,7 @@ func FileUpload(endpoint string, header map[string]string, body io.Reader, res i
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return getError(resp)
 	}
 
@@ -117,7 +117,7 @@ func PostForm(endpoint string, header map[string]string, form url.Values, res in
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return getError(resp)
 	}
 
@@ -145,7 +145,7 @@ func PostBody(endpoint string, header map[string]string, jsonValue []byte, res i
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return getError(resp)
 	}
 
@@ -173,7 +173,7 @@ func Fetch(endpoint string, header map[string]string, res interface{}) error {
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return getError(resp)
 	}
 

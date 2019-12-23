@@ -3,6 +3,7 @@ package logs
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/cloud-annotations/training/cacli/e"
@@ -28,7 +29,20 @@ func Run(cmd *cobra.Command, args []string) {
 
 	switch model.Entity.Status.State {
 	case "completed", "error", "failed", "canceled":
-		// TODO: pull from object storage.
+		bucket := model.Entity.TrainingResultsReference.Location.Bucket
+		modelLocation := model.Entity.TrainingResultsReference.Location.ModelLocation
+
+		results, err := session.GetObject(bucket, modelLocation+"/learner-1/training-log.txt")
+		if err != nil {
+			e.Exit(err)
+		}
+
+		bodyBytes, err := ioutil.ReadAll(results.Body)
+		if err != nil {
+			e.Exit(err)
+		}
+		fmt.Println(string(bodyBytes))
+
 		os.Exit(0)
 	case "pending", "running":
 		// do nothing
