@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cloud-annotations/training/cacli/version"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -43,6 +44,7 @@ examples and usage of using your application. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Version: version.BuildVersion(),
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
