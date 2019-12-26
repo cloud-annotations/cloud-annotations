@@ -12,16 +12,16 @@
 $ npm install -g cloud-annotations
 ```
 
-### Alpha - Homebrew
+## Installation (Alpha)
+#### Homebrew
 ```bash
 $ brew install cloud-annotations/tap/cacli
 ```
 
-### Alpha - Linux / macOS
+#### Linux / macOS
 ```bash
-$ curl -sSL https://cloud.annotations.ai/install.sh| sudo sh
+$ curl -sSL https://cloud.annotations.ai/install.sh | sudo sh
 ```
-
 
 ## Before you begin
 
