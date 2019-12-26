@@ -23,6 +23,11 @@ $ brew install cloud-annotations/tap/cacli
 $ curl -sSL https://cloud.annotations.ai/install.sh | sudo sh
 ```
 
+#### Windows
+```bash
+🤷‍♂️
+```
+
 ## Before you begin
 
 The Cloud Annotations CLI requires you to already have labeled images in the [Cloud Annotations online tool](https://cloud.annotations.ai/). For an in-depth guide on this process, check out the following links:
