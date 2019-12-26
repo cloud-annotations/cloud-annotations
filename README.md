@@ -4,15 +4,24 @@
 [![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
 [![Coverage Status](https://img.shields.io/coveralls/cloud-annotations/training/master.svg)](https://coveralls.io/github/cloud-annotations/training?branch=master)
 
-**🚨IMPORTANT🚨** Watson Machine Learning recently changed their credential system to use apikeys. Please update to `cacli v1.1.9+` 
-
-![](https://cloud-annotations.github.io/training/object-detection/assets/main.png)
+![](https://cloud-annotations.github.io/training/object-detection/cli/assets/main.png)
 
 ## Installation
 
 ```bash
 $ npm install -g cloud-annotations
 ```
+
+### Alpha - Homebrew
+```bash
+$ brew install cloud-annotations/tap/cacli
+```
+
+### Alpha - Linux / macOS
+```bash
+$ curl -sSL https://cloud.annotations.ai/install.sh| sudo sh
+```
+
 
 ## Before you begin
 
