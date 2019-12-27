@@ -9,10 +9,9 @@ deploy:
   skip_cleanup: true
   # TODO: update Homebrew tap
   script: |
-    cd cacli && curl -sL https://git.io/goreleaser | bash
-
-    cd ../trainer && python setup.py all
-    UPLOAD_URL="https://uploads.github.com/repos/cloud-annotations/training/releases/v{{ .Version }}/assets?name=training.zip&access_token=$GITHUB_TOKEN"
+    cd cacli && curl -sL https://git.io/goreleaser | bash \
+    cd ../trainer && python setup.py all \
+    UPLOAD_URL="https://uploads.github.com/repos/cloud-annotations/training/releases/v{{ .Version }}/assets?name=training.zip&access_token=$GITHUB_TOKEN" \
     curl --data-binary @training.zip -H "Content-Type: application/octet-stream" "$UPLOAD_URL"
   on:
     tags: true
