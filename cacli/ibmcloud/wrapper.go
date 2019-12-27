@@ -14,6 +14,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cloud-annotations/training/cacli/version"
+
 	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"github.com/IBM/ibm-cos-sdk-go/aws/credentials"
 	"github.com/IBM/ibm-cos-sdk-go/aws/session"
@@ -450,8 +452,7 @@ func (s *CredentialSession) addTrainingScript(endpoint string, trainingZip strin
 		defer file.Close()
 		body = bufio.NewReader(file)
 	} else {
-		// TODO: get actual version of the github training.zip release.
-		version := "1.2.1"
+		version := version.BuildVersion()
 		endpoint := fmt.Sprintf("https://github.com/cloud-annotations/training/releases/download/v%s/training.zip", version)
 		request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 		if err != nil {

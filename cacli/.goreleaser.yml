@@ -42,13 +42,3 @@ archives:
       amd64: x86_64
     files:
     - none*
-
-brews:
-  - github:
-      owner: cloud-annotations
-      name: homebrew-tap
-    folder: Formula
-    homepage:  https://cloud.annotations.ai
-    description: CLI for training Cloud Annotation object detection and classification models
-    test: |
-      system "#{bin}/cacli --version"
