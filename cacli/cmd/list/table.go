@@ -5,12 +5,12 @@ import (
 	"sort"
 	"time"
 
+	"github.com/cheggaaa/pb/termutil"
 	"github.com/cloud-annotations/training/cacli/ibmcloud"
 
 	"github.com/cloud-annotations/training/cacli/date"
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/jedib0t/go-pretty/text"
-	"golang.org/x/sys/unix"
 )
 
 type tableItem struct {
@@ -34,11 +34,11 @@ func min(a int, b int) int {
 
 func getWindowWidth() int {
 	defaultWidowWidth := 80
-	ws, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
+	width, err := termutil.TerminalWidth()
 	if err != nil {
 		return defaultWidowWidth
 	}
-	return int(ws.Col)
+	return width
 }
 
 func render(runs *ibmcloud.Models) {

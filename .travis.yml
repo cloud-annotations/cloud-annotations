@@ -1,0 +1,10 @@
+language: go
+go: 1.13.x
+
+deploy:
+- provider: script
+  skip_cleanup: true
+  script: cd cacli && curl -sL https://git.io/goreleaser | bash
+  on:
+    tags: true
+    condition: $TRAVIS_OS_NAME = linux
