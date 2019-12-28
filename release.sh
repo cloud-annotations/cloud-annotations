@@ -1,6 +1,9 @@
 #!/bin/bash
-set -e
+python --version
+python3 --version
 go version
+set -e
+
 cd cacli && curl -sL https://git.io/goreleaser | bash
 
 cd ../trainer && python setup.py all
