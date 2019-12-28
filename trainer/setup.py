@@ -15,7 +15,7 @@ from subprocess import call
 PULL_OBJECT_DETECTION = """
     svn export -r 8436 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection &&
     svn export -r 8436 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim &&
-    protoc src/object_detection/protos/*.proto --python_out=.
+    cd src && protoc object_detection/protos/*.proto --python_out=. && cd ..
 """
 
 PULL_CLASSIFICATION = """
@@ -53,6 +53,17 @@ def move_zip(zip_file, name):
                 zip_file.writestr(rel_path, f.read())
 
 
+if args.type == 'all':
+    call(PULL_CLASSIFICATION, shell=True)
+    call(PULL_OBJECT_DETECTION, shell=True)
+
+if args.type == 'object_detection':
+    call(PULL_OBJECT_DETECTION, shell=True)
+  
+if args.type == 'classification':
+    call(PULL_CLASSIFICATION, shell=True)
+
+
 setup(
     name='src',
     version='0.1',
@@ -64,17 +75,6 @@ setup(
     }
 )
 shutil.rmtree('src.egg-info')
-
-
-if args.type == 'all':
-    call(PULL_CLASSIFICATION, shell=True)
-    call(PULL_OBJECT_DETECTION, shell=True)
-
-if args.type == 'object_detection':
-    call(PULL_OBJECT_DETECTION, shell=True)
-  
-if args.type == 'classification':
-    call(PULL_CLASSIFICATION, shell=True)
 
 
 with zipfile.ZipFile(OUTPUT_FILE, 'w', zipfile.ZIP_DEFLATED) as tf_model:
