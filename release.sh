@@ -9,4 +9,6 @@ rm -f protoc-3.7.1-linux-x86_64.zip
 cd cacli && curl -sL https://git.io/goreleaser | bash
 
 cd ../trainer && python setup.py all
+ls
+echo "https://uploads.github.com/repos/cloud-annotations/training/releases/$TRAVIS_TAG/assets?name=training.zip&access_token=$GITHUB_TOKEN"
 curl --data-binary @training.zip -H "Content-Type: application/octet-stream" "https://uploads.github.com/repos/cloud-annotations/training/releases/$TRAVIS_TAG/assets?name=training.zip&access_token=$GITHUB_TOKEN"
