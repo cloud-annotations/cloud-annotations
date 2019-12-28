@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo $TRAVIS_TAG
+go version
 cd cacli && curl -sL https://git.io/goreleaser | bash
 
 cd ../trainer && python setup.py all
