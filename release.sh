@@ -40,6 +40,6 @@ base64_content=$(echo $content | base64 -di | sed  "s/v[a-zA-Z0-9]*\.[a-zA-Z0-9]
 # Upload new cacli homebrew formula
 content_params="{\"message\":\"version_bump\",\"content\":\"$base64_content\",\"sha\":\"$sha\"}"
 
-echo content_params
+echo $content_params
 
 curl -sX PUT "Content-Type: application/json" -d $content_params $content_url
