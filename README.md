@@ -4,7 +4,7 @@
 [![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
 [![Coverage Status](https://img.shields.io/coveralls/cloud-annotations/training/master.svg)](https://coveralls.io/github/cloud-annotations/training?branch=master)
 
-![](https://cloud-annotations.github.io/training/object-detection/cli/assets/main.png)
+![](https://github.com/cloud-annotations/training/raw/master/docs/_object_detection/assets/main.png)
 
 ## Before you begin
 
