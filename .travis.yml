@@ -7,7 +7,6 @@ script: echo "success!"
 deploy:
 - provider: script
   skip_cleanup: true
-  # TODO: update Homebrew tap
   script: ./release.sh
   on:
     tags: true

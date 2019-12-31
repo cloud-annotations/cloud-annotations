@@ -29,13 +29,11 @@ import (
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
 	Use:   "logs <model-id>",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Display log and debug information of a training run",
+	Long: `Display log and debug information of a training run.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Basic Example:
+  cacli logs MODEL-ID`,
 	Run: logs.Run,
 }
 

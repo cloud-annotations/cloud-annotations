@@ -29,20 +29,22 @@ import (
 // downloadCmd represents the download command
 var downloadCmd = &cobra.Command{
 	Use:   "download <model-id>",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Download a model",
+	Long: `Download a model. By default the command will download all the contents of the
+model directory.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Basic Example:
+  cacli download MODEL-ID
+	
+Only Download a Subset of Formats:
+  cacli download MODEL-ID --tfjs --tflite --coreml`,
 	Run: download.Run,
 }
 
 func init() {
 	rootCmd.AddCommand(downloadCmd)
 
-	downloadCmd.Flags().Bool("tfjs", false, "Help message for toggle")
-	downloadCmd.Flags().Bool("tflite", false, "Help message for toggle")
-	downloadCmd.Flags().Bool("coreml", false, "Help message for toggle")
+	downloadCmd.Flags().Bool("tfjs", false, "Only download TensorFlow.js model")
+	downloadCmd.Flags().Bool("tflite", false, "Only download TensorFlow Lite model")
+	downloadCmd.Flags().Bool("coreml", false, "Only download Core ML model")
 }

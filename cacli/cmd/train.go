@@ -29,13 +29,21 @@ import (
 // trainCmd represents the train command
 var trainCmd = &cobra.Command{
 	Use:   "train [<bucket>]",
-	Short: "// TODO: A brief description of your command",
-	Long: `// TODO: A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Start a training run",
+	Long: `Start a training run for the given bucket. This command will interactively ask
+for required information unless otherwise specified.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Basic Example:
+  cacli train
+
+Noninteractive Example:
+  cacli train BUCKET \
+    --cos-access-key ACCESS-KEY \
+    --cos-secret-key SECRET-KEY \
+    --wml-instance-id INSTANCE-ID \
+    --wml-api-key API-KEY \
+    --wml-url URL
+`,
 	Run: train.Run,
 }
 

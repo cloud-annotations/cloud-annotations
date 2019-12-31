@@ -37,13 +37,19 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cacli",
-	Short: "// TODO: A brief description of your application",
-	Long: `// TODO: A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "A command line tool for training machine learning models",
+	Long: fmt.Sprintf(`  ___        _               ___ _    ___  
+ / __|      /_\             / __| |  |_ _| 
+| (__      / _ \           | (__| |__ | |  
+ \___loud /_/ \_nnotations  \___|____|___| (v%s)
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+A command line tool for training/managing Watson Machine Learning models based
+on datasets created with Cloud Annotations. 
+
+For more info visit: https://cloud.annotations.ai 
+
+To get started, login then train:
+  cacli login && cacli train`, version.BuildVersion()),
 	Version: version.BuildVersion(),
 }
 
