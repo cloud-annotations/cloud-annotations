@@ -22,7 +22,7 @@ If something doesn’t work, please [file an issue](https://github.com/cloud-ann
 $ npm install -g cloud-annotations
 ```
 
-## Installation (Alpha)
+## Installation (beta)
 #### Homebrew (macOS)
 If you are on macOS and using [Homebrew](https://brew.sh/), you can install `cacli` with the following:
 ```bash
