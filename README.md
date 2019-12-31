@@ -1,6 +1,6 @@
 # Cloud Annotations
+[![GoDoc](https://godoc.org/github.com/cloud-annotations/training/cacli?status.svg)](https://godoc.org/github.com/cloud-annotations/training/cacli)
 [![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
-[![Coverage Status](https://img.shields.io/coveralls/cloud-annotations/training/master.svg)](https://coveralls.io/github/cloud-annotations/training?branch=master)
 
 ![](https://github.com/cloud-annotations/training/raw/master/docs/_object_detection/assets/main.png)
 
