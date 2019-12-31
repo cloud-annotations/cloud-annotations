@@ -64,6 +64,9 @@ if args.type == 'classification':
     call(PULL_CLASSIFICATION, shell=True)
 
 
+shutil.copy('src/model_main_override.py', 'src/object_detection/model_main.py')
+
+
 setup(
     name='src',
     version='0.1',
