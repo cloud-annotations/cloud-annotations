@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -518,10 +519,14 @@ func (s *CredentialSession) GetTrainingRun(modelID string) (*Model, error) {
 }
 
 func (s *CredentialSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) error {
-	// TODO: we need to get the location of the bucket!!!!!
+	cosEndpoint, err := s.GetEndpointForBucket(bucket)
+	if err != nil {
+		return err
+	}
+
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("none"), // sdk is dumb and needs this...
-		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
+		Endpoint:         aws.String(cosEndpoint),
 		S3ForcePathStyle: aws.Bool(true),
 		Credentials:      credentials.NewStaticCredentials(s.AccessKeyID, s.SecretAccessKey, ""),
 	})
@@ -613,11 +618,41 @@ func (s *CredentialSession) MonitorRun(modelID string, cb func(string)) error {
 	}
 }
 
+func (s *CredentialSession) GetEndpointForBucket(bucket string) (string, error) {
+	bucketList, err := s.ListAllBucket()
+	if err != nil {
+		return "", err
+	}
+	var bucketLocationWithType *string
+	for _, element := range bucketList.Buckets {
+		if *element.Name == bucket {
+			bucketLocationWithType = element.LocationConstraint
+		}
+	}
+	if bucketLocationWithType == nil {
+		return "", errors.New("unable to determine bucket region")
+	}
+
+	re, err := regexp.Compile("-standard$|-vault$|-cold$|-flex$")
+	if err != nil {
+		return "", err
+	}
+
+	location := re.ReplaceAllString(*bucketLocationWithType, "")
+	cosEndpoint := "https://s3." + regionMap[location] + ".cloud-object-storage.appdomain.cloud"
+
+	return cosEndpoint, err
+}
+
 func (s *CredentialSession) GetObject(bucket string, key string) (*s3.GetObjectOutput, error) {
-	// TODO: we need to get the location of the bucket!!!!!
+	cosEndpoint, err := s.GetEndpointForBucket(bucket)
+	if err != nil {
+		return nil, err
+	}
+
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String("none"), // sdk is dumb and needs this...
-		Endpoint:         aws.String("https://s3.us.cloud-object-storage.appdomain.cloud"),
+		Endpoint:         aws.String(cosEndpoint),
 		S3ForcePathStyle: aws.Bool(true),
 		Credentials:      credentials.NewStaticCredentials(s.AccessKeyID, s.SecretAccessKey, ""),
 	})
