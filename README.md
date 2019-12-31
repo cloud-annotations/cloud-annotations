@@ -39,25 +39,3 @@ The Cloud Annotations CLI requires you to already have labeled images in the [Cl
 
 Cloud Annotations CLI should work on macOS, Windows, and Linux.<br>
 If something doesn’t work, please [file an issue](https://github.com/cloud-annotations/training/issues/new).
-
-## Usage
-```bash
-$ cacli
-┌─────────────────────────────┐
-│ (C)loud (A)nnotations (CLI) │
-│ version 1.1.9               │
-└─────────────────────────────┘
-
-Usage: cacli <command>
-
-where <command> is one of:
-  init         Interactively create a config.yaml file
-  train        Start a training run
-  logs         Monitor the logs of a training run
-  progress     Monitor the progress of a training run
-  list         List all training runs
-  download     Download a trained model
-  export       Export files from Bucket
-
-cacli <cmd> -h     quick help on <cmd>
-```
