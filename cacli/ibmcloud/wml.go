@@ -11,6 +11,7 @@ import (
 const (
 	modelsRoute             = "/v3/models"
 	trainingDefinitionRoute = "/v3/ml_assets/training_definitions"
+	///v3/models/
 )
 
 func getModel(url string, token string, instanceID string, modelID string) (*Model, error) {
@@ -22,7 +23,7 @@ func getModel(url string, token string, instanceID string, modelID string) (*Mod
 	}
 
 	result := &Model{}
-	err := Fetch(endpoint, header, result)
+	err := fetch(endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +40,7 @@ func getModels(url string, token string, instanceID string) (*Models, error) {
 	}
 
 	result := &Models{}
-	err := Fetch(endpoint, header, result)
+	err := fetch(endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +63,7 @@ func postModel(url string, token string, instanceID string, trainingRun *run.Tra
 	}
 
 	result := &Model{}
-	err = PostBody(endpoint, header, jsonValue, result)
+	err = postBody(endpoint, header, jsonValue, result)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func postTrainingDefinition(url string, token string, instanceID string, trainin
 	}
 
 	result := &TrainingDefinitionRes{}
-	err = PostBody(endpoint, header, jsonValue, result)
+	err = postBody(endpoint, header, jsonValue, result)
 	if err != nil {
 		return nil, err
 	}
@@ -101,10 +102,26 @@ func putTrainingDefinition(url string, token string, instanceID string, body io.
 	}
 
 	result := &TrainingScriptRes{}
-	err := FileUpload(url, header, body, result)
+	err := fileUpload(url, header, body, result)
 	if err != nil {
 		return nil, err
 	}
 
 	return result, nil
+}
+
+func cancelRun(url, token, instanceID, modelID string) error {
+	url = url + modelsRoute + "/" + modelID
+	header := map[string]string{
+		"Authorization":  "Bearer " + token,
+		"ML-Instance-ID": instanceID,
+		"Content-Type":   "application/json",
+	}
+
+	payload := []byte(`{"op": "replace", "path": "/status/state", "value": "canceled"}`)
+
+	var result interface{}
+	patch(url, header, payload, &result)
+
+	return nil
 }

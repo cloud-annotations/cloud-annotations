@@ -503,19 +503,11 @@ func (s *CredentialSession) ListAllBucket() (*s3.ListBucketsExtendedOutput, erro
 }
 
 func (s *CredentialSession) ListTrainingRuns() (*Models, error) {
-	models, err := getModels(s.URL, s.Token.AccessToken, s.InstanceID)
-	if err != nil {
-		return nil, err
-	}
-	return models, nil
+	return getModels(s.URL, s.Token.AccessToken, s.InstanceID)
 }
 
 func (s *CredentialSession) GetTrainingRun(modelID string) (*Model, error) {
-	model, err := getModel(s.URL, s.Token.AccessToken, s.InstanceID, modelID)
-	if err != nil {
-		return nil, err
-	}
-	return model, nil
+	return getModel(s.URL, s.Token.AccessToken, s.InstanceID, modelID)
 }
 
 func (s *CredentialSession) DownloadDirs(bucket string, modelLocation string, modelID string, modelsToDownload []string) error {
@@ -670,4 +662,8 @@ func (s *CredentialSession) GetObject(bucket string, key string) (*s3.GetObjectO
 		return nil, err
 	}
 	return res, nil
+}
+
+func (s *CredentialSession) CancelRun(modelID string) {
+	cancelRun(s.URL, s.Token.AccessToken, s.InstanceID, modelID)
 }
