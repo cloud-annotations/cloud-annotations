@@ -11,7 +11,6 @@ import (
 const (
 	modelsRoute             = "/v3/models"
 	trainingDefinitionRoute = "/v3/ml_assets/training_definitions"
-	///v3/models/
 )
 
 func getModel(url string, token string, instanceID string, modelID string) (*Model, error) {

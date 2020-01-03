@@ -56,11 +56,6 @@ var client = http.Client{
 // bodyString := string(bodyBytes)
 // fmt.Println(bodyString)
 ////
-
-func isSuccess(code int) bool {
-	return code >= 200 && code < 300
-}
-
 func getError(resp *http.Response) error {
 	var errorTemplate ErrorMessage
 	if err := json.NewDecoder(resp.Body).Decode(&errorTemplate); err != nil {

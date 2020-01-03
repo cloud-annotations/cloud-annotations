@@ -21,7 +21,7 @@ func handleRequest(request *http.Request, header map[string]string, res interfac
 
 	defer resp.Body.Close()
 
-	if !isSuccess(resp.StatusCode) {
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		return getError(resp)
 	}
 
