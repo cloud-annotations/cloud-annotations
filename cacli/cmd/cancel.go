@@ -29,9 +29,10 @@ import (
 // cancelCmd represents the cancel command
 var cancelCmd = &cobra.Command{
 	Use:   "cancel <model-id>",
-	Short: "Coming soon",
-	Long:  `Coming soon.`,
-	Run:   cancel.Run,
+	Short: "Cancel a training that is either pending or running",
+	Long: `Cancel a training that is either pending or running. 
+	You can not cancel a training that is complete or already canceled of failed.`,
+	Run: cancel.Run,
 }
 
 func init() {
