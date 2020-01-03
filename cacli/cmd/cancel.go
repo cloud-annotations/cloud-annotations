@@ -22,19 +22,20 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/cloud-annotations/training/cacli/cmd/cancel"
 	"github.com/spf13/cobra"
 )
 
 // cancelCmd represents the cancel command
 var cancelCmd = &cobra.Command{
 	Use:   "cancel <model-id>",
-	Short: "Coming soon",
-	Long:  `Coming soon.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("This command is not yet available.")
-	},
+	Short: "Cancel a training run",
+	Long: `Cancel a training run that is either pending or running. 
+You can not cancel a training run that is complete, canceled or failed.
+	
+Basic Example:
+  cacli cancel MODEL_ID`,
+	Run: cancel.Run,
 }
 
 func init() {

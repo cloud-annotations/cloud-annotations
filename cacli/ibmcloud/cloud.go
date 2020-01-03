@@ -1,13 +1,10 @@
 package ibmcloud
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -59,11 +56,6 @@ var client = http.Client{
 // bodyString := string(bodyBytes)
 // fmt.Println(bodyString)
 ////
-
-func isSuccess(code int) bool {
-	return code >= 200 && code < 300
-}
-
 func getError(resp *http.Response) error {
 	var errorTemplate ErrorMessage
 	if err := json.NewDecoder(resp.Body).Decode(&errorTemplate); err != nil {
@@ -78,123 +70,11 @@ func getError(resp *http.Response) error {
 	return errors.New("unknown")
 }
 
-func FileUpload(endpoint string, header map[string]string, body io.Reader, res interface{}) error {
-	request, err := http.NewRequest(http.MethodPut, endpoint, body)
-	if err != nil {
-		return err
-	}
-
-	for key, value := range header {
-		request.Header.Add(key, value)
-	}
-
-	resp, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if !isSuccess(resp.StatusCode) {
-		return getError(resp)
-	}
-
-	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func PostForm(endpoint string, header map[string]string, form url.Values, res interface{}) error {
-	request, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(form.Encode()))
-	if err != nil {
-		return err
-	}
-
-	for key, value := range header {
-		request.Header.Add(key, value)
-	}
-
-	resp, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if !isSuccess(resp.StatusCode) {
-		return getError(resp)
-	}
-
-	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func PostBody(endpoint string, header map[string]string, jsonValue []byte, res interface{}) error {
-	request, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(jsonValue))
-	if err != nil {
-		return err
-	}
-
-	for key, value := range header {
-		request.Header.Add(key, value)
-	}
-
-	resp, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if !isSuccess(resp.StatusCode) {
-		return getError(resp)
-	}
-
-	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func Fetch(endpoint string, header map[string]string, res interface{}) error {
-	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
-	if err != nil {
-		return err
-	}
-
-	for key, value := range header {
-		request.Header.Add(key, value)
-	}
-
-	resp, err := client.Do(request)
-	if err != nil {
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	if !isSuccess(resp.StatusCode) {
-		return getError(resp)
-	}
-
-	if err = json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func getIdentityEndpoints() (*IdentityEndpoints, error) {
 	header := map[string]string{}
 
 	result := &IdentityEndpoints{}
-	err := Fetch(identityEndpoint, header, result)
+	err := fetch(identityEndpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +92,7 @@ func getToken(endpoint string, otp string) (*Token, error) {
 	form.Add("passcode", otp)
 
 	result := &Token{}
-	err := PostForm(endpoint, header, form, result)
+	err := postForm(endpoint, header, form, result)
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +110,7 @@ func getTokenFromIAM(endpoint string, apikey string) (*Token, error) {
 	form.Add("apikey", apikey)
 
 	result := &Token{}
-	err := PostForm(endpoint, header, form, result)
+	err := postForm(endpoint, header, form, result)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +131,7 @@ func upgradeToken(endpoint string, refreshToken string, accountID string) (*Toke
 	}
 
 	result := &Token{}
-	err := PostForm(endpoint, header, form, result)
+	err := postForm(endpoint, header, form, result)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +153,7 @@ func getAccounts(endpoint *string, token string) (*Accounts, error) {
 	}
 
 	result := &Accounts{}
-	err := Fetch(*endpoint, header, result)
+	err := fetch(*endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -296,7 +176,7 @@ func getResources(endpoint *string, token string, resourceID string) (*Resources
 	}
 
 	result := &Resources{}
-	err := Fetch(*endpoint, header, result)
+	err := fetch(*endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -312,7 +192,7 @@ func getCredentials(token string, params GetCredentialsParams) (*Credentials, er
 	}
 
 	result := &Credentials{}
-	err := Fetch(endpoint, header, result)
+	err := fetch(endpoint, header, result)
 	if err != nil {
 		return nil, err
 	}
@@ -331,7 +211,7 @@ func createCredential(token string, params CreateCredentialParams) (*Credential,
 	}
 
 	result := &Credential{}
-	err = PostBody(resourceKeysEndpoint, header, jsonValue, result)
+	err = postBody(resourceKeysEndpoint, header, jsonValue, result)
 	if err != nil {
 		return nil, err
 	}
