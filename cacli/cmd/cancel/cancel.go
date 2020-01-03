@@ -22,4 +22,19 @@ func Run(cmd *cobra.Command, args []string) {
 		e.Exit(err)
 	}
 
+	switch model.Entity.Status.State {
+	case "completed", "error", "failed", "canceled":
+		// do nothing
+		e.Exit(errors.New("Can not cancel training. use 'cacli list' to check status"))
+	case "pending", "running":
+		// cancel
+		err = session.CancelRun(modelID)
+		if err != nil {
+			e.Exit(errors.New("failed to cancel training"))
+		}
+	default:
+		// means we gave a bad model id.
+		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
+	}
+
 }

@@ -664,6 +664,6 @@ func (s *CredentialSession) GetObject(bucket string, key string) (*s3.GetObjectO
 	return res, nil
 }
 
-func (s *CredentialSession) CancelRun(modelID string) {
-	cancelRun(s.URL, s.Token.AccessToken, s.InstanceID, modelID)
+func (s *CredentialSession) CancelRun(modelID string) error {
+	return cancelRun(s.URL, s.Token.AccessToken, s.InstanceID, modelID)
 }
