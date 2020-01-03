@@ -22,8 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/cloud-annotations/training/cacli/cmd/tensorboard"
 	"github.com/spf13/cobra"
 )
 
@@ -32,14 +31,13 @@ var tensorboardCmd = &cobra.Command{
 	Use:   "tensorboard <model-id>",
 	Short: "Comming soon",
 	Long:  `Comming soon`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("This command is not yet available.")
-	},
+	Run:   tensorboard.Run,
 }
 
 func init() {
 	rootCmd.AddCommand(tensorboardCmd)
-
+	trainCmd.Flags().StringP("config", "c", "", "Optional config file")
+	trainCmd.Flags().BoolP("verbose", "v", true, "verbose output")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
