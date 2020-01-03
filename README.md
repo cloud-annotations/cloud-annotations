@@ -15,12 +15,6 @@ Cloud Annotations CLI should work on macOS, Windows, and Linux.<br>
 If something doesn’t work, please [file an issue](https://github.com/cloud-annotations/training/issues/new).
 
 ## Installation
-
-```bash
-$ npm install -g cloud-annotations
-```
-
-## Installation (beta)
 #### Homebrew (macOS)
 If you are on macOS and using [Homebrew](https://brew.sh/), you can install `cacli` with the following:
 ```bash
@@ -37,3 +31,9 @@ $ curl -sSL https://cloud.annotations.ai/install.sh | sudo sh
 Download the appropriate version for your platform from the [releases page](https://github.com/cloud-annotations/training/releases). Once downloaded, the binary can be run from anywhere. You don't need to install it into a global location. This works well for shared hosts and other systems where you don't have a privileged account.
 
 Ideally, you should install it somewhere in your `PATH` for easy use. `/usr/local/bin` is the most probable location.
+
+## NPM Installation (deprecated)
+
+```bash
+$ npm install -g cloud-annotations
+```
