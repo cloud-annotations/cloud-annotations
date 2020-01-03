@@ -30,10 +30,10 @@ import (
 var cancelCmd = &cobra.Command{
 	Use:   "cancel <model-id>",
 	Short: "Cancel a training run",
-	Long: `Cancel a training run that is either pending or running. You can not cancel a training that is complete or already canceled of failed.
+	Long: `Cancel a training run that is either pending or running. \nYou can not cancel a training that is complete, already canceled or failed.
 	
 Basic Example:
-	cacli cancel MODEL_ID`,
+  cacli cancel MODEL_ID`,
 	Run: cancel.Run,
 }
 

@@ -20,21 +20,23 @@ func Run(cmd *cobra.Command, args []string) {
 	modelID := args[0]
 
 	session := login.AssertLoggedIn()
-
+	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
+	s.Suffix = " Cancelling training run..."
+	s.Start()
 	model, err := session.GetTrainingRun(modelID)
 	if err != nil {
 		e.Exit(err)
 	}
 
 	switch model.Entity.Status.State {
-	case "completed", "error", "failed", "canceled":
-		fmt.Println("training status : ", model.Entity.Status.State)
-		e.Exit(err)
+	case "completed", "canceled":
+		s.Stop()
+		e.Exit(fmt.Errorf("can not cancel an already %s training run", model.Entity.Status.State))
+	case "error", "failed":
+		s.Stop()
+		e.Exit(errors.New("can not cancel an already failed training run"))
 	case "pending", "running":
 		// cancel
-		s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
-		s.Suffix = " Cancelling training run..."
-		s.Start()
 		err = session.CancelRun(modelID)
 		s.Stop()
 		if err != nil {
@@ -44,6 +46,7 @@ func Run(cmd *cobra.Command, args []string) {
 
 	default:
 		// means we gave a bad model id.
+		s.Stop()
 		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
 	}
 }
