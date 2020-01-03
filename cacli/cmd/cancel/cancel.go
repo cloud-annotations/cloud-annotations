@@ -21,7 +21,7 @@ func Run(cmd *cobra.Command, args []string) {
 
 	session := login.AssertLoggedIn()
 	s := spinner.New(spinner.CharSets[14], 60*time.Millisecond)
-	s.Suffix = " Cancelling training run..."
+	s.Suffix = " Canceling training run..."
 	s.Start()
 	model, err := session.GetTrainingRun(modelID)
 	if err != nil {
