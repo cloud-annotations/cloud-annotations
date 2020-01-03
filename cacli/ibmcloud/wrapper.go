@@ -455,6 +455,9 @@ func (s *CredentialSession) addTrainingScript(endpoint string, trainingZip strin
 	} else {
 		version := version.BuildVersion()
 		endpoint := fmt.Sprintf("https://github.com/cloud-annotations/training/releases/download/v%s/training.zip", version)
+		if version == "dev" {
+			endpoint = "https://github.com/cloud-annotations/training/releases/latest/download/training.zip"
+		}
 		request, err := http.NewRequest(http.MethodGet, endpoint, nil)
 		if err != nil {
 			return nil, err
