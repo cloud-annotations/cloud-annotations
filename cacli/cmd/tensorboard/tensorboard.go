@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 
 	"github.com/cloud-annotations/training/cacli/cmd/login"
@@ -38,6 +39,7 @@ func Run(cmd *cobra.Command, args []string) {
 	modelLocation := model.Entity.TrainingResultsReference.Location.ModelLocation
 
 	s3endpoint, err := session.GetEndpointForBucket(bucket)
+	s3endpoint = strings.ReplaceAll(s3endpoint, "https://", "")
 
 	if err != nil {
 		e.Exit(err)
@@ -60,8 +62,10 @@ func Run(cmd *cobra.Command, args []string) {
 	arguments := []string{"tensorboard", fmt.Sprintf("--logdir=s3://%s/%s", bucket, modelLocation)}
 	env := os.Environ()
 	env = append(env, fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", session.AccessKeyID))
-	env = append(env, fmt.Sprintf("AWS_SECRET_ACCESS_KEY_ID=%s", session.SecretAccessKey))
+	env = append(env, fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", session.SecretAccessKey))
 	env = append(env, fmt.Sprintf("S3_ENDPOINT=%s", s3endpoint))
+	env = append(env, "S3_USE_HTTPS=1")
+	env = append(env, "S3_VERIFY_SSL=0")
 	// command.Env = env
 
 	syscall.Exec(binary, arguments, env)
