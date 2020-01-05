@@ -22,31 +22,22 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/cloud-annotations/training/cacli/cmd/tensorboard"
 	"github.com/spf13/cobra"
 )
 
 // tensorboardCmd represents the tensorboard command
 var tensorboardCmd = &cobra.Command{
 	Use:   "tensorboard <model-id>",
-	Short: "Comming soon",
-	Long:  `Comming soon`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("This command is not yet available.")
-	},
+	Short: "Start TensorBoard for a training run",
+	Long: `TensorBoard is a suite of web applications for inspecting and understanding
+your TensorFlow runs and graphs. https://github.com/tensorflow/tensorboard.
+
+Basic Example:
+  cacli tensorboard MODEL-ID`,
+	Run: tensorboard.Run,
 }
 
 func init() {
 	rootCmd.AddCommand(tensorboardCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// tensorboardCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// tensorboardCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
