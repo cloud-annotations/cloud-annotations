@@ -31,10 +31,7 @@ var tensorboardCmd = &cobra.Command{
 	Use:   "tensorboard <model-id>",
 	Short: "Start TensorBoard for a training run",
 	Long: `TensorBoard is a suite of web applications for inspecting and understanding
-your TensorFlow runs and graphs. https://github.com/tensorflow/tensorboard.
-
-Basic Example:
-  cacli tensorboard MODEL-ID`,
+your TensorFlow runs and graphs. https://github.com/tensorflow/tensorboard.`,
 	Run: tensorboard.Run,
 }
 

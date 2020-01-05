@@ -31,10 +31,7 @@ var progressCmd = &cobra.Command{
 	Use:   "progress <model-id>",
 	Short: "Display progess bar and ETA of a training run",
 	Long: `Display the estimated training training time and progess bar for a given
-training run.
-
-Basic Example:
-  cacli progress MODEL-ID`,
+training run.`,
 	Run: progress.Run,
 }
 

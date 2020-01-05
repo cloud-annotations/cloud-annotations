@@ -32,9 +32,6 @@ var downloadCmd = &cobra.Command{
 	Short: "Download a model",
 	Long: `Download a model. By default the command will download all the contents of the
 model directory.
-
-Basic Example:
-  cacli download MODEL-ID
 	
 Only Download a Subset of Formats:
   cacli download MODEL-ID --tfjs --tflite --coreml`,

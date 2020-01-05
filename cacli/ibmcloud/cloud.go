@@ -45,10 +45,7 @@ var client = http.Client{
 	Timeout: time.Duration(0 * time.Second),
 }
 
-// TODO: We need to check the response for errors.
-// TODO: return interface instead of side effects.
-// QUESTION: How do we handle Decoding if we don't have the struct passed in?
-////
+//// useful for logging
 // bodyBytes, err := ioutil.ReadAll(resp.Body)
 // if err != nil {
 // 	panic(err)
@@ -56,6 +53,7 @@ var client = http.Client{
 // bodyString := string(bodyBytes)
 // fmt.Println(bodyString)
 ////
+
 func getError(resp *http.Response) error {
 	var errorTemplate ErrorMessage
 	if err := json.NewDecoder(resp.Body).Decode(&errorTemplate); err != nil {

@@ -31,23 +31,10 @@ var cancelCmd = &cobra.Command{
 	Use:   "cancel <model-id>",
 	Short: "Cancel a training run",
 	Long: `Cancel a training run that is either pending or running. 
-You can not cancel a training run that is complete, canceled or failed.
-	
-Basic Example:
-  cacli cancel MODEL_ID`,
+You can not cancel a training run that is complete, canceled or failed.`,
 	Run: cancel.Run,
 }
 
 func init() {
 	rootCmd.AddCommand(cancelCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// cancelCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// cancelCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

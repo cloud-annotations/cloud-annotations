@@ -30,6 +30,9 @@ func Run(cmd *cobra.Command, args []string) {
 
 	session := login.AssertLoggedIn()
 
+	s.Suffix = " Downloading model..."
+	s.Start()
+
 	model, err := session.GetTrainingRun(modelID)
 	if err != nil {
 		e.Exit(err)
@@ -37,18 +40,16 @@ func Run(cmd *cobra.Command, args []string) {
 
 	switch model.Entity.Status.State {
 	case "pending", "running":
+		s.Stop()
 		e.Exit(errors.New("model is still training"))
 	case "completed":
 		// do nothing
 	case "error", "failed", "canceled":
 		fmt.Println(text.Colors{text.FgYellow}.Sprintf("warning") + " training was canceled or failed")
-		// e.Exit(errors.New("training was canceled or failed"))
 	default:
-		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
+		s.Stop()
+		e.Exit(errors.New("invalid training run state"))
 	}
-
-	s.Suffix = " Downloading model..."
-	s.Start()
 
 	modelsToDownload := []string{}
 	if tensorflowJS {

@@ -50,8 +50,8 @@ func Run(_ *cobra.Command, args []string) {
 	case "pending", "running":
 		// do nothing
 	default:
-		// means we gave a bad model id.
-		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
+		s.Stop()
+		e.Exit(errors.New("invalid training run state"))
 	}
 
 	totalStepsRegex, err := regexp.Compile(`\.\/start\.sh (\d*)$`)
@@ -115,7 +115,6 @@ func Run(_ *cobra.Command, args []string) {
 	hasStartedTraining := false
 	timeWeStartedToMonitor := time.Now()
 
-	// TODO: we need to break when this finishes...
 	err = session.MonitorRun(modelID, func(message string) {
 		if !hasStartedPreparing {
 			// If we haven't gotten any training messages yet, check to see if we do now.
@@ -162,7 +161,6 @@ func Run(_ *cobra.Command, args []string) {
 
 		isSuccess := len(successRegex.FindStringSubmatch(message)) > 2
 		if isSuccess {
-			// TODO: wipe bar and start checking for new regex
 			bar.Finish()
 			fmt.Print("\033[?25h")
 			fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " training complete")
@@ -215,7 +213,6 @@ func Run(_ *cobra.Command, args []string) {
 		return
 	})
 	if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
-		// TODO: test this.
 		fmt.Print("\033[?25h")
 		s.Stop()
 		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " model files saved to bucket")

@@ -45,8 +45,7 @@ func Run(cmd *cobra.Command, args []string) {
 		fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " training canceled")
 
 	default:
-		// means we gave a bad model id.
 		s.Stop()
-		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
+		e.Exit(errors.New("invalid training run state"))
 	}
 }

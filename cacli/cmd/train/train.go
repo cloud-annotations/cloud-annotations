@@ -22,7 +22,7 @@ func Run(cmd *cobra.Command, args []string) {
 	if len(args) >= 1 {
 		bucket = args[0]
 	}
-	// TODO: finish other flags
+
 	projectName, err := cmd.Flags().GetString("name")
 	output, err := cmd.Flags().GetString("output")
 	steps, err := cmd.Flags().GetInt("steps")
@@ -98,7 +98,7 @@ func Run(cmd *cobra.Command, args []string) {
 
 	s.Suffix = " Starting training run..."
 	s.Start()
-	// TODO: allow project name and output bucket.
+
 	model, err := session.StartTraining(script, projectName, trainingBucket, outputBucket, steps, gpu)
 	if err != nil {
 		e.Exit(err)

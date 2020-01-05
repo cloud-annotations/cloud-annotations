@@ -211,7 +211,6 @@ func Run(*cobra.Command, []string) {
 
 	s.Stop()
 
-	// TODO: clean this.
 	// Get the users home directory.
 	home, err := homedir.Dir()
 	if err != nil {
@@ -250,96 +249,3 @@ func Run(*cobra.Command, []string) {
 
 	fmt.Println(text.Colors{text.FgGreen}.Sprintf("success") + " you are now logged in")
 }
-
-// QUESTION: Do we want to make users re-choose resources when session expires?
-// - if yes we should at least have the item scrolled to as a sort of "default"
-
-////////////////////////////////////////////////////////////////////////////////
-// TODO: theoretical login examples:
-////////////////////////////////////////////////////////////////////////////////
-// SCRATCH EVERYTHING...
-// we should just use legacy credentials for loging in with no interaction.
-// ie the credentials.json from the ibmcloud GUI.
-// ```
-// cacli login --wml @wml.json --cos @cos.json --non-interactive
-// ```
-
-// NOTE: the account id is tied to the resource responce json.
-// QUESTION: do we need the user to provide an account id?
-// - YES, we need the account id to get the WML region and generate credentials
-// - I meannnnnn technically we could brute force all the listed accounts to find
-//   the right one.
-// - We should also test if we can list resources via a ibmcloud apikey. it might
-//   already have account context.
-
-// QUESTION: Should we even make them choose a COS instance at login?
-
-// interaction required:
-// ```
-// cacli login
-// ```
-
-// zero interaction: (general case flags)
-// ```
-// cacli login \
-//   --apikey GLOBAL_IBM_API_KEY \
-//   --wmlinstanceid YOUR_WML_INSTANCE_ID \ /* I think we can use the instance to find the proper region */
-//   --cosinstanceid YOUR_COS_INSTANCE_ID \
-//   --account ACCOUNT_TO_TARGET
-// ```
-
-// Maybe we want the option to log in, with no account targeted?
-// ```
-// export IBMCLOUD_API_KEY=GLOBAL_IBM_API_KEY
-// cacli login --no-interaction
-// cacli train \
-//   --wmlinstanceid YOUR_WML_INSTANCE_ID \
-//   --cosinstanceid YOUR_COS_INSTANCE_ID \
-//   --account ACCOUNT_TO_TARGET \
-//   --bucket MY_BUCKET \
-//   --steps 1000 \
-//   --gpu k80 \
-//   --output MY_OTHER_BUCKET
-// ```
-
-// Maybe we want the option to log in, with no account targeted?
-// ```
-// export IBMCLOUD_API_KEY=GLOBAL_IBM_API_KEY
-// cacli login --no-interaction /* do we even need to run login? */
-// cacli train \
-//   --account ACCOUNT_TO_TARGET \
-//   --wmlinstanceid YOUR_WML_INSTANCE_ID \
-//   --cosinstanceid YOUR_COS_INSTANCE_ID \
-//   --bucket MY_BUCKET \
-//   --steps 1000 \
-//   --gpu k80 \
-//   --output MY_OTHER_BUCKET
-// ```
-
-// Allow HMAC to allow for targeting random stuff
-// ```
-// export IBMCLOUD_API_KEY=GLOBAL_IBM_API_KEY
-// cacli train \
-//   --account ACCOUNT_TO_TARGET \
-//   --wmlinstanceid YOUR_WML_INSTANCE_ID \
-//   --cosinstanceid YOUR_COS_INSTANCE_ID \ /* this will be overridden if any bucket creds are specified */
-//   --bucket MY_BUCKET \
-//   --bucketcreds MY_ID:MY_key \
-//   --steps 1000 \
-//   --gpu k80 \
-//   --output MY_OTHER_BUCKET \
-//   --outputcreds MY_ID:MY_key
-// ```
-
-////////////////////////////////////////////////////////////////////////////////
-// TODO: easily switch instances without re-login
-////////////////////////////////////////////////////////////////////////////////
-// This could get funky because you might need to change account to use the
-// resource you want.
-// might be best to just have a `cacli target` interactive command.
-// ```
-// cacli target \
-//   --account YOUR_ACCOUNT_ID \
-//   --wml YOUR_WML_INSTANCE_ID \
-//   --cos YOUR_COS_INSTANCE_ID
-// ```

@@ -47,7 +47,7 @@ func Run(cmd *cobra.Command, args []string) {
 	case "pending", "running":
 		// do nothing
 	default:
-		e.Exit(errors.New("TODO: GetTrainingRun didn't return with a valid state"))
+		e.Exit(errors.New("invalid training run state"))
 	}
 
 	err = session.MonitorRun(modelID, func(message string) {
