@@ -53,6 +53,10 @@ func init() {
 	trainCmd.Flags().String("name", "", "Optional project name")
 	trainCmd.Flags().String("output", "", "Optional output bucket")
 	trainCmd.Flags().Int("steps", 1000, "Number of training steps")
-	trainCmd.Flags().String("gpu", "k80", "k80 | k80x2 | k80x4 | v100 | v100x2")
+	trainCmd.Flags().String("gpu", "k80", "k80x2, k80x4, v100, v100x2")
 	trainCmd.Flags().String("script", "", "Custom training script.zip")
+
+	trainCmd.Flags().String("framework", "tensorflow", "keras, pytorch, caffe")
+	trainCmd.Flags().String("frameworkv", "1.14", "Framework version")
+	trainCmd.Flags().String("pythonv", "3.6", "Python version")
 }

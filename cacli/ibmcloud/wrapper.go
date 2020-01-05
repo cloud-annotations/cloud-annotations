@@ -332,17 +332,17 @@ func (s *AccountSession) CreateCredential(params CreateCredentialParams) (*Crede
 	return credential, nil
 }
 
-func (s *CredentialSession) StartTraining(trainingZip string, projectName string, bucket *s3.BucketExtended, output *s3.BucketExtended, steps int, gpu string) (*Model, error) {
+func (s *CredentialSession) StartTraining(trainingZip string, projectName string, bucket *s3.BucketExtended, output *s3.BucketExtended, steps int, gpu string, framework string, frameworkVersion string, pythonVersion string) (*Model, error) {
 	// TODO: We shouldn't hard code all of this.
 	trainingDefinition := &TrainingDefinition{
 		Name: projectName,
 		Framework: Framework{
-			Name:    "tensorflow",
-			Version: "1.12",
+			Name:    framework,
+			Version: frameworkVersion,
 			Runtimes: []Runtimes{
 				Runtimes{
 					Name:    "python",
-					Version: "3.6",
+					Version: pythonVersion,
 				},
 			},
 		},

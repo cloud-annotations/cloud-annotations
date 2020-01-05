@@ -31,6 +31,10 @@ func Run(cmd *cobra.Command, args []string) {
 	gpu, err := cmd.Flags().GetString("gpu")
 	script, err := cmd.Flags().GetString("script")
 
+	framework, err := cmd.Flags().GetString("framework")
+	frameworkVersion, err := cmd.Flags().GetString("frameworkv")
+	pythonVersion, err := cmd.Flags().GetString("pythonv")
+
 	if err != nil {
 		e.Exit(err)
 	}
@@ -109,7 +113,7 @@ func Run(cmd *cobra.Command, args []string) {
 		// if non default steps, include it in project name.
 		projectName = projectName + " (" + strconv.Itoa(steps) + ")"
 	}
-	model, err := session.StartTraining(script, projectName, trainingBucket, outputBucket, steps, gpu)
+	model, err := session.StartTraining(script, projectName, trainingBucket, outputBucket, steps, gpu, framework, frameworkVersion, pythonVersion)
 	if err != nil {
 		e.Exit(err)
 	}
