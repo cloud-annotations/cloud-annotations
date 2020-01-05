@@ -3,6 +3,7 @@ package train
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,8 +27,10 @@ func Run(cmd *cobra.Command, args []string) {
 	projectName, err := cmd.Flags().GetString("name")
 	output, err := cmd.Flags().GetString("output")
 	steps, err := cmd.Flags().GetInt("steps")
+	stepsChanged := cmd.Flags().Changed("steps")
 	gpu, err := cmd.Flags().GetString("gpu")
 	script, err := cmd.Flags().GetString("script")
+
 	if err != nil {
 		e.Exit(err)
 	}
@@ -99,6 +102,13 @@ func Run(cmd *cobra.Command, args []string) {
 	s.Suffix = " Starting training run..."
 	s.Start()
 
+	if projectName == "" {
+		projectName = *trainingBucket.Name
+	}
+	if stepsChanged {
+		// if non default steps, include it in project name.
+		projectName = projectName + " (" + strconv.Itoa(steps) + ")"
+	}
 	model, err := session.StartTraining(script, projectName, trainingBucket, outputBucket, steps, gpu)
 	if err != nil {
 		e.Exit(err)
