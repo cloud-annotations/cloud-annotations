@@ -1,0 +1,89 @@
+.Home_titleBar__3XDTs {
+  position: fixed;
+  z-index: 100;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  background-color: #000000;
+  color: rgba(255, 255, 255, 1);
+}
+
+.Home_titleBar__3XDTsthin {
+  position: fixed;
+  z-index: 100;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  background-color: #000000;
+  color: rgba(255, 255, 255, 1);
+}
+
+.Home_title__1dfd5 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 32px;
+  margin-right: auto;
+  color: rgba(255, 255, 255, 1);
+}
+
+.Home_title__1dfd5:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+.Home_titlePrefix__vIot9 {
+  font-weight: 400;
+}
+
+.Home_link__3O3aj,
+.Home_link__3O3aj:visited {
+  color: rgba(255, 255, 255, 1);
+  text-decoration: none;
+  margin: 0 14px;
+}
+
+.Home_link__3O3aj:hover {
+  box-shadow: 0 1px #0062ff;
+}
+
+.Home_link__3O3aj:active {
+  color: rgba(255, 255, 255, 1);
+}
+
+.Home_link__3O3aj:focus {
+  color: rgba(255, 255, 255, 1);
+  box-shadow: 0 3px rgba(255, 255, 255, 1);
+}
+
+.Home_link__3O3aj.activeLink {
+  box-shadow: 0 1px #0062ff;
+}
+
+.Home_link__3O3aj.lastLink {
+  margin-right: auto;
+}
+
+.Home_link__3O3ajgithub {
+  margin: 0 16px 0 0;
+  background-color: transparent;
+  color: #78a9ff;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  fill: #78a9ff;
+}
+
+.Home_link__3O3ajgithub:hover {
+  color: #a6c8ff;
+  background-color: #353535;
+  fill: #a6c8ff;
+}
+
+.Home_link__3O3ajgithubicon {
+  margin-left: 8px;
+}

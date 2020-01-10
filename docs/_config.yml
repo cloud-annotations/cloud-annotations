@@ -40,10 +40,10 @@ plugins:
 collections:
   object_detection:
     output: true
-    permalink: /object-detection/cli/:path:output_ext
+    permalink: /workshops/object-detection/:path:output_ext
   classification:
     output: true
-    permalink: /classification/cli/:path:output_ext
+    permalink: /workshops/classification/:path:output_ext
 
 # Theme all pages with workshop layout
 defaults:
