@@ -87,3 +87,71 @@
 .Home_link__3O3ajgithubicon {
   margin-left: 8px;
 }
+
+.tile {
+  background: #282828;
+  border: none;
+  padding: 0;
+  transition: background-color 0.15s ease;
+  height: 100%;
+  min-width: 8rem;
+  min-height: 4rem;
+  position: relative;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+}
+
+.tile:hover {
+  background: #3d3d3d;
+}
+
+.tile_link {
+  cursor: pointer;
+  text-decoration: none;
+  height: 100%;
+  min-height: 18.75rem;
+  position: relative;
+  z-index: 100;
+  color: #0062ff;
+}
+
+.tile_image {
+  height: 9rem;
+  margin: 0rem;
+  position: relative;
+}
+
+.tile_type {
+  color: #bebebe;
+  background: none !important;
+  font-size: 0.875rem;
+  margin: 0;
+  font-weight: 300;
+  line-height: 1rem;
+  padding: 1rem;
+  position: relative;
+  padding-bottom: 0;
+}
+
+.tile_body {
+  padding: 1rem 1rem 2rem 1rem;
+}
+
+.tile_body_title {
+  color: #f3f3f3;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.375rem;
+}
+
+.tile_bottom {
+  min-height: 1.5rem;
+  width: 100%;
+  padding: 0 1rem 1rem 1rem;
+  display: flex;
+}
+
+.tile_bottom_svg {
+  margin-left: auto;
+  fill: #408bfc;
+}
