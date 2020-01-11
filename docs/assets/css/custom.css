@@ -1031,7 +1031,7 @@ html {
 .sidebar {
   position: fixed;
   left: 0;
-  top: 50px;
+  top: 64px;
   bottom: 0;
   width: 256px;
   transform: translate(-256px);
@@ -1104,7 +1104,7 @@ html {
   position: fixed;
   left: 0;
   right: 0;
-  top: 50px;
+  top: 64px;
   bottom: 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
