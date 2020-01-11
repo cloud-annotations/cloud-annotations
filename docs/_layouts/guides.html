@@ -1,0 +1,25 @@
+---
+layout: base
+---
+
+{% include titlebar.html active="guides" %}
+
+<div class="wrapper-stuff">
+  <!--Nav Bar -->
+  <nav class="col-xs-3 bs-docs-sidebar" id="the-nav-bar">
+    <ul id="sidebar" class="nav nav-stacked fixed">
+      {% for item in site[page.collection] %}
+      <li>
+        <a href="#{{ item.title | slugify }}">{{ item.title }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+
+  <!--Main Content -->
+  <div class="content markdown-body">
+    {% for item in site[page.collection] %}
+    <h1 id="{{ item.title | slugify }}">{{ item.title }}</h1>
+    {{ item.content }} {% endfor %}
+  </div>
+</div>

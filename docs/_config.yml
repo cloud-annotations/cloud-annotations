@@ -22,7 +22,7 @@ title: Cloud Annotations Training
 email: bourdakos1@gmail.com
 description: >-  # this means to ignore newlines until "baseurl:"
   Create custom models from Cloud Annotations for mobile, IoT and web.
-baseurl: "/" # the subpath of your site, e.g. /blog
+baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bourdakos1
 github_username:  bourdakos1
@@ -44,10 +44,24 @@ collections:
   classification:
     output: true
     permalink: /workshops/classification/:path:output_ext
+  guides:
+    output: true
+    permalink: /
 
 # Theme all pages with workshop layout
 defaults:
   - scope:
       path: ""
+      type: "classification"
     values:
       layout: workshop-stepper
+  - scope:
+      path: ""
+      type: "object_detection"
+    values:
+      layout: workshop-stepper
+  - scope:
+      path: ""
+      type: "guides"
+    values:
+      layout: guides

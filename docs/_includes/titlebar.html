@@ -1,29 +1,25 @@
----
-layout: base
----
-
-<div class="Home_titleBar__3XDTsthin">
+<div class="Home_titleBar__3XDTs">
   <a href="https://cloud.annotations.ai" class="Home_title__1dfd5">
     <span class="Home_titlePrefix__vIot9">IBM</span>&nbsp;&nbsp;Cloud
     Annotations
   </a>
   <a
-    class="Home_link__3O3aj {% if page.active == 'guides' %}activeLink{% endif %}"
+    class="Home_link__3O3aj {% if include.active == 'guides' %}activeLink{% endif %}"
     href="/"
     >Guides</a
   >
   <a
-    class="Home_link__3O3aj {% if page.active == 'workshops' %}activeLink{% endif %}"
+    class="Home_link__3O3aj {% if include.active == 'workshops' %}activeLink{% endif %}"
     href="/workshops"
     >Workshops</a
   >
   <a
-    class="Home_link__3O3aj {% if page.active == 'demos' %}activeLink{% endif %}"
+    class="Home_link__3O3aj {% if include.active == 'demos' %}activeLink{% endif %}"
     href="/demos"
     >Demos</a
   >
   <a
-    class="Home_link__3O3aj {% if page.active == 'sdks' %}activeLink{% endif %} lastLink"
+    class="Home_link__3O3aj {% if include.active == 'sdks' %}activeLink{% endif %} lastLink"
     href="/sdks"
     >SDKs</a
   >
@@ -76,5 +72,3 @@ layout: base
       <path d="M21 2v2h5.59L18 12.59 19.41 14 28 5.41V11h2V2h-9z"></path></svg
   ></a>
 </div>
-
-{{ content }}

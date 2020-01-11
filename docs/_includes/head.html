@@ -3,6 +3,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   {%- seo -%}
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
   <link
     rel="stylesheet"
     href="{{ '/assets/css/components.css' | relative_url }}"
@@ -16,6 +21,7 @@
     href="{{ '/assets/css/custom2.css' | relative_url }}"
   />
   <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}" />
+  <link rel="stylesheet" href="{{ '/assets/css/toc.css' | relative_url }}" />
   {%- feed_meta -%} {%- if jekyll.environment == 'production' and
   site.google_analytics -%} {%- include google-analytics.html -%} {%- endif -%}
 </head>
