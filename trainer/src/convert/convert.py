@@ -80,11 +80,11 @@ except Exception as e:
     print(e)
     print("Unable to convert to TensorFlow Lite")
 
-# try:
-#     if args.tfjs:
-#         from convert.convert_to_tfjs import convert_to_tfjs
-#         output_names = model_structure['output_names']
-#         convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)
-# except Exception as e:
-#     print(e)
-#     print("Unable to convert to TensorFlow.js")
+try:
+    if args.tfjs:
+        from convert.convert_to_tfjs import convert_to_tfjs
+        output_names = model_structure['output_names']
+        convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)
+except Exception as e:
+    print(e)
+    print("Unable to convert to TensorFlow.js")
