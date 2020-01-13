@@ -74,6 +74,10 @@
   margin-top: 100px;
 }
 
+.wrapper-stuff .content {
+  margin-left: calc((100% - 782px - 256px) / 2 + 256px);
+}
+
 /* fix linking to targets on page */
 :target:before {
   content: "";
