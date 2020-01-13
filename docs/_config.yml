@@ -35,6 +35,7 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-redirect-from
 
 # Direct posts to specific url
 collections:

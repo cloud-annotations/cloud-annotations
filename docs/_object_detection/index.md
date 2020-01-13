@@ -1,6 +1,8 @@
 ---
 title: Introduction
 date: 1970-01-01
+redirect_from:
+  - /object-detection/cli/
 ---
 
 ![](assets/main.png)
