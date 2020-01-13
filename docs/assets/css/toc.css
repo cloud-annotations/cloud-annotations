@@ -15,6 +15,7 @@
   top: 64px;
   bottom: 0;
   overflow: scroll;
+  transform: translate(-500px);
 }
 
 /* all links */
@@ -75,7 +76,7 @@
 }
 
 .wrapper-stuff .content {
-  margin-left: calc((100% - 782px - 256px) / 2 + 256px);
+  margin-left: auto;
 }
 
 /* fix linking to targets on page */
@@ -84,4 +85,14 @@
   display: block;
   height: 100px;
   margin: -100px 0 0;
+}
+
+@media (min-width: 1200px) {
+  .bs-docs-sidebar {
+    transform: translate(0px);
+  }
+
+  .wrapper-stuff .content {
+    margin-left: calc((100% - 782px - 256px) / 2 + 256px);
+  }
 }
