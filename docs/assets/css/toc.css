@@ -73,3 +73,11 @@
 .wrapper-stuff {
   margin-top: 100px;
 }
+
+/* fix linking to targets on page */
+:target:before {
+  content: "";
+  display: block;
+  height: 100px;
+  margin: -100px 0 0;
+}
