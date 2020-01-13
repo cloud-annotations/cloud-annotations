@@ -2,6 +2,7 @@
 title: Preparing training data
 date: 1970-01-02
 ---
+
 To train an object detection model we need a dataset of images and bounding box annotations.
 
 To ease the creation of our annotations, we can use [Cloud Annotations](https://cloud.annotations.ai), a web GUI that sits on top of an object storage that allows us to upload photos and associate them with annotations.
@@ -52,6 +53,3 @@ After we create and name our bucket, it will prompt us to choose an annotation t
 ![](/assets/images/9a.CA_create-label.png)
 3. Start drawing bounding boxes
 ![](/assets/images/10.CA_labeled.png)
-
-## &nbsp;
-> **📁 [Sample Training Data](https://ibm.box.com/v/counting-cars-training)**

@@ -9,8 +9,9 @@ layout: base
   <nav class="col-xs-3 bs-docs-sidebar" id="the-nav-bar">
     <ul id="sidebar" class="nav nav-stacked fixed">
       {% for item in site[page.collection] %}
-      <li>
+      <li id="nav-{{ item.title | slugify }}">
         <a href="#{{ item.title | slugify }}">{{ item.title }}</a>
+        <ul class="nav nav-stacked"></ul>
       </li>
       {% endfor %}
     </ul>
@@ -20,6 +21,9 @@ layout: base
   <div class="content markdown-body">
     {% for item in site[page.collection] %}
     <h1 id="{{ item.title | slugify }}">{{ item.title }}</h1>
-    {{ item.content }} {% endfor %}
+    <section class="guide-section">
+      {{ item.content }}
+    </section>
+    {% endfor %}
   </div>
 </div>

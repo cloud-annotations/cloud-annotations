@@ -7,10 +7,22 @@
   {{ content }}
 
   <script>
+
+
+$('body .markdown-body').find("h1").each(function() {
+  const h1ID = this.id
+  let listItems = []
+  $(this).next("section").find("h2").each(function() {
+    listItems.push('<li><a href="#' + this.id + '">'+$(this).text()+'</a></li>')
+  })
+  $("#nav-" + h1ID + ' .nav-stacked').html(listItems.join(''))
+})
+
 $('body').scrollspy({
     target: '#the-nav-bar',
     offset: 140
 })
+
    </script>
 </body>
 

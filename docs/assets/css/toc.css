@@ -1,12 +1,20 @@
-.fixed {
+/* .fixed {
   position: fixed;
-}
+  top: 64px;
+  bottom: 0;
+  overflow: scroll;
+} */
 
 /* sidebar */
 .bs-docs-sidebar {
   padding-left: 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  padding-top: 36px;
+  padding-bottom: 20px;
+
+  position: fixed;
+  top: 64px;
+  bottom: 0;
+  overflow: scroll;
 }
 
 /* all links */
@@ -35,6 +43,11 @@
   background-color: transparent;
   border-left-color: var(--primary);
 }
+
+.bs-docs-sidebar .nav .nav > li > a {
+  border-left-color: transparent;
+}
+
 /* all active links */
 .bs-docs-sidebar .nav > .active > a,
 .bs-docs-sidebar .nav > .active:hover > a,
