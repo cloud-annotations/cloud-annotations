@@ -9,20 +9,11 @@
   align-items: center;
   background-color: #000000;
   color: rgba(255, 255, 255, 1);
-}
+  flex-direction: column;
 
-.Home_titleBar__3XDTsthin {
-  position: fixed;
-  z-index: 100;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  /* height: 3rem; */
-  height: 64px;
-  display: flex;
-  align-items: center;
-  background-color: #000000;
-  color: rgba(255, 255, 255, 1);
+  height: 90px;
+
+  /* display: block; */
 }
 
 .Home_title__1dfd5 {
@@ -31,6 +22,12 @@
   margin-left: 32px;
   margin-right: auto;
   color: rgba(255, 255, 255, 1);
+  flex-shrink: 0;
+
+  margin-left: auto;
+  height: 30px;
+  display: flex;
+  align-items: flex-end;
 }
 
 .Home_title__1dfd5:hover {
@@ -65,9 +62,9 @@
   box-shadow: 0 1px #0062ff;
 }
 
-.Home_link__3O3aj.lastLink {
+/* .Home_link__3O3aj.lastLink {
   margin-right: auto;
-}
+} */
 
 .Home_link__3O3ajgithub {
   margin: 0 16px 0 0;
@@ -77,6 +74,7 @@
   display: flex;
   align-items: center;
   fill: #78a9ff;
+  display: none;
 }
 
 .Home_link__3O3ajgithub:hover {
@@ -87,6 +85,26 @@
 
 .Home_link__3O3ajgithubicon {
   margin-left: 8px;
+}
+
+.gridWrapper {
+  margin-top: 112px;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-gap: 1rem;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  justify-items: center;
+}
+
+.gridItem {
+  width: 100%;
+  max-width: 336px;
+  margin-bottom: 20px;
+
+  /* margin-right: 1rem;
+  margin-left: auto; */
 }
 
 .tile {
@@ -159,4 +177,55 @@
 
 .guide-section {
   margin-bottom: 64px;
+}
+
+.titlebar_mainlinks {
+  /* margin-right: auto; */
+  overflow: scroll;
+  white-space: nowrap;
+  max-width: 100%;
+  height: 60px;
+  line-height: 60px;
+  /* display: flex;
+  align-items: center; */
+  /* padding: 60px 0; */
+  /* tex */
+}
+
+@media (min-width: 900px) {
+  .gridWrapper {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 688px;
+  }
+
+  .Home_link__3O3ajgithub {
+    display: flex;
+  }
+
+  .Home_titleBar__3XDTs {
+    display: flex;
+    flex-direction: row;
+    height: 64px;
+  }
+
+  .Home_title__1dfd5 {
+    margin-left: 32px;
+  }
+
+  .titlebar_mainlinks {
+    /* line-height: unset; */
+    line-height: 24px;
+    height: 64px;
+    margin-right: auto;
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (min-width: 1200px) {
+  .gridWrapper {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1040px;
+  }
 }
