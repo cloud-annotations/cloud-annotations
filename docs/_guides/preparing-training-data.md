@@ -3,18 +3,31 @@ title: Preparing training data
 date: 1970-01-02
 ---
 
-To train an object detection model we need a dataset of images and bounding box annotations.
+To train a computer vision model you need a lot of images.
+Cloud Annotations supports uploading both photos and videos.
+However, before you start snapping, there's a few limitations to consider.
 
-To ease the creation of our annotations, we can use [Cloud Annotations](https://cloud.annotations.ai), a web GUI that sits on top of an object storage that allows us to upload photos and associate them with annotations.
+## Training data best practices
+* **Object Type** The model is optimized for photographs of objects in the real world. They are unlikely to work well for x-rays, hand drawings, scanned documents, receipts, etc.
 
-Using an object storage gives us a reliable place to keep our training data. It also opens up the potential for collaboration, letting a team to simultaneously annotate the dataset in real-time.
+* **Object Environment** The training data should be as close as possible to the data on which predictions are to be made. For example, if your use case involves blurry and low-resolution images (such as from a security camera), your training data should be composed of blurry, low-resolution images. In general, you should also consider providing multiple angles, resolutions, and backgrounds for your training images.
 
-IBM Cloud offers a lite tier of object storage, which includes 25 GB of storage for free. (this is what we will be using throughout the tutorial)
+* **Difficulty** The model generally can't predict labels that humans can't assign. So, if a human can't be trained to assign labels by looking at the image for 1-2 seconds, the model likely can't be trained to do it either.
 
+* **Label Count** We recommend at least 50 labels per object category for a usable model, but using 100s or 1000s would provide better results.
+
+* **Image Dimensions** The model resizes the image to 300x300 pixels, so keep that in mind when training the model with images where one dimension is much longer than the other.
+![](/assets/images/shrink_image.png)
+
+* **Object Size** The object of interests size should be at least ~5% of the image area to be detected. For example, on the resized 300x300 pixel image the object should cover ~60x60 pixels.
+![](/assets/images/small_image.png)
+
+
+## Set up Cloud Annotations
 To use Cloud Annotations just navigate to [cloud.annotations.ai](https://cloud.annotations.ai) and click **Continue with IBM Cloud**.
 ![](/assets/images/0a.CA_login.png)
 
-Once logged, if we don't have an object storage instance, it will prompt us to create one. Click **Get started** to be directed to IBM Cloud, where you can create a free object storage instance.
+Once logged, if you don't have an object storage instance, it will prompt you to create one. Click **Get started** to be directed to IBM Cloud, where you can create a free object storage instance.
 ![](/assets/images/1a.CA_no-object-storage.png)
 
 You might need to re-login to IBM Cloud to create a resource.
@@ -25,31 +38,23 @@ Choose a pricing plan and click **Create**, then **Confirm** on the following po
 
 Once your object storage instance has been provisioned, navigate back to [cloud.annotations.ai](https://cloud.annotations.ai) and refresh the page. 
 
-We will be storing our files and annotations in something called a **bucket**, we can create one by clicking **Start a new  project**.
+The files and annotations will be stored in a **bucket**, You can create one by clicking **Start a new project**.
 ![](/assets/images/4a.CA_create-bucket.png)
 
 Give the bucket a unique name.
 ![](/assets/images/5.CA_name-bucket.png)
 
-After we create and name our bucket, it will prompt us to choose an annotation type. We need to choose **Localization**. This allows us to draw bounding box rectangles on our images.
-![](/assets/images/6a.CA_set-type.png)
+## [Object detection](#object-detection) or [classification](#classification)?
+A classification model can tell you what an image is and how confident it is about it's decision.
+An object detection model can provide you with much more information:
+* **Location** The coordinates and area of where the object is in the image.
+* **Count** The number of objects found in the image.
+* **Size** How large the object is with respect to the image dimensions.
 
-## Training data best practices
-* The model we will be training is optimized for photographs of objects in the real world. They are unlikely to work well for x-rays, hand drawings, scanned documents, receipts, etc.
+If an object detection model gives us this extra information, why would we use classification?
+* **Labor Cost** An object detection model requires humans to draw boxes around every object to train. A classification model only requires a simple label for each image.
+* **Training Cost** It can take longer and require more expensive hardware to train an object detection model.
+* **Inference Cost** An object detection model can be much slower than real-time to process an image on low-end hardware.
 
-* The training data should be as close as possible to the data on which predictions are to be made. For example, if your use case involves blurry and low-resolution images (such as from a security camera), your training data should be composed of blurry, low-resolution images. In general, you should also consider providing multiple angles, resolutions, and backgrounds for your training images.
 
-* The model we will be training can't generally predict labels that humans can't assign. So, if a human can't be trained to assign labels by looking at the image for 1-2 seconds, the model likely can't be trained to do it either.
 
-* We recommend at least 50 training images per label for a usable model, but using 100s or 1000s would provide better results.
-
-* The model we will be training resizes the image to 300x300 pixels, so keep that is mind when training the model with images where one dimension is much longer than the other.
-![](/assets/images/image_shrink.png)
-
-## Labeling the data
-1. Upload a video or many images
-![](/assets/images/7a.CA_blank-canvas.png)
-2. Create the desired labels
-![](/assets/images/9a.CA_create-label.png)
-3. Start drawing bounding boxes
-![](/assets/images/10.CA_labeled.png)
