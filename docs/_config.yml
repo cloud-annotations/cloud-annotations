@@ -47,7 +47,7 @@ collections:
     permalink: /workshops/classification/:path:output_ext
   guides:
     output: true
-    permalink: /
+    permalink: /docs
 
 # Theme all pages with workshop layout
 defaults:

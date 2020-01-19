@@ -11,3 +11,15 @@ deploy:
   on:
     tags: true
     condition: $TRAVIS_OS_NAME = linux
+
+- provider: script
+  skip_cleanup: true
+  script: export DEPLOY_TO=production && cd docs && bash deploy.sh
+  on:
+    branch: master
+
+- provider: script
+  skip_cleanup: true
+  script: export DEPLOY_TO=staging && cd docs && bash deploy.sh
+  on:
+    branch: niko-dev

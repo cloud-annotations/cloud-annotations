@@ -17,32 +17,32 @@ However, before you start snapping, there's a few limitations to consider.
 * **Label Count** We recommend at least 50 labels per object category for a usable model, but using 100s or 1000s would provide better results.
 
 * **Image Dimensions** The model resizes the image to 300x300 pixels, so keep that in mind when training the model with images where one dimension is much longer than the other.
-![](/assets/images/shrink_image.png)
+![](/docs-assets/images/shrink_image.png)
 
 * **Object Size** The object of interests size should be at least ~5% of the image area to be detected. For example, on the resized 300x300 pixel image the object should cover ~60x60 pixels.
-![](/assets/images/small_image.png)
+![](/docs-assets/images/small_image.png)
 
 
 ## Set up Cloud Annotations
 To use Cloud Annotations just navigate to [cloud.annotations.ai](https://cloud.annotations.ai) and click **Continue with IBM Cloud**.
-![](/assets/images/0a.CA_login.png)
+![](/docs-assets/images/0a.CA_login.png)
 
 Once logged, if you don't have an object storage instance, it will prompt you to create one. Click **Get started** to be directed to IBM Cloud, where you can create a free object storage instance.
-![](/assets/images/1a.CA_no-object-storage.png)
+![](/docs-assets/images/1a.CA_no-object-storage.png)
 
 You might need to re-login to IBM Cloud to create a resource.
-![](/assets/images/2a.IBM_login-to-create-resource.png)
+![](/docs-assets/images/2a.IBM_login-to-create-resource.png)
 
 Choose a pricing plan and click **Create**, then **Confirm** on the following popup.
-![](/assets/images/3a.IBM_create-object-storage.png)
+![](/docs-assets/images/3a.IBM_create-object-storage.png)
 
 Once your object storage instance has been provisioned, navigate back to [cloud.annotations.ai](https://cloud.annotations.ai) and refresh the page. 
 
 The files and annotations will be stored in a **bucket**, You can create one by clicking **Start a new project**.
-![](/assets/images/4a.CA_create-bucket.png)
+![](/docs-assets/images/4a.CA_create-bucket.png)
 
 Give the bucket a unique name.
-![](/assets/images/5.CA_name-bucket.png)
+![](/docs-assets/images/5.CA_name-bucket.png)
 
 ## [Object detection](#object-detection) or [classification](#classification)?
 A classification model can tell you what an image is and how confident it is about it's decision.

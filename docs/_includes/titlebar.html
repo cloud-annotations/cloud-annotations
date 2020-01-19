@@ -1,5 +1,5 @@
 <div class="Home_titleBar__3XDTs">
-  <a href="https://cloud.annotations.ai" class="Home_title__1dfd5">
+  <a href="/" class="Home_title__1dfd5">
     <span class="Home_titlePrefix__vIot9">IBM</span>&nbsp;&nbsp;Cloud
     Annotations
   </a>
@@ -7,22 +7,22 @@
   <div class="titlebar_mainlinks">
     <a
       class="Home_link__3O3aj {% if include.active == 'guides' %}activeLink{% endif %}"
-      href="/"
+      href="{{ '/docs' | relative_url }}"
       >Guides</a
     >
     <a
       class="Home_link__3O3aj {% if include.active == 'workshops' %}activeLink{% endif %}"
-      href="/workshops"
+      href="{{ '/workshops' | relative_url }}"
       >Workshops</a
     >
     <a
       class="Home_link__3O3aj {% if include.active == 'demos' %}activeLink{% endif %}"
-      href="/demos"
+      href="{{ '/demos' | relative_url }}"
       >Demos</a
     >
     <a
       class="Home_link__3O3aj {% if include.active == 'sdks' %}activeLink{% endif %} lastLink"
-      href="/sdks"
+      href="{{ '/sdks' | relative_url }}"
       >SDKs</a
     >
   </div>
