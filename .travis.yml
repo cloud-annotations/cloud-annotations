@@ -22,12 +22,12 @@ deploy:
 
 - provider: script
   cleanup: false
-  script: export DEPLOY_TO=production && cd docs && bash deploy.sh
+  script: export DEPLOY_TO=production && cd docs && ./deploy.sh
   on:
     branch: master
 
 - provider: script
   cleanup: false
-  script: export DEPLOY_TO=staging && cd docs && bash deploy.sh
+  script: export DEPLOY_TO=staging && cd docs && ./deploy.sh
   on:
     branch: niko-dev
