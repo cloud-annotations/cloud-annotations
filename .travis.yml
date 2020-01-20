@@ -14,20 +14,20 @@ before_deploy:
 
 deploy:
 - provider: script
-  cleanup: false
+  skip_cleanup: true
   script: ./release.sh
   on:
     tags: true
     condition: $TRAVIS_OS_NAME = linux
 
 - provider: script
-  cleanup: false
+  skip_cleanup: true
   script: export DEPLOY_TO=production && cd docs && ./deploy.sh
   on:
     branch: master
 
 - provider: script
-  cleanup: false
+  skip_cleanup: true
   script: export DEPLOY_TO=staging && cd docs && ./deploy.sh
   on:
     branch: niko-dev
