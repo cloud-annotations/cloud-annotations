@@ -32,6 +32,6 @@ spec:
     spec:
       containers:
       - name: docs
-        image: us.icr.io/bourdakos1/docs:6baa9ccf5ff9772e1f17c47531196f65c0f2c31c
+        image: us.icr.io/bourdakos1/docs:4e210023fdf7f243c9a4df33b3c98d3fc5c803f3
         ports:
         - containerPort: 8012

@@ -48,7 +48,8 @@ function attempt_build {
 
 function set_image {
   echo Container build completed, updating $DEPLOYMENT ...
-  sed -i '' "s,\(^.*image: \)\(.*$\),\1"$IMAGE_NAME"," k8s/docs.yaml
+  ls
+  sed -i '' "s,\(^.*image: \)\(.*$\),\1"$IMAGE_NAME"," "./k8s/docs.yaml"
   kubectl apply -f k8s
 }
 
