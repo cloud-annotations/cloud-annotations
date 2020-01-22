@@ -1,6 +1,6 @@
 ---
 title: Object detection
-date: 1970-01-03
+# date: 1970-01-03
 ---
 
 After your bucket is created and named, it will prompt you to choose an annotation type. Choose **Localization**, this enables bounding box drawing.

@@ -48,6 +48,27 @@ collections:
   guides:
     output: true
     permalink: /docs
+    order:
+      - getting-started.md
+      - preparing-training-data.md
+      - object-detection.md
+      - classification.md
+      - labeling-with-a-team.md
+      - uploading-images-via-api.md
+      - exporting-annotations-via-gui.md
+      - exporting-annotations-via-api.md
+      - training-overview.md
+      - training-via-gui.md
+      - installing-the-cli.md
+      - training-via-cli.md
+      - training-with-google-colab.md
+      - non-interactive-training.md
+      - custom-training-scripts.md
+      - downloading-a-model-via-gui.md
+      - downloading-a-model-via-cli.md
+      - using-a-model.md
+      - auto-labeling.md
+      
 
 # Theme all pages with workshop layout
 defaults:

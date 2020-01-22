@@ -1,6 +1,6 @@
 ---
 title: Getting started
-date: 1970-01-01
+# date: 1970-01-01
 ---
 
 > **Note:** `Guides` are a work in progress and coming soon! Until they are completed check out some of the [workshops](/workshops).

@@ -1,6 +1,6 @@
 ---
 title: Preparing training data
-date: 1970-01-02
+# date: 1970-01-02
 ---
 
 To train a computer vision model you need a lot of images.
