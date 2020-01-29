@@ -24,7 +24,7 @@ $ brew install cloud-annotations/tap/cacli
 #### Shell script (Linux / macOS)
 If you are on Linux or macOS, you can install `cacli` with the following:
 ```bash
-$ curl -sSL https://cloud.annotations.ai/install.sh | sudo sh
+$ curl -sSL https://cloud.annotations.ai/install.sh | sh
 ```
 
 #### Binary (Windows / Linux / macOS)
