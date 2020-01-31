@@ -217,6 +217,9 @@ func Run(*cobra.Command, []string) {
 		e.Exit(err)
 	}
 
+	// Try to make ~/.cacli ignore any errors.
+	_ = os.Mkdir(home+"/.cacli", 0755)
+
 	// Persist Token.
 	tokenFile, err := json.MarshalIndent(accountSession.Token, "", "\t") // is it worth pretty printing?
 	if err != nil {
