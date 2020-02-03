@@ -21,6 +21,6 @@ ENV LANGUAGE en_US.UTF-8
 ADD . /tmp/jekyll-site
 WORKDIR /tmp/jekyll-site
 RUN bundle install
-RUN bundle exec jekyll build
+RUN JEKYLL_ENV=production bundle exec jekyll build
 RUN cp /tmp/jekyll-site/nginx/default.conf /etc/nginx/conf.d/default.conf
 RUN cp -r /tmp/jekyll-site/_site/* /usr/share/nginx/html
