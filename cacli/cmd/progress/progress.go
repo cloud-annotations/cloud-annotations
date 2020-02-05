@@ -208,7 +208,7 @@ func Run(_ *cobra.Command, args []string) {
 		}
 
 		// otherwise show preparing to train message.
-		s.Suffix = " Training has starting, waiting for a progress update..."
+		s.Suffix = " Training has started, waiting for a progress update..."
 		s.Start()
 		return
 	})
