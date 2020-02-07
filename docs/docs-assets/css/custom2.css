@@ -215,6 +215,7 @@
 
   .titlebar_mainlinks {
     /* line-height: unset; */
+    overflow: hidden;
     line-height: 24px;
     height: 64px;
     margin-right: auto;

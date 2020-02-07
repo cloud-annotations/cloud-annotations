@@ -1,6 +1,6 @@
 ---
 title: Training via GUI
-date: 1970-01-11
+# date: 1970-01-11
 ---
 
 First upload your training photos (either photos or video files which will import frames as photos). Either drag and drop into the center, or select an option from the **file** menu.

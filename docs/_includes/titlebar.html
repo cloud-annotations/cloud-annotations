@@ -1,31 +1,31 @@
-<div class="Home_titleBar__3XDTs">
-  <a href="https://cloud.annotations.ai" class="Home_title__1dfd5">
+<header class="Home_titleBar__3XDTs">
+  <a href="/" class="Home_title__1dfd5">
     <span class="Home_titlePrefix__vIot9">IBM</span>&nbsp;&nbsp;Cloud
     Annotations
   </a>
 
-  <div class="titlebar_mainlinks">
+  <nav class="titlebar_mainlinks">
     <a
       class="Home_link__3O3aj {% if include.active == 'guides' %}activeLink{% endif %}"
-      href="/"
-      >Guides</a
+      href="{{ '/docs' | relative_url }}"
+      >Docs</a
     >
     <a
       class="Home_link__3O3aj {% if include.active == 'workshops' %}activeLink{% endif %}"
-      href="/workshops"
+      href="{{ '/workshops' | relative_url }}"
       >Workshops</a
     >
     <a
       class="Home_link__3O3aj {% if include.active == 'demos' %}activeLink{% endif %}"
-      href="/demos"
+      href="{{ '/demos' | relative_url }}"
       >Demos</a
     >
     <a
       class="Home_link__3O3aj {% if include.active == 'sdks' %}activeLink{% endif %} lastLink"
-      href="/sdks"
+      href="{{ '/sdks' | relative_url }}"
       >SDKs</a
     >
-  </div>
+  </nav>
 
   <a
     class="Home_link__3O3ajgithub"
@@ -74,4 +74,4 @@
       ></path>
       <path d="M21 2v2h5.59L18 12.59 19.41 14 28 5.41V11h2V2h-9z"></path></svg
   ></a>
-</div>
+</header>

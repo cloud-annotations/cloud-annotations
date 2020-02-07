@@ -18,10 +18,10 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Cloud Annotations Training
+title: Cloud Annotations
 email: bourdakos1@gmail.com
 description: >-  # this means to ignore newlines until "baseurl:"
-  Create custom models from Cloud Annotations for mobile, IoT and web.
+  Create custom machine learning models for mobile, IoT and web.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: bourdakos1
@@ -47,7 +47,28 @@ collections:
     permalink: /workshops/classification/:path:output_ext
   guides:
     output: true
-    permalink: /
+    permalink: /docs
+    order:
+      - getting-started.md
+      - preparing-training-data.md
+      - object-detection.md
+      - classification.md
+      - labeling-with-a-team.md
+      - uploading-images-via-api.md
+      - exporting-annotations-via-gui.md
+      - exporting-annotations-via-api.md
+      - training-overview.md
+      - training-via-gui.md
+      - installing-the-cli.md
+      - training-via-cli.md
+      - training-with-google-colab.md
+      - non-interactive-training.md
+      - custom-training-scripts.md
+      - downloading-a-model-via-gui.md
+      - downloading-a-model-via-cli.md
+      - using-a-model.md
+      - auto-labeling.md
+      
 
 # Theme all pages with workshop layout
 defaults:
