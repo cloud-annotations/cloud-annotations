@@ -3,16 +3,6 @@ title: Training via GUI
 # date: 1970-01-11
 ---
 
-First upload your training photos (either photos or video files which will import frames as photos). Either drag and drop into the center, or select an option from the **file** menu.
-![](/docs-assets/images/upload_training.png)
-![](/docs-assets/images/upload_alt.png)
-
-Once your training data has been uploaded, create a new object label. To do so, double click on the label menu, type your new label name, then hit enter.
-![](/docs-assets/images/new_label.png)
-
-Now, label the objects in the images. First select the correct label, then drag a bounding box around the cooresponding object.
-![](/docs-assets/images/label_images.png)
-
 Once you have labeled a sufficient amount of photos, click **Train Model**. A dialog message will appear, prompting you to select your Watson Machine Learning instance. If none are available, it will guide you to create a new one (You may need to refresh your Cloud Annotations window for the new instance to appear, but don't worry, your labels will be saved).
 ![](/docs-assets/images/wml_dialog.png)
 
