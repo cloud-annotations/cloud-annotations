@@ -2,6 +2,7 @@
 title: Getting started
 # date: 1970-01-01
 ---
+> 🚨**Notice:** Due to Watson Machine Learning updates, Cloud Annotations training will be temporarily unavailable 🚨
 
 > **Note:** `Guides` are a work in progress and coming soon! Until they are completed check out some of the [workshops](/workshops).
 
