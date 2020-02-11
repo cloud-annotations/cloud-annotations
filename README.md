@@ -18,7 +18,7 @@ If something doesn’t work, please [file an issue](https://github.com/cloud-ann
 #### Homebrew (macOS)
 If you are on macOS and using [Homebrew](https://brew.sh/), you can install `cacli` with the following:
 ```bash
-$ brew install cloud-annotations/tap/cacli
+$ brew install cacli
 ```
 
 #### Shell script (Linux / macOS)
