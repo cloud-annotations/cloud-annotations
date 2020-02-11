@@ -34,6 +34,4 @@ Ideally, you should install it somewhere in your `PATH` for easy use. `/usr/loca
 
 ## NPM Installation (deprecated)
 
-```bash
-$ npm install -g cloud-annotations
-```
+> **Note:** The npm installation is deprecated and no longer supported.
