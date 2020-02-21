@@ -4,4 +4,4 @@ description: Getting started - Preparing training data - Object Detection - Clas
 # date: 1970-01-20
 ---
 
-Coming soon
+Documentation coming soon
