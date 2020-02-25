@@ -14,4 +14,4 @@ It also opens up the potential for collaboration, letting a team to simultaneous
 
 IBM Cloud offers a lite tier of object storage, which includes 25 GB of free storage.
 
-Before you start, sign up for a free [IBM Cloud](https://ibm.biz/cloud-annotations-sign-up){:target="_blank"} account.
+Before you start, sign up for a free [IBM Cloud](https://ibm.biz/cloud-annotations-dashboard){:target="_blank"} account.
