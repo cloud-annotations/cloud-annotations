@@ -1,5 +1,5 @@
 ---
-title: Installing the Cloud Annotations CLI (cacli)
+title: Installing the CLI
 # date: 1970-01-12
 ---
 

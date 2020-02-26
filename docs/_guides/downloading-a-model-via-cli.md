@@ -3,6 +3,10 @@ title: Downloading a model via CLI
 # date: 1970-01-18
 ---
 
-With the Cloud Annotations CLI [installed](#installing-the-cloud-annotations-cli-cacli), we will download our trained model. First we need the model ID. This can be obtained by running `cacli list` to list all training runs, find the ID of the model that you would like to download. Then run:
+To download a trained model with the [Cloud Annotations CLI](#installing-the-cli), simply use the `cacli download` command.
 
-`cacli download <model id>`.
+```
+cacli download <model-id>
+```
+
+> **Note** The `model-id` can be obtained by running `cacli list` to list all available training runs.

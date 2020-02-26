@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: " en " }}">
+
+{%- include head.html -%}
+
+<body>
+  {{ content }}
+
+  <script>
+
+const ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return '-' + Math.random().toString(36).substr(2, 9);
+};
+
+$('body .markdown-body').find("h1").each(function() {
+  const h1ID = this.id
+  let listItems = []
+  $(this).next("section").find("h2").each(function() {
+    this.id = this.id + ID()
+    listItems.push('<li><a href="#' + this.id + '">'+$(this).text()+'</a></li>')
+  })
+  $("#nav-" + h1ID + ' .nav-stacked').html(listItems.join(''))
+})
+
+$('body').scrollspy({
+    target: '#the-nav-bar',
+    offset: 140
+})
+
+   </script>
+</body>
+
+</html>

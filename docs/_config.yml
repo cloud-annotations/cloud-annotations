@@ -87,3 +87,4 @@ defaults:
       type: "guides"
     values:
       layout: guides
+      title: poodoo

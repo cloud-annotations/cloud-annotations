@@ -2,7 +2,6 @@
 title: Getting started
 # date: 1970-01-01
 ---
-> **Note:** `Guides` are a work in progress and coming soon! Until they are completed check out some of the [workshops](/workshops).
 
 Cloud Annotations makes labeling images and training machine learning models easy.
 Whether you've never touched a line of code in your life or you're a TensorFlow ninja, these docs will help you build what you need. Let's get started!

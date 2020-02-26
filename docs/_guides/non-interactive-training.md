@@ -1,5 +1,5 @@
 ---
-title: Non-interactive training (useful for CI)
+title: Non-interactive training
 # date: 1970-01-15
 ---
 

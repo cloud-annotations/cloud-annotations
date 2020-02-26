@@ -54,6 +54,7 @@ python -m classification.retrain \
   --image_dir=data \
   --saved_model_dir=$OUTPUT_DIRECTORY/saved_model \
   --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
+  --validation_percentage=20 \
   --how_many_training_steps=$1 \
   --output_labels=$OUTPUT_DIRECTORY/labels.txt
 fi
