@@ -1,6 +1,6 @@
 ---
 title: What next?
-date: 1970-01-11
+date: 1970-01-7
 redirect_from:
   - /classification/cli/what_next.html
 ---
