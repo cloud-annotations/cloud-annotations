@@ -1,59 +1,27 @@
 #!/bin/bash
 
-if [ "$DEPLOY_TO" = "production" ]
-then
-  # PRODUCTION:
-  echo "Deploying to PRODUCTION..."
-  CLUSTER="annotations"
-  URL="https://${CLUSTER}.us-east.containers.appdomain.cloud"
-else
-  # STAGING:
-  echo "Deploying to STAGING..."
-  CLUSTER="staging.annotations"
-  URL="https://stagingannotations.us-east.containers.appdomain.cloud"
-fi
+trap 'echo "The deployment was aborted. Message -- "; exit 1' ERR
 
+CLUSTER="bpnvi8vw0nkktonrr20g"
+IMAGE_NAME="us.icr.io/cloud-annotations/docs:$(git rev-parse HEAD)"
 
-IMAGE_NAME="us.icr.io/bourdakos1/docs:$(git rev-parse HEAD)"
+# Log in
+echo "Logging in..."
+ibmcloud config --check-version=false
+ibmcloud login -a cloud.ibm.com -r us-east -g prod
 
-function fail {
-  echo $1 >&2
-  exit 1
-}
+# Download cluster config
+echo Downloading config for $CLUSTER ...
+eval $(ibmcloud ks cluster config --cluster $CLUSTER | grep "export KUBECONFIG")
 
-trap 'fail "The deployment was aborted. Message -- "' ERR
+# Build image
+echo Building $IMAGE_NAME ...
+ibmcloud cr build --no-cache --pull -t $IMAGE_NAME .
 
-function configure {
-  echo "Validating configuration..."
-  [ ! -z "$CLUSTER" ] || fail "Configuration option is not set: CLUSTER"
-  [ ! -z "$IMAGE_NAME" ] || fail "Configuration option is not set: IMAGE_NAME"
-  
-  ibmcloud config --check-version=false
-  ibmcloud login -r us-east
-}
+# Apply kubernetes yamls
+echo Container build completed, updating $DEPLOYMENT ...
+sed -i "s,\(^.*image: \)\(.*$\),\1"$IMAGE_NAME"," k8s/docs.yaml
+kubectl apply -f k8s -n prod
+kubectl apply -f k8s -n stage
 
-function download_config {
-  echo Downloading config for $CLUSTER ...
-  CONFIG="$(ibmcloud ks cluster config $CLUSTER)"
-  CONFIG=${CONFIG##*export KUBECONFIG=}
-  CONFIG=${CONFIG%%.yml*}
-  export KUBECONFIG=$CONFIG.yml
-}
-
-function attempt_build {
-  echo Building $IMAGE_NAME ...
-  ibmcloud cr build --no-cache --pull -t $IMAGE_NAME .
-  # ibmcloud cr build -t $IMAGE_NAME .
-}
-
-function set_image {
-  echo Container build completed, updating $DEPLOYMENT ...
-  sed -i "s,\(^.*image: \)\(.*$\),\1"$IMAGE_NAME"," k8s/docs.yaml
-  kubectl apply -f k8s
-}
-
-configure
-download_config
-attempt_build
-set_image
 echo "Deployment complete"

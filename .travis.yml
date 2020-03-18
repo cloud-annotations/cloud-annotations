@@ -8,7 +8,7 @@ before_deploy:
 - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
 - chmod +x ./kubectl
 - sudo mv ./kubectl /usr/local/bin/kubectl
-- curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+- curl -sL https://ibm.biz/idt-installer | bash
 - ibmcloud plugin install container-registry
 - ibmcloud plugin install kubernetes-service
 
@@ -25,9 +25,3 @@ deploy:
   script: export DEPLOY_TO=production && cd docs && ./deploy.sh
   on:
     branch: master
-
-- provider: script
-  skip_cleanup: true
-  script: export DEPLOY_TO=staging && cd docs && ./deploy.sh
-  on:
-    branch: niko-dev
