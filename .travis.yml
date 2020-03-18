@@ -5,13 +5,7 @@ install: echo "success!"
 script: echo "success!"
 
 before_deploy: 
-- curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-- chmod +x ./kubectl
-- sudo mv ./kubectl /usr/local/bin/kubectl
 - curl -sL https://ibm.biz/idt-installer | bash
-- ibmcloud plugin install container-registry
-- ibmcloud plugin install kubernetes-service
-
 deploy:
 - provider: script
   skip_cleanup: true
