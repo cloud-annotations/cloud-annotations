@@ -1,0 +1,8 @@
+# Ignore everything.
+**
+
+# Allow `/src` and `Dockerfile`.
+!/Dockerfile
+!/src/**
+
+!/runner.sh

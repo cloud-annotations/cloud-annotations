@@ -10,16 +10,16 @@ from convert.convert_ssd_helper import convert_ssd_tflite
 
 from convert.TFLiteConverter import convert
 
-def convert_to_tflite(exported_graph_path, model_structure, output_path):
+def convert_to_tflite(saved_model_path, model_structure, output_path):
     if model_structure['type'] == ModelType.LOCALIZATION:
         if os.path.exists(output_path) and os.path.isdir(output_path):
             shutil.rmtree(output_path)
         os.makedirs(output_path)
 
-        convert_ssd_tflite(exported_graph_path, model_structure, output_path)
+        convert_ssd_tflite(saved_model_path, model_structure, output_path)
 
         # Move the labels to the model directory.
-        json_labels = os.path.join(exported_graph_path, 'labels.json')
+        json_labels = os.path.join(saved_model_path, 'labels.json')
         shutil.copy2(json_labels, output_path)
     else:
         if os.path.exists(output_path) and os.path.isdir(output_path):
@@ -29,7 +29,6 @@ def convert_to_tflite(exported_graph_path, model_structure, output_path):
         input_arrays = [model_structure['input_name']]
         output_arrays = model_structure['output_names']
 
-        saved_model_path = os.path.join(exported_graph_path, 'saved_model')
         converter = convert.from_saved_model(
             saved_model_path,
             input_arrays=input_arrays,
@@ -39,8 +38,8 @@ def convert_to_tflite(exported_graph_path, model_structure, output_path):
             f.write(tflite_model)
 
         # Move the labels to the model directory.
-        json_labels = os.path.join(exported_graph_path, 'labels.json')
-        text_labels = os.path.join(exported_graph_path, 'labels.txt')
+        json_labels = os.path.join(saved_model_path, 'labels.json')
+        text_labels = os.path.join(saved_model_path, 'labels.txt')
         if not os.path.isfile(json_labels):
             with open(text_labels, 'r') as f:
                 labels = f.read()

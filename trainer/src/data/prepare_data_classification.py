@@ -24,8 +24,6 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
 
     data_dir = create_dir('', 'data')
 
-    create_dir(write_bucket, 'model')
-
     annotations_file = os.path.join(read_bucket, '_annotations.json')
 
     with open(annotations_file) as f:

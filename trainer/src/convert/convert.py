@@ -9,6 +9,7 @@ import argparse
 from convert.types import ModelType
 
 import tensorflow as tf
+tf.enable_eager_execution()
 
 parser = argparse.ArgumentParser()
 # export types
@@ -16,12 +17,10 @@ parser.add_argument('--coreml', action='store_true')
 parser.add_argument('--tflite', action='store_true')
 parser.add_argument('--tfjs', action='store_true')
 
-# model params
-parser.add_argument('--input-name', type=str)
-parser.add_argument('--output-names', type=str, nargs='+')
+parser.add_argument('--model-type', type=str)
 
 # import paths
-parser.add_argument('--exported-graph-path', type=str, default='exported_graph')
+parser.add_argument('--saved-model-path', type=str)
 
 # export paths
 parser.add_argument('--mlmodel-path', type=str, default='model_ios')
@@ -30,16 +29,8 @@ parser.add_argument('--tfjs-path', type=str, default='model_web')
 args = parser.parse_args()
 
 def infer_model_structure():
-    if args.input_name and args.output_names:
-        return {
-            'input_name': args.input_name,
-            'output_names': args.output_names,
-            'type': ModelType.NONE
-        }
-
     with tf.Session(graph=tf.Graph()) as sess:
-        saved_model_path = os.path.join(args.exported_graph_path, 'saved_model')
-        tf.saved_model.loader.load(sess, ['serve'], saved_model_path)
+        tf.saved_model.loader.load(sess, ['serve'], args.saved_model_path)
         graph = tf.get_default_graph()
         ops = [op.name for op in graph.get_operations()]
         op1 = 'Postprocessor/ExpandDims_1'
@@ -63,28 +54,53 @@ def infer_model_structure():
             }
 
 model_structure = infer_model_structure()
+print(args.model_type)
 
 try:
     if args.coreml:
+        print(' ' * 80)
+        print('_' * 80)
+        print('Converting to Core ML')
         from convert.convert_to_core_ml import convert_to_core_ml
-        convert_to_core_ml(args.exported_graph_path, model_structure, args.mlmodel_path)
+        convert_to_core_ml(args.saved_model_path, model_structure, args.mlmodel_path)
+        print('Successfully converted to Core ML')
+        print('_' * 80)
+        print(' ' * 80)
 except Exception as e:
     print(e)
     print("Unable to convert to Core ML")
+    print('_' * 80)
+    print(' ' * 80)
 
 try:
     if args.tflite:
+        print(' ' * 80)
+        print('_' * 80)
+        print('Converting to TensorFlow Lite')
         from convert.convert_to_tflite import convert_to_tflite
-        convert_to_tflite(args.exported_graph_path, model_structure, args.tflite_path)
+        convert_to_tflite(args.saved_model_path, model_structure, args.tflite_path)
+        print('Successfully converted to TensorFlow Lite')
+        print('_' * 80)
+        print(' ' * 80)
 except Exception as e:
     print(e)
     print("Unable to convert to TensorFlow Lite")
+    print('_' * 80)
+    print(' ' * 80)
 
 try:
     if args.tfjs:
+        print(' ' * 80)
+        print('_' * 80)
+        print('Converting to TensorFlow.js')
         from convert.convert_to_tfjs import convert_to_tfjs
         output_names = model_structure['output_names']
-        convert_to_tfjs(args.exported_graph_path, output_names, args.tfjs_path)
+        convert_to_tfjs(args.saved_model_path, output_names, args.tfjs_path)
+        print('Successfully converted to TensorFlow.js')
+        print('_' * 80)
+        print(' ' * 80)
 except Exception as e:
     print(e)
     print("Unable to convert to TensorFlow.js")
+    print('_' * 80)
+    print(' ' * 80)
