@@ -4,8 +4,11 @@ go: 1.13.x
 services:
 - docker
 
+before_install:
+- sudo apt-get update
+- sudo apt-get -y install protobuf-compiler
+
 install:
-- apt install protobuf-compiler
 - curl -sL https://ibm.biz/idt-installer | bash
 - echo "" > trainer/.env
 - cd trainer
