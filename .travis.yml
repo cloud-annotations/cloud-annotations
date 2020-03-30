@@ -6,8 +6,8 @@ services:
 
 before_install:
 - wget https://github.com/google/protobuf/releases/download/v3.0.0/protoc-3.0.0-linux-x86_64.zip -O /tmp/protoc-3.0.0-linux-x86_64.zip
-- unzip /tmp/protoc-3.0.0-linux-x86_64.zip
-- export PATH=$PATH:$PWD/protoc-3.0.0-linux-x86_64/bin/
+- unzip /tmp/protoc-3.0.0-linux-x86_64.zip -d protoc-3.0.0
+- export PATH=$PATH:$PWD/protoc-3.0.0/bin/
 
 install:
 - curl -sL https://ibm.biz/idt-installer | bash
