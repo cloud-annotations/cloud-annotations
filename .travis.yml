@@ -5,6 +5,7 @@ services:
 - docker
 
 install:
+- apt install protobuf-compiler
 - curl -sL https://ibm.biz/idt-installer | bash
 - echo "" > trainer/.env
 - cd trainer
