@@ -1,21 +1,31 @@
 language: go
 go: 1.13.x
 
-install: echo "success!"
-script: echo "success!"
+services:
+- docker
 
-before_deploy: 
+install:
 - curl -sL https://ibm.biz/idt-installer | bash
-deploy:
-- provider: script
-  skip_cleanup: true
-  script: ./release.sh
-  on:
-    tags: true
-    condition: $TRAVIS_OS_NAME = linux
+- cd trainer && make setup
+- cd trainer && make build
 
-- provider: script
-  skip_cleanup: true
-  script: export DEPLOY_TO=production && cd docs && ./deploy.sh
-  on:
-    branch: master
+jobs:
+  include:
+    - stage: test
+      script: cd trainer && make run_classification
+    - stage: test
+      script: cd trainer && make run_localization
+    # - stage: deploy
+    #   deploy:
+    #   - provider: script
+    #     skip_cleanup: true
+    #     script: ./release.sh
+    #     on:
+    #       tags: true
+    #       condition: $TRAVIS_OS_NAME = linux
+
+    #   - provider: script
+    #     skip_cleanup: true
+    #     script: export DEPLOY_TO=production && cd docs && ./deploy.sh
+    #     on:
+    #       branch: master
