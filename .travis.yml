@@ -7,7 +7,8 @@ services:
 install:
 - curl -sL https://ibm.biz/idt-installer | bash
 - echo "" > trainer/.env
-- cd trainer && make install
+- cd trainer && make setup_classification
+- cd trainer && make setup_object_detection
 - cd trainer && make build
 
 jobs:
