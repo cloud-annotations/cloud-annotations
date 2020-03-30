@@ -28,8 +28,8 @@ setup_classification:
 
 .PHONY: setup_object_detection
 setup_object_detection:
-	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection &&
-	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim &&
+	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection
+	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim
 	cd src && protoc object_detection/protos/*.proto --python_out=. && cd ..
 
 
