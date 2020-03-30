@@ -7,7 +7,7 @@ services:
 install:
 - curl -sL https://ibm.biz/idt-installer | bash
 - echo "" > trainer/.env
-- cd trainer && make setup
+- cd trainer && make install
 - cd trainer && make build
 
 jobs:
@@ -16,6 +16,7 @@ jobs:
       script: cd trainer && make run_classification
     - stage: test
       script: cd trainer && make run_localization
+
     # - stage: deploy
     #   deploy:
     #   - provider: script

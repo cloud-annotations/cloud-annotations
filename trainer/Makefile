@@ -11,8 +11,13 @@ all: build run
 ################################################################################
 # Setup
 ################################################################################
-.PHONY: setup
-setup: setup_env setup_classification setup_object_detection
+.PHONY: install
+install: pip_install setup_classification setup_object_detection
+
+
+.PHONY: pip_install
+pip_install:
+	pip install flake8 black
 
 
 .PHONY: setup_classification
@@ -26,12 +31,6 @@ setup_object_detection:
 	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection &&
 	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim &&
 	cd src && protoc object_detection/protos/*.proto --python_out=. && cd ..
-
-
-.PHONY: setup_env
-setup_env:
-	python3 -m venv env
-	pip install flake8 black
 
 
 ################################################################################
