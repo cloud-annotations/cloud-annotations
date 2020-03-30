@@ -5,12 +5,9 @@ services:
 - docker
 
 before_install:
-- mkdir protoc_3.3
-- cd protoc_3.3
-- wget wget https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip
-- chmod 775 protoc-3.3.0-linux-x86_64.zip
-- unzip protoc-3.3.0-linux-x86_64.zip
-- export PATH=$PATH:$PWD/bin/protoc
+- wget https://github.com/google/protobuf/releases/download/v3.0.0/protoc-3.0.0-linux-x86_64.zip -O /tmp/protoc-3.0.0-linux-x86_64.zip
+- unzip /tmp/protoc-3.0.0-linux-x86_64.zip
+- export PATH=$PATH:$PWD/protoc-3.0.0-linux-x86_64/bin/
 
 install:
 - curl -sL https://ibm.biz/idt-installer | bash
