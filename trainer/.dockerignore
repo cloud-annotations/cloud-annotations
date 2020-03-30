@@ -4,5 +4,4 @@
 # Allow `/src` and `Dockerfile`.
 !/Dockerfile
 !/src/**
-
-!/runner.sh
+!/test/**

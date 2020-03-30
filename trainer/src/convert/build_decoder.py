@@ -1,42 +1,16 @@
 import coremltools
 import numpy as np
-import tensorflow as tf
 
 from coremltools.models import datatypes
 from coremltools.models import neural_network
 
-def get_anchors(graph):
-    """
-    Computes the list of anchor boxes by sending a fake image through the graph.
-    Outputs an array of size (4, num_anchors) where each element is an anchor box
-    given as [ycenter, xcenter, height, width] in normalized coordinates.
-    """
-    anchors_tensor = "Concatenate/concat:0"
-    with graph.as_default():
-        with tf.Session(graph=graph) as sess:
-            image_tensor = graph.get_tensor_by_name("image_tensor:0")
-            box_corners_tensor = graph.get_tensor_by_name(anchors_tensor)
-            box_corners = sess.run(box_corners_tensor, feed_dict={image_tensor: np.zeros((1, 300, 300, 3))})
 
-            # The TensorFlow graph gives each anchor box as [ymin, xmin, ymax, xmax]. 
-            # Convert these min/max values to a center coordinate, width and height.
-            ymin, xmin, ymax, xmax = np.transpose(box_corners)
-            width = xmax - xmin
-            height = ymax - ymin
-            ycenter = ymin + height / 2.
-            xcenter = xmin + width / 2.
-            return np.stack([ycenter, xcenter, height, width])
-
-
-def build_decoder(graph, num_classes, num_anchors):
-    # Read the anchors into a (4, 1917) tensor.
-    anchors = get_anchors(graph)
-    
-    # MLMultiArray inputs of neural networks must have 1 or 3 dimensions. 
+def build_decoder(anchors, num_classes, num_anchors):
+    # MLMultiArray inputs of neural networks must have 1 or 3 dimensions.
     # We only have 2, so add an unused dimension of size one at the back.
     input_features = [
         ("scores", datatypes.Array(num_classes + 1, num_anchors, 1)),
-        ("boxes", datatypes.Array(4, num_anchors, 1))
+        ("boxes", datatypes.Array(4, num_anchors, 1)),
     ]
 
     # The outputs of the decoder model should match the inputs of the next
@@ -44,7 +18,7 @@ def build_decoder(graph, num_classes, num_anchors):
     # of bounding boxes in the first dimension.
     output_features = [
         ("raw_confidence", datatypes.Array(num_anchors, num_classes)),
-        ("raw_coordinates", datatypes.Array(num_anchors, 4))
+        ("raw_coordinates", datatypes.Array(num_anchors, 4)),
     ]
 
     builder = neural_network.NeuralNetworkBuilder(input_features, output_features)
@@ -54,7 +28,8 @@ def build_decoder(graph, num_classes, num_anchors):
         name="permute_scores",
         dim=(0, 3, 2, 1),
         input_name="scores",
-        output_name="permute_scores_output")
+        output_name="permute_scores_output",
+    )
 
     # Strip off the "unknown" class (at index 0).
     builder.add_slice(
@@ -63,7 +38,8 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="raw_confidence",
         axis="width",
         start_index=1,
-        end_index=num_classes + 1)
+        end_index=num_classes + 1,
+    )
 
     # Grab the y, x coordinates (channels 0-1).
     builder.add_slice(
@@ -72,7 +48,8 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="slice_yx_output",
         axis="channel",
         start_index=0,
-        end_index=2)
+        end_index=2,
+    )
 
     # boxes_yx / 10
     builder.add_elementwise(
@@ -80,7 +57,8 @@ def build_decoder(graph, num_classes, num_anchors):
         input_names="slice_yx_output",
         output_name="scale_yx_output",
         mode="MULTIPLY",
-        alpha=0.1)
+        alpha=0.1,
+    )
 
     # Split the anchors into two (2, 1917, 1) arrays.
     anchors_yx = np.expand_dims(anchors[:2, :], axis=-1)
@@ -90,27 +68,31 @@ def build_decoder(graph, num_classes, num_anchors):
         name="anchors_yx",
         output_name="anchors_yx",
         constant_value=anchors_yx,
-        shape=[2, num_anchors, 1])
+        shape=[2, num_anchors, 1],
+    )
 
     builder.add_load_constant(
         name="anchors_hw",
         output_name="anchors_hw",
         constant_value=anchors_hw,
-        shape=[2, num_anchors, 1])
+        shape=[2, num_anchors, 1],
+    )
 
     # (boxes_yx / 10) * anchors_hw
     builder.add_elementwise(
         name="yw_times_hw",
         input_names=["scale_yx_output", "anchors_hw"],
         output_name="yw_times_hw_output",
-        mode="MULTIPLY")
+        mode="MULTIPLY",
+    )
 
     # (boxes_yx / 10) * anchors_hw + anchors_yx
     builder.add_elementwise(
         name="decoded_yx",
         input_names=["yw_times_hw_output", "anchors_yx"],
         output_name="decoded_yx_output",
-        mode="ADD")
+        mode="ADD",
+    )
 
     # Grab the height and width (channels 2-3).
     builder.add_slice(
@@ -119,7 +101,8 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="slice_hw_output",
         axis="channel",
         start_index=2,
-        end_index=4)
+        end_index=4,
+    )
 
     # (boxes_hw / 5)
     builder.add_elementwise(
@@ -127,21 +110,24 @@ def build_decoder(graph, num_classes, num_anchors):
         input_names="slice_hw_output",
         output_name="scale_hw_output",
         mode="MULTIPLY",
-        alpha=0.2)
+        alpha=0.2,
+    )
 
     # exp(boxes_hw / 5)
     builder.add_unary(
         name="exp_hw",
         input_name="scale_hw_output",
         output_name="exp_hw_output",
-        mode="exp")
+        mode="exp",
+    )
 
     # exp(boxes_hw / 5) * anchors_hw
     builder.add_elementwise(
         name="decoded_hw",
         input_names=["exp_hw_output", "anchors_hw"],
         output_name="decoded_hw_output",
-        mode="MULTIPLY")
+        mode="MULTIPLY",
+    )
 
     # The coordinates are now (y, x) and (height, width) but NonMaximumSuppression
     # wants them as (x, y, width, height). So create four slices and then concat
@@ -152,7 +138,8 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="slice_y_output",
         axis="channel",
         start_index=0,
-        end_index=1)
+        end_index=1,
+    )
 
     builder.add_slice(
         name="slice_x",
@@ -160,7 +147,8 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="slice_x_output",
         axis="channel",
         start_index=1,
-        end_index=2)
+        end_index=2,
+    )
 
     builder.add_slice(
         name="slice_h",
@@ -168,7 +156,8 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="slice_h_output",
         axis="channel",
         start_index=0,
-        end_index=1)
+        end_index=1,
+    )
 
     builder.add_slice(
         name="slice_w",
@@ -176,19 +165,27 @@ def build_decoder(graph, num_classes, num_anchors):
         output_name="slice_w_output",
         axis="channel",
         start_index=1,
-        end_index=2)
+        end_index=2,
+    )
 
     builder.add_elementwise(
         name="concat",
-        input_names=["slice_x_output", "slice_y_output", "slice_w_output", "slice_h_output"],
+        input_names=[
+            "slice_x_output",
+            "slice_y_output",
+            "slice_w_output",
+            "slice_h_output",
+        ],
         output_name="concat_output",
-        mode="CONCAT")
+        mode="CONCAT",
+    )
 
     # (4, num_anchors, 1) --> (1, num_anchors, 4)
     builder.add_permute(
         name="permute_output",
         dim=(0, 3, 2, 1),
         input_name="concat_output",
-        output_name="raw_coordinates")
+        output_name="raw_coordinates",
+    )
 
     return coremltools.models.MLModel(builder.spec)

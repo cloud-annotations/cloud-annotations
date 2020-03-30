@@ -44,7 +44,7 @@ python -m object_detection.export_inference_graph \
   --trained_checkpoint_prefix=$TRAINED_CHECKPOINT_PREFIX \
   --output_directory=$TMP_OUTPUT_DIRECTORY
 
-cp -r $TMP_OUTPUT_DIRECTORY/saved_model $OUTPUT_DIRECTORY
+cp -r $TMP_OUTPUT_DIRECTORY/saved_model/. $OUTPUT_DIRECTORY
 
 python -m export_labels \
   --label_map_path=$LABEL_MAP_PATH \
@@ -69,9 +69,34 @@ echo 'CACLI-TRAINING-SUCCESS'
 # Don't crash for failed conversion.
 trap 'echo CACLI-CONVERSION-FAILED; exit 0' ERR
 
-python -m convert.convert --tfjs --coreml --tflite \
-  --$TYPE \
-  --tfjs-path=${RESULT_DIR}/model_web \
+python -m convert.convert \
+  --model-type=$TYPE \
+  --coreml --tflite --tfjs \
+  --saved-model=$OUTPUT_DIRECTORY \
   --mlmodel-path=${RESULT_DIR}/model_ios \
   --tflite-path=${RESULT_DIR}/model_android \
-  --saved-model-path=$OUTPUT_DIRECTORY
+  --tfjs-path=${RESULT_DIR}/model_web
+  
+
+border () {
+  local str="$*"
+  local len=${#str}
+  local i
+  printf '┌─'
+  for (( i = 0; i < len; ++i )); do
+      printf '─'
+  done
+  printf '─┐'
+  printf "\n│ $str │\n"
+  printf '└─'
+  for (( i = 0; i < len; ++i )); do
+      printf '─'
+  done
+  printf '─┘'
+  echo
+}
+
+echo ""
+echo "Output files stored in: "
+border $(basename ${RESULT_DIR})
+echo ""

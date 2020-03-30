@@ -1,6 +1,9 @@
 import coremltools
 
-def build_nms(decoder_model, labels, default_iou_threshold=0.5, default_confidence_threshold=0.5):
+
+def build_nms(
+    decoder_model, labels, default_iou_threshold=0.5, default_confidence_threshold=0.5
+):
     nms_spec = coremltools.proto.Model_pb2.Model()
     nms_spec.specificationVersion = 3
 
@@ -12,7 +15,7 @@ def build_nms(decoder_model, labels, default_iou_threshold=0.5, default_confiden
 
         nms_spec.description.output.add()
         nms_spec.description.output[i].ParseFromString(decoder_output)
-        
+
     nms_spec.description.output[0].name = "confidence"
     nms_spec.description.output[1].name = "coordinates"
 
@@ -28,12 +31,12 @@ def build_nms(decoder_model, labels, default_iou_threshold=0.5, default_confiden
         del ma_type.shape[:]
 
     nms = nms_spec.nonMaximumSuppression
-    nms.confidenceInputFeatureName = 'raw_confidence'
-    nms.coordinatesInputFeatureName = 'raw_coordinates'
-    nms.confidenceOutputFeatureName = 'confidence'
-    nms.coordinatesOutputFeatureName = 'coordinates'
-    nms.iouThresholdInputFeatureName = 'iouThreshold'
-    nms.confidenceThresholdInputFeatureName = 'confidenceThreshold'
+    nms.confidenceInputFeatureName = "raw_confidence"
+    nms.coordinatesInputFeatureName = "raw_coordinates"
+    nms.confidenceOutputFeatureName = "confidence"
+    nms.coordinatesOutputFeatureName = "coordinates"
+    nms.iouThresholdInputFeatureName = "iouThreshold"
+    nms.confidenceThresholdInputFeatureName = "confidenceThreshold"
 
     nms.iouThreshold = default_iou_threshold
     nms.confidenceThreshold = default_confidence_threshold

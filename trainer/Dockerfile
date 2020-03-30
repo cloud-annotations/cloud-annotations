@@ -80,9 +80,9 @@ RUN pip install \
     wrapt==1.11.2
 
 ADD src /
-ADD runner.sh .
+ADD test /
 
 RUN chmod +x start.sh
-RUN chmod +x runner.sh
-
-ENTRYPOINT ["./runner.sh"]
+RUN chmod +x run.sh
+RUN chmod +x cache.sh
+RUN chmod +x convert.sh

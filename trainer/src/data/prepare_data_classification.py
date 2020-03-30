@@ -6,13 +6,14 @@ import os
 import shutil
 import json
 
-read_dir = ''
-write_dir = ''
+read_dir = ""
+write_dir = ""
 try:
-    read_dir = os.environ['DATA_DIR']
-    write_dir = os.environ['RESULT_DIR']
+    read_dir = os.environ["DATA_DIR"]
+    write_dir = os.environ["RESULT_DIR"]
 except Exception:
     pass
+
 
 def main(read_bucket=read_dir, write_bucket=write_dir):
     def create_dir(base, dirName):
@@ -22,17 +23,24 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
         os.makedirs(path)
         return path
 
-    data_dir = create_dir('', 'data')
+    data_dir = create_dir("", "data")
 
-    annotations_file = os.path.join(read_bucket, '_annotations.json')
+    annotations_file = os.path.join(read_bucket, "_annotations.json")
 
     with open(annotations_file) as f:
-        annotations = json.load(f)['annotations']
+        annotations = json.load(f)["annotations"]
 
-    labels = list({annotation['label'] for image in annotations.values() for annotation in image})
+    labels = list(
+        {annotation["label"] for image in annotations.values() for annotation in image}
+    )
 
     for label in labels:
-        file_list = [image_name for image_name in annotations.keys() for annotation in annotations[image_name] if annotation['label'] == label]
+        file_list = [
+            image_name
+            for image_name in annotations.keys()
+            for annotation in annotations[image_name]
+            if annotation["label"] == label
+        ]
 
         # Make directory for labels, if they don't exist.
         train_label_dir = os.path.join(data_dir, label)
@@ -44,7 +52,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
             try:
                 shutil.copy2(os.path.join(read_bucket, f), train_label_dir)
             except Exception as err:
-                print('Error: {}, skipping {}...'.format(err, f))
+                print("Error: {}, skipping {}...".format(err, f))
 
 
 if __name__ == "__main__":
