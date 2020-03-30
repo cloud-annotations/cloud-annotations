@@ -12,17 +12,18 @@ before_install:
 install:
 - curl -sL https://ibm.biz/idt-installer | bash
 - echo "" > trainer/.env
-- cd trainer
+- pushd trainer
 - make setup_classification
 - make setup_object_detection
 - make build
+- popd
 
 jobs:
   include:
     - stage: test
-      script: cd trainer && make run_classification
+      script: pushd trainer && make run_classification && popd
     - stage: test
-      script: cd trainer && make run_localization
+      script: pushd trainer && make run_localization && popd
 
     # - stage: deploy
     #   deploy:
