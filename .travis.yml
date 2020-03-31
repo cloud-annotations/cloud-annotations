@@ -20,22 +20,20 @@ install:
 
 jobs:
   include:
+    - stage: publish docs
+      if: branch = master
+      env: DEPLOY_TO=production
+      script: pushd docs && ./deploy.sh && popd
     - stage: test
       script: pushd trainer && make run_classification && popd
     - stage: test
-      script: pushd trainer && make run_localization && popd
-
-    # - stage: deploy
-    #   deploy:
-    #   - provider: script
-    #     skip_cleanup: true
-    #     script: ./release.sh
-    #     on:
-    #       tags: true
-    #       condition: $TRAVIS_OS_NAME = linux
-
-    #   - provider: script
-    #     skip_cleanup: true
-    #     script: export DEPLOY_TO=production && cd docs && ./deploy.sh
-    #     on:
-    #       branch: master
+      script: pushd trainer && make run_object_detection && popd
+    - stage: deploy
+      script: skip
+      deploy:
+      - provider: script
+        skip_cleanup: true
+        script: ./release.sh
+        on:
+          tags: true
+          condition: $TRAVIS_OS_NAME = linux
