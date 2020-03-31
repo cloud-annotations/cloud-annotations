@@ -26,9 +26,9 @@ jobs:
       install: curl -sL https://ibm.biz/idt-installer | bash
       script: pushd docs && ./deploy.sh && popd
     - stage: test
-      script: pushd trainer && make classification && popd
+      script: pushd trainer && make test_classification && popd
     - stage: test
-      script: pushd trainer && make object_detection && popd
+      script: pushd trainer && make test_object_detection && popd
     - stage: deploy
       script: skip
       deploy:

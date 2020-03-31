@@ -81,6 +81,19 @@ lint:
 	python -m flake8 src
 
 
+.PHONY: test_classification
+test_classification: build
+	rm -rf tmp
+	@docker run -v `pwd`/tmp:/result_dir -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(CLASSIFCATION_BUCKET) $(STEPS)
+	./test/ensure_models_exist.sh `pwd`/tmp
+
+
+.PHONY: test_object_detection
+test_object_detection: build
+	rm -rf tmp
+	@docker run -v `pwd`/tmp:/result_dir -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
+	./test/ensure_models_exist.sh `pwd`/tmp
+
 ################################################################################
 # Convert
 ################################################################################
@@ -123,6 +136,6 @@ cache_classification:
 	@docker run -v `pwd`/test_cache/classifcation:/result_dir/model -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(CLASSIFCATION_BUCKET) $(STEPS)
 
 
-.PHONY: _cache_object_detection
+.PHONY: cache_object_detection
 cache_object_detection:
 	@docker run -v `pwd`/test_cache/object_detection:/result_dir/model -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
