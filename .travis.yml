@@ -1,5 +1,7 @@
 language: go
 go: 1.13.x
+os: linux
+dist: xenial
 
 services:
 - docker
@@ -10,29 +12,27 @@ before_install:
 - export PATH=$PATH:$PWD/protoc-3.0.0/bin/
 
 install:
-- curl -sL https://ibm.biz/idt-installer | bash
-- echo "" > trainer/.env
+- echo "" > trainer/.env # `make` expects an `.env` file, so create an empty one.
 - pushd trainer
 - make setup_classification
 - make setup_object_detection
-- make build
 - popd
 
 jobs:
   include:
     - stage: publish docs
       if: branch = master
-      env: DEPLOY_TO=production
+      before_install: skip
+      install: curl -sL https://ibm.biz/idt-installer | bash
       script: pushd docs && ./deploy.sh && popd
     - stage: test
-      script: pushd trainer && make run_classification && popd
+      script: pushd trainer && make classification && popd
     - stage: test
-      script: pushd trainer && make run_object_detection && popd
+      script: pushd trainer && make object_detection && popd
     - stage: deploy
       script: skip
       deploy:
       - provider: script
-        skip_cleanup: true
         script: ./release.sh
         on:
           tags: true

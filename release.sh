@@ -2,10 +2,11 @@
 set -e
 
 # Install the protobuf compiler.
-curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.7.1/protoc-3.7.1-linux-x86_64.zip
-sudo unzip -o protoc-3.7.1-linux-x86_64.zip -d /usr/local bin/protoc
-sudo unzip -o protoc-3.7.1-linux-x86_64.zip -d /usr/local 'include/*'
-rm -f protoc-3.7.1-linux-x86_64.zip
+# protobuf compiler installed in travis now...
+# curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.7.1/protoc-3.7.1-linux-x86_64.zip
+# sudo unzip -o protoc-3.7.1-linux-x86_64.zip -d /usr/local bin/protoc
+# sudo unzip -o protoc-3.7.1-linux-x86_64.zip -d /usr/local 'include/*'
+# rm -f protoc-3.7.1-linux-x86_64.zip
 
 # Install goreleaser and release binaries.
 cd cacli && curl -sL https://git.io/goreleaser | bash
