@@ -17,13 +17,13 @@ You can export your data from Cloud Annotations via the following steps:
 
 1. Choose `File` > `Export as Create ML`
 
-![](/docs-assets/images/export-annotations.png)
+{% include responsive.html image="export-annotations.png" %}
 
 ## Uploading to Google Drive
 Once exported, you should have a file named `<bucket-name>.zip`.
 Unzip the downloaded folder and upload it to [Google Drive](https://drive.google.com/){:target="_blank"}.
 
-![](/docs-assets/images/gdrive.png)
+{% include responsive.html image="gdrive.png" %}
 
 ## Using Google Colab
 [Open in Colab](https://colab.research.google.com/github/cloud-annotations/google-colab-training/blob/master/object_detection.ipynb){:target="_blank"}

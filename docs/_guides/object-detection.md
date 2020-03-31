@@ -4,16 +4,23 @@ title: Object detection
 ---
 
 After your bucket is created and named, it will prompt you to choose an annotation type. Choose `Localization`, this enables bounding box drawing.
-![](/docs-assets/images/6a.CA_set-type.png)
+
+{% include responsive.html image="6a.CA_set-type.png" %}
 
 
 ## Labeling the data
-1. Upload a video or some images
-![](/docs-assets/images/7a.CA_blank-canvas.png)
-2. Create the desired labels
-![](/docs-assets/images/9a.CA_create-label.png)
-3. Start drawing bounding boxes
-![](/docs-assets/images/10.CA_labeled.png)
+<!-- markdown list doesn't support include -->
+<ol>
+  <li>Upload a video or some images
+  {% include responsive.html image="7a.CA_blank-canvas.png" %}
+  </li>
+  <li>Create the desired labels
+  {% include responsive.html image="9a.CA_create-label.png" %}
+  </li>
+  <li>Start drawing bounding boxes
+  {% include responsive.html image="10.CA_labeled.png" %}
+  </li>
+</ol>
 
 
 ## Keyboard shortcuts

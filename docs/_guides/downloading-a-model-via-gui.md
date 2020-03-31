@@ -4,6 +4,7 @@ title: Downloading a model via GUI
 ---
 
 From an existing project, select **Training runs** > **View all**
-![](/docs-assets/images/view_all_training.png)
+
+{% include responsive.html image="view_all_training.png" %}
 
 Select a completed training job from the lefthand side, click **Download**. A zip file will be created containing your trained model files.

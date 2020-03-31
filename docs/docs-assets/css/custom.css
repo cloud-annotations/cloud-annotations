@@ -1122,6 +1122,11 @@ html {
   height: auto;
 }
 
+.content-responsive-img {
+  width: 100%;
+  height: auto;
+}
+
 .stepper {
   counter-reset: step;
   padding: 16px;
