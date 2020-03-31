@@ -57,6 +57,6 @@ func init() {
 	trainCmd.Flags().String("script", "", "Custom training script.zip")
 
 	trainCmd.Flags().String("framework", "tensorflow", "keras, pytorch, caffe")
-	trainCmd.Flags().String("frameworkv", "1.12", "Framework version")
+	trainCmd.Flags().String("frameworkv", "1.15", "Framework version")
 	trainCmd.Flags().String("pythonv", "3.6", "Python version")
 }
