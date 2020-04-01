@@ -33,6 +33,7 @@ jobs:
       script: skip
       deploy:
       - provider: script
+        skip_cleanup: true # keep the pulled model repos from install phase.
         script: ./release.sh
         on:
           tags: true

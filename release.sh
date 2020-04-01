@@ -12,7 +12,7 @@ set -e
 cd cacli && curl -sL https://git.io/goreleaser | bash
 
 # Build training zip.
-cd ../trainer && python setup.py all
+cd ../trainer && python setup.py no_pull
 
 # Get ID of the released based on its version tag.
 response=$(curl -s "https://api.github.com/repos/cloud-annotations/training/releases/tags/$TRAVIS_TAG?access_token=$GITHUB_TOKEN")
