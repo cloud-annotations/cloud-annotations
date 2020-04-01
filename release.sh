@@ -37,7 +37,7 @@ content=$(echo "$response" | tr -d "\n\r" | jq -r '.content')
 
 # base64 -i (ignores garbage like newlines)
 # base64_content=$(echo $content | base64 -di | sed  "s/v[a-zA-Z0-9]*\.[a-zA-Z0-9]*\.[a-zA-Z0-9]*/${TRAVIS_TAG}/g" | base64 | tr -d "\n\r")
-base64_content=$(echo $content | base64 -di | sed "s/https:\/\/github\.com\/cloud-annotations\/training\/archive\/v[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.tar\.gz/https:\/\/github.com\/cloud-annotations\/training\/archive\/${TRAVIS_TAG}.gz/g" | base64 | tr -d "\n\r")
+base64_content=$(echo $content | base64 -di | sed "s/https:\/\/github\.com\/cloud-annotations\/training\/archive\/v[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.tar\.gz/https:\/\/github.com\/cloud-annotations\/training\/archive\/${TRAVIS_TAG}.tar.gz/g" | base64 | tr -d "\n\r")
 # TODO: get sha256
 # curl -fLs https://github.com/cloud-annotations/training/archive/v1.2.29.tar.gz | shasum -a 256 | cut -d ' ' -f 1 
 
