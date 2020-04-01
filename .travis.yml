@@ -8,8 +8,8 @@ services:
 
 before_install:
 - wget https://github.com/google/protobuf/releases/download/v3.0.0/protoc-3.0.0-linux-x86_64.zip -O /tmp/protoc-3.0.0-linux-x86_64.zip
-- unzip /tmp/protoc-3.0.0-linux-x86_64.zip -d /protoc-3.0.0
-- export PATH=$PATH:/protoc-3.0.0/bin/
+- unzip /tmp/protoc-3.0.0-linux-x86_64.zip -d /tmp/protoc-3.0.0
+- export PATH=$PATH:/tmp/protoc-3.0.0/bin/
 
 install:
 - echo "" > trainer/.env # `make` expects an `.env` file, so create an empty one.
