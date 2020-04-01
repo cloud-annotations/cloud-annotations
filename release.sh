@@ -8,6 +8,8 @@ set -e
 # sudo unzip -o protoc-3.7.1-linux-x86_64.zip -d /usr/local 'include/*'
 # rm -f protoc-3.7.1-linux-x86_64.zip
 
+# TODO: https://developer.github.com/changes/2020-02-10-deprecating-auth-through-query-param/
+
 # Install goreleaser and release binaries.
 cd cacli && curl -sL https://git.io/goreleaser | bash
 
