@@ -39,12 +39,10 @@ plugins:
 
 # Direct posts to specific url
 collections:
-  object_detection:
+  workshops:
     output: true
-    permalink: /workshops/object-detection/:path:output_ext
-  classification:
-    output: true
-    permalink: /workshops/classification/:path:output_ext
+    permalink: /workshops/:path:output_ext
+    sort_by: order
   guides:
     output: true
     permalink: /docs
@@ -70,16 +68,11 @@ collections:
       - auto-labeling.md
       
 
-# Theme all pages with workshop layout
+# Theme pages
 defaults:
   - scope:
       path: ""
-      type: "classification"
-    values:
-      layout: workshop-stepper
-  - scope:
-      path: ""
-      type: "object_detection"
+      type: "workshops"
     values:
       layout: workshop-stepper
   - scope:

@@ -1,8 +1,6 @@
 ---
 title: Preparing training data
-date: 1970-01-02
-redirect_from:
-  - /classification/cli/5.html
+order: 1
 ---
 
 Cloud Annotations makes labeling images and training machine learning models easy.

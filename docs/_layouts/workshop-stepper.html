@@ -5,9 +5,12 @@ layout: base
 {% include titlebar.html active="workshops" %}
 
 <main>
+  {{page.collection}}
   <nav class="sidebar">
     <ol class="stepper">
-      {% for item in site[page.collection] %} {% if item.url == page.url %}
+      {% for item in site[page.collection] %} {% assign pagePath = page.path |
+      split: "/" %} {% assign itemPath = item.path | split: "/" %} {% if
+      pagePath[1] == itemPath[1] %} {% if item.url == page.url %}
       <li class="stepper-item active">
         <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
       </li>
@@ -15,7 +18,7 @@ layout: base
       <li class="stepper-item">
         <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
       </li>
-      {% endif %} {% endfor %}
+      {% endif %}{% endif %}{% endfor %}
     </ol>
   </nav>
 
