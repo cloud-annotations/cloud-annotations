@@ -47,6 +47,13 @@ For external links:
 ## Screenshots
 All assets should go under `/docs-assets/_images` the rest will be generated (by me)
 
+- Always fullscreen
+- Use incognito Chrome 
+- Use macOS to `Capture selected window` 
+  - (<kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>4</kbd>, <kbd>spacebar</kbd>, click) or (<kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>5</kbd>, choose `Capture selected window`)
+- To draw attention to something the user needs to click on:
+  - rounded 8px red stoke, with 4px padding from a solid background button
+  
 To use an image:
 ```
 {% include responsive.html image="<image-name>.png" %}
@@ -55,10 +62,3 @@ DON'T:
 ```
 ![](<image-name>.png)
 ```
-
-- Always fullscreen
-- Use incognito Chrome 
-- Use macOS to `Capture selected window` 
-  - (<kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>4</kbd>, <kbd>spacebar</kbd>, click) or (<kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>5</kbd>, choose `Capture selected window`)
-- To draw attention to something the user needs to click on:
-  - rounded 8px red stoke, with 4px padding from a solid background button
