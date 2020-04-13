@@ -1,7 +1,7 @@
 ## Guides
 Each markdown file generates an `h1` header for the title and adds it to the sidebar. Only use (`h2`, `h3`, `h4`…) tags for headings in the actual markdown file. Any `h2` tags will generate a sub heading link in the sidebar.
 
-Each markdown file should include a title at the top:
+Each markdown file should include a `title` at the top:
 ```
 ---
 title: Non-interactive training
@@ -13,15 +13,15 @@ The order of the `guides` are specified in `_config.yml`
 ## Workshops
 Each markdown file generates an `h1` header for the title and adds it to the sidebar. Only use (`h2`, `h3`, `h4`…) tags for headings in the actual markdown file.
 
-Each markdown file should include a title and date at the top:
+Each markdown file should include a `title` and `order` at the top:
 ```
 ---
 title: Preparing training data
-date: 1970-01-02
+order: 2
 ---
 ```
 
-`workshops` are organized/sorted by the date
+`workshops` are sorted by `order`
 
 ## Copy
 When describing UI to click on, use single backticks, for example: Choose `File` > `Export as Create ML`
