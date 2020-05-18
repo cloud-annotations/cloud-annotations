@@ -30,7 +30,7 @@ $ curl -sSL https://cloud.annotations.ai/install.sh | sh
 ```
 
 #### Windows
-1. Download the [binary](https://github.com/cloud-annotations/training/releases/download/v1.2.29/cacli_windows_x86_64.exe).
+1. Download the [binary](https://github.com/cloud-annotations/training/releases/latest/download/cacli_windows_x86_64.exe).
 1. Rename it to `cacli.exe`.
 1. `cd` to the directory where it was downloaded.
 1. Run `cacli --version` to check that it's working.
