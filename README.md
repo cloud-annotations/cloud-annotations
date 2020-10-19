@@ -2,7 +2,7 @@
 [![GoDoc](https://godoc.org/github.com/cloud-annotations/training/cacli?status.svg)](https://godoc.org/github.com/cloud-annotations/training/cacli)
 [![Build Status](https://img.shields.io/travis/cloud-annotations/training/master.svg)](https://travis-ci.org/cloud-annotations/training)
 
-![](https://github.com/cloud-annotations/training/raw/master/docs/_object_detection/assets/main.png)
+![](https://github.com/cloud-annotations/training/raw/master/docs/_workshops/object-detection/assets/main.png)
 
 ## Before you begin
 
