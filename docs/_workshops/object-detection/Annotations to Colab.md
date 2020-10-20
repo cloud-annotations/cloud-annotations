@@ -10,9 +10,7 @@ Cloud Annotations focuses on the dataset creation aspect of the model developmen
 
 Today we'll be using an online tool called Google Colab as a free and easy way to get our first model trained.
 
-## Prepare to Export to Colab
-
-#### Training with Google Colab
+## Training with Google Colab
 Google Colaboratory, or “Colab” for short, is a product from Google Research. Colab allows anybody to write and execute arbitrary python code through the browser, and is especially well suited to machine learning, data analysis and education. More technically, Colab is a hosted Jupyter notebook service that requires no setup to use, while providing free access to computing resources including GPUs.
 
 To train your model with Colab, click `Train model in Colab`.
