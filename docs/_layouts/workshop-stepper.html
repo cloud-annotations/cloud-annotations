@@ -1,0 +1,93 @@
+---
+layout: base
+---
+
+{% include titlebar.html active="workshops" %}
+
+{% assign page_list = "" %}
+{% assign previous_url = nil %}
+{% assign next_url = nil %}
+{% assign hide_prev = "hide" %}
+{% assign hide_next = "hide" %}
+
+{% for item in site[page.collection] %}
+  {% assign pagePath = page.path | split: "/" %}
+  {% assign itemPath = item.path | split: "/" %}
+  {% if pagePath[1] == itemPath[1] %} 
+    {% assign tmp = item.url | relative_url | append: "&&" | append: item.title %}
+    {% if page_list == "" %}
+      {% assign page_list = page_list | append: tmp %}
+    {% else %}
+      {% assign page_list = page_list | append: "," | append: tmp %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% assign page_list = page_list | split: "," %}
+
+{% assign num = page_list.size - 1 %}
+{% for i in (0..num) %}
+  {% assign item = page_list[i] | split: "&&" %}
+  {% assign url = item[0] %}
+  {% if url == page.url %}
+    {% assign prev = i | minus: 1 %}
+    {% assign next = i | plus: 1 %}
+    {% if prev >= 0 %}
+      {% assign itemx = page_list[prev] | split: "&&" %}
+      {% assign previous_url = itemx[0] %}
+      {% assign hide_prev = "" %}
+    {% endif %}
+    {% if next < page_list.size %}
+      {% assign itemx = page_list[next] | split: "&&" %}
+      {% assign next_url = itemx[0] %}
+      {% assign hide_next = "" %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+<main>
+  {{page.collection}}
+  <nav class="sidebar">
+    <ol class="stepper">
+      {% for item in page_list %}
+        {% assign itemx = item | split: "&&" %}
+        {% assign url = itemx[0] %}
+        {% assign title = itemx[1] %}
+        {% if url == page.url %}
+          <li class="stepper-item active">
+            <a href="{{ url }}">{{ title }}</a>
+          </li>
+        {% else %}
+          <li class="stepper-item">
+            <a href="{{ url }}">{{ title }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ol>
+  </nav>
+
+  <div class="content-wrapper">
+    <article class="content markdown-body">
+      <h1>{{ page.title }}</h1>
+      {{ content }}
+    </article>
+  </div>
+
+  <div class="controls-wrapper">
+    <a
+      class="button secondary {{ hide_prev }}"
+      href="{{ previous_url }}"
+      aria-label="Previous page"
+    >
+      Back
+    </a>
+    <div class="spacer"></div>
+    <a
+      class="button primary {{ hide_next }}"
+      href="{{ next_url }}"
+      aria-label="Next page"
+    >
+      Next
+    </a>
+  </div>
+</main>

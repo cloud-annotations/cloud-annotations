@@ -1,3 +1,6 @@
+test_cache
+tmp
+
 _site
 .sass-cache
 .jekyll-metadata

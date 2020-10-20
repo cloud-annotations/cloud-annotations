@@ -1,0 +1,13 @@
+<picture>
+  <source
+    class="content-responsive-img"
+    media="(max-width: 600px)"
+    srcset="/docs-assets/generated_images/{{ include.image }}, /docs-assets/generated_images@1x/{{ include.image }} 2x"
+  />
+  <img
+    class="content-responsive-img"
+    src="/docs-assets/generated_images@1x/{{ include.image }}"
+    alt="{{ include.alt }}"
+    srcset="/docs-assets/generated_images@2x/{{ include.image }} 2x"
+  />
+</picture>

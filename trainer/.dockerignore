@@ -1,0 +1,7 @@
+# Ignore everything.
+**
+
+# Allow `/src` and `Dockerfile`.
+!/Dockerfile
+!/src/**
+!/test/**

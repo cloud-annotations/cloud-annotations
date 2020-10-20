@@ -2,6 +2,7 @@
 
 trap 'echo CACLI-TRAINING-FAILED; exit 1' ERR
 
+pip install --user Cython contextlib2 matplotlib
 pip install --user --no-deps -r requirements.txt
 
 SCRIPT="python - << EOF
@@ -16,6 +17,7 @@ EOF"
 TYPE=$(eval "$SCRIPT")
 
 PIPELINE_CONFIG_PATH=pipeline.config
+TMP_OUTPUT_DIRECTORY=${RESULT_DIR}/_model
 OUTPUT_DIRECTORY=${RESULT_DIR}/model
 OUTPUT_LABEL_PATH=${OUTPUT_DIRECTORY}/labels.json
 CHECKPOINT_PATH=${RESULT_DIR}/checkpoints
@@ -40,7 +42,9 @@ TRAINED_CHECKPOINT_PREFIX=$(python -m get_latest_checkpoint \
 python -m object_detection.export_inference_graph \
   --pipeline_config_path=$PIPELINE_CONFIG_PATH \
   --trained_checkpoint_prefix=$TRAINED_CHECKPOINT_PREFIX \
-  --output_directory=$OUTPUT_DIRECTORY
+  --output_directory=$TMP_OUTPUT_DIRECTORY
+
+cp -r $TMP_OUTPUT_DIRECTORY/saved_model/. $OUTPUT_DIRECTORY
 
 python -m export_labels \
   --label_map_path=$LABEL_MAP_PATH \
@@ -52,17 +56,47 @@ echo '/////////////////////////////'
 python -m data.prepare_data_classification
 python -m classification.retrain \
   --image_dir=data \
-  --saved_model_dir=$OUTPUT_DIRECTORY/saved_model \
+  --saved_model_dir=$OUTPUT_DIRECTORY \
   --tfhub_module=https://tfhub.dev/google/imagenet/mobilenet_v1_100_224/feature_vector/1 \
+  --validation_percentage=20 \
   --how_many_training_steps=$1 \
-  --output_labels=$OUTPUT_DIRECTORY/labels.txt
+  --output_labels=labels.txt
+mv labels.txt $OUTPUT_DIRECTORY
 fi
 
 echo 'CACLI-TRAINING-SUCCESS'
-trap 'echo CACLI-CONVERSION-FAILED; exit 1' ERR
 
-python -m convert.convert --tfjs --coreml --tflite \
-  --tfjs-path=${RESULT_DIR}/model_web \
+# Don't crash for failed conversion.
+trap 'echo CACLI-CONVERSION-FAILED; exit 0' ERR
+
+python -m convert.convert \
+  --model-type=$TYPE \
+  --coreml --tflite --tfjs \
+  --saved-model=$OUTPUT_DIRECTORY \
   --mlmodel-path=${RESULT_DIR}/model_ios \
   --tflite-path=${RESULT_DIR}/model_android \
-  --exported-graph-path=$OUTPUT_DIRECTORY
+  --tfjs-path=${RESULT_DIR}/model_web
+  
+
+border () {
+  local str="$*"
+  local len=${#str}
+  local i
+  printf '┌─'
+  for (( i = 0; i < len; ++i )); do
+      printf '─'
+  done
+  printf '─┐'
+  printf "\n│ $str │\n"
+  printf '└─'
+  for (( i = 0; i < len; ++i )); do
+      printf '─'
+  done
+  printf '─┘'
+  echo
+}
+
+echo ""
+echo "Output files stored in: "
+border $(basename ${RESULT_DIR})
+echo ""

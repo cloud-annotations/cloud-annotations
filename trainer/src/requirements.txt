@@ -1,6 +1,9 @@
 pycocotools==2.0.0
-coremltools==2.0
-tfcoreml==0.3.0
-tensorflowjs==0.8.0
+coremltools==3.3
+tfcoreml==1.1
+tensorflowjs==1.4.0
 tensorflow-hub==0.3.0
 h5py==2.8.0
+numpy==1.17.5
+sympy==1.5.1
+mpmath==1.1.0
