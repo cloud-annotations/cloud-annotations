@@ -2,7 +2,7 @@
 
 trap 'echo "The deployment was aborted. Message -- "; exit 1' ERR
 
-CLUSTER="bpnvi8vw0nkktonrr20g"
+CLUSTER="bso3qn4w0imtmamdicu0"
 IMAGE_NAME="us.icr.io/cloud-annotations/docs:$(git rev-parse HEAD)"
 
 # Log in
@@ -12,7 +12,7 @@ ibmcloud login -a cloud.ibm.com -r us-east -g prod
 
 # Download cluster config
 echo Downloading config for $CLUSTER ...
-eval $(ibmcloud ks cluster config --cluster $CLUSTER | grep "export KUBECONFIG")
+ibmcloud ks cluster config --cluster $CLUSTER
 
 # Build image
 echo Building $IMAGE_NAME ...
