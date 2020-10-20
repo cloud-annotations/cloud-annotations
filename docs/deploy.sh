@@ -22,6 +22,5 @@ ibmcloud cr build --no-cache --pull -t $IMAGE_NAME .
 echo Container build completed, updating $DEPLOYMENT ...
 sed -i "s,\(^.*image: \)\(.*$\),\1"$IMAGE_NAME"," k8s/docs.yaml
 kubectl apply -f k8s
-kubectl apply -f k8s -n stage
 
 echo "Deployment complete"
