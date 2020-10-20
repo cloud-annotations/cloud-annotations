@@ -6,7 +6,7 @@
 
 ## Before you begin
 
-The Cloud Annotations CLI requires you to already have labeled images in the [Cloud Annotations online tool](https://cloud.annotations.ai/). For an in-depth guide on this process, check out the following links:
+To train a model you should already have labeled images in the [Cloud Annotations online tool](https://cloud.annotations.ai/). For an in-depth guide on this process, check out the following links:
 
 - [Training a Classification Model](https://cloud.annotations.ai/workshops/classification/) – How to train your own model to label images on IBM Cloud.
 - [Training an Object Detection Model](https://cloud.annotations.ai/workshops/object-detection/) – How to train your own model to find objects in an image on IBM Cloud.
