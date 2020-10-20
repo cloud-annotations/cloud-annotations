@@ -17,18 +17,20 @@ Google Colaboratory, or “Colab” for short, is a product from Google Research
 
 To train your model with Colab, click `Train model in Colab`.
 
+![Train in Colab](/docs/_workshops/object-detection/assets/colab_train_in.png?raw=true)
+
+
 Copy the provided credentials and click `Open Colab`.
 
+![Colab Credentials](/docs/_workshops/object-detection/assets/colab_credentials.png?raw=true)
+
+
 In order to access our training data from our Colab notebook, our code needs credentials for the object storage bucket. Paste the credentials copied from the previous step into the first cell and follow the rest of the instructions provided in the notebook.
+
+![Colab Screenshot](/docs/_workshops/object-detection/assets/colab_screenshot.png?raw=true)
+
 
 #### Download the Model
 The last step of the notebook will prompt you to download a zip file containing our model. Simply unzip this file to use it in any of the web demos in the next steps.
 
 > Note: The model downloaded is only compatible with the web demos. To use the trained model in the other demos, additional conversions will need to be run.
-
-
-#### Paste those values in Colab
-Paste the values copied from the last step into the first cell of the Colab notebook. They are what gives Colab the access to your images which allows them to be processed through your Cloud Object Storage bucket.
-![Colab Snapshot](docs/_workshops/object-detection/assets/colab_snapshot.png)
-
-
