@@ -1,88 +1,63 @@
-FROM tensorflow/tensorflow:1.15.2-py3
+FROM tensorflow/tensorflow:2.1.2
 
-RUN apt-get update \
-    && apt-get -y install automake autotools-dev fuse g++ git libcurl4-openssl-dev libfuse-dev libssl-dev libxml2-dev make pkg-config \
-    && apt-get -y install s3fs \
-    && apt-get -y install python-scipy
+# tzdata package install is interactive, force it to not be
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN pip install \
-    absl-py==0.7.1 \
-    alabaster==0.7.12 \
-    appdirs==1.4.3 \
-    astor==0.7.1 \
-    Babel==2.8.0 \
-    certifi==2019.9.11 \
-    chardet==3.0.4 \
-    cloudpickle==1.2.2 \
-    decorator==4.4.1 \
-    docutils==0.16 \
-    gast==0.2.2 \
-    google-pasta==0.1.6 \
-    # graphsurgeon==0.4.1 \
-    grpcio==1.16.1 \
-    h5py==2.9.0 \
-    # hpo==0.3.1 \
-    idna==2.9 \
-    imagesize==1.2.0 \
-    Jinja2==2.11.1 \
-    joblib==0.14.1 \
-    Keras==2.2.5 \
-    Keras-Applications==1.0.8 \
-    Keras-Preprocessing==1.1.0 \
-    Markdown==3.1.1 \
-    MarkupSafe==1.1.1 \
-    # mkl-fft==1.0.15 \
-    # mkl-random==1.1.0 \
-    # mkl-service==2.3.0 \
-    mock==4.0.1 \
-    nose==1.3.7 \
-    numpy==1.16.5 \
-    numpydoc==0.9.2 \
-    olefile==0.46 \
-    packaging==20.1 \
-    pandas==1.0.1 \
-    Pillow==6.2.1 \
-    ply==3.11 \
-    protobuf==3.8.0 \
-    psutil==5.5.0 \
-    Pygments==2.5.2 \
-    Pyomo==5.2 \
-    pyparsing==2.4.6 \
-    python-dateutil==2.8.1 \
-    pytz==2019.3 \
-    PyUtilib==5.7.3 \
-    PyYAML==5.1.2 \
-    # rbfopt==0.2 \
-    requests==2.23.0 \
-    scikit-learn==0.22.2.post1 \
-    # scipy==1.3.1 \
-    six==1.12.0 \
-    sklearn==0.0 \
-    snowballstemmer==2.0.0 \
-    Sphinx==2.4.3 \
-    sphinxcontrib-applehelp==1.0.2 \
-    sphinxcontrib-devhelp==1.0.2 \
-    sphinxcontrib-htmlhelp==1.0.3 \
-    sphinxcontrib-jsmath==1.0.1 \
-    sphinxcontrib-qthelp==1.0.3 \
-    sphinxcontrib-serializinghtml==1.1.4 \
-    # tensorboard==1.15.0 \
-    # tensorflow==1.15.0 \
-    # tensorflow-estimator==1.15.1 \
-    # tensorflow-probability==0.8.0 \
-    # tensorflow-serving-api==1.15.0 \
-    # tensorrt==6.0.1.5 \
-    termcolor==1.1.0 \
-    # tflms==2.0.2 \
-    # uff==0.6.5 \
-    urllib3==1.25.8 \
-    Werkzeug==0.15.4 \
-    wrapt==1.11.2
+# Install apt dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    gpg-agent \
+    python3-cairocffi \
+    protobuf-compiler \
+    python3-pil \
+    python3-lxml \
+    python3-tk \
+    wget \
+    automake \
+    autotools-dev \
+    fuse \
+    g++ \
+    libcurl4-openssl-dev \
+    libfuse-dev \
+    libssl-dev \
+    libxml2-dev \
+    make \
+    pkg-config \
+    s3fs \
+    python-scipy \
+    # cv2
+    # ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+    libgl1-mesa-glx \
+    ffmpeg \
+    libsm6 \
+    libxext6
+    # 
 
-ADD src /
-ADD test /
+# Add new user to avoid running as root
+# RUN useradd -ms /bin/bash iris
+# USER iris
+WORKDIR /home/iris
 
-RUN chmod +x start.sh
-RUN chmod +x run.sh
-RUN chmod +x cache.sh
-RUN chmod +x convert.sh
+# COPY --chown=iris src /home/iris/trainer
+# COPY --chown=iris test /home/iris/trainer
+
+RUN git clone https://github.com/cloud-annotations/models.git /home/iris/models
+
+WORKDIR /home/iris/models/research
+RUN protoc object_detection/protos/*.proto --python_out=.
+
+
+RUN cp object_detection/packages/tf2/setup.py ./
+ENV PATH="/home/iris/.local/bin:${PATH}"
+
+RUN python -m pip install -U pip
+RUN python -m pip install .
+
+RUN python -m pip install -U tensorflowjs
+
+COPY src /home/iris/trainer
+COPY test /home/iris/trainer
+
+ENV TF_CPP_MIN_LOG_LEVEL 3
+
+WORKDIR /home/iris/trainer

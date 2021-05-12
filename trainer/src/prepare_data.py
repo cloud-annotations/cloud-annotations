@@ -4,9 +4,6 @@ import json
 import random
 import hashlib
 import shutil
-import tarfile
-
-import six.moves.urllib as urllib
 
 import contextlib2
 import PIL.Image
@@ -36,7 +33,6 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
         return path
 
     data_dir = create_dir("", "data")
-    checkpoint_dir = create_dir(write_dir, "checkpoints")
 
     ############################################################################
     # Create LabelMap Proto
@@ -90,7 +86,7 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
                     img_path = os.path.join(read_bucket, example)
                     if not os.path.isfile(img_path):
                         continue
-                    with tf.gfile.GFile(img_path, "rb") as fid:
+                    with tf.io.gfile.GFile(img_path, "rb") as fid:
                         encoded_jpg = fid.read()
                     encoded_jpg_io = io.BytesIO(encoded_jpg)
                     image = PIL.Image.open(encoded_jpg_io)
@@ -186,36 +182,14 @@ def main(read_bucket=read_dir, write_bucket=write_dir):
     create_tf_record(val_output_path, val_shards, val_examples)
 
     ############################################################################
-    # Extract Model Checkpoint
-    ############################################################################
-    download_base = "https://max-cdn.cdn.appdomain.cloud/max-object-detector/1.0.1/"
-    model_file = "ssd_mobilenet_v1_coco_2018_01_28.tar.gz"
-
-    tar_path = os.path.join("", model_file)
-
-    if not os.path.exists(tar_path):
-        print("Downloading model checkpoint...")
-        opener = urllib.request.URLopener()
-        opener.retrieve(download_base + model_file, tar_path)
-    else:
-        print("Model checkpoint found.")
-
-    with tarfile.open(tar_path) as tar:
-        for member in tar.getmembers():
-            # Flatten the directory.
-            member.name = os.path.basename(member.name)
-            if "model.ckpt" in member.name:
-                print("Extracting {}...".format(member.name))
-                tar.extract(member, path=checkpoint_dir)
-
-    ############################################################################
     # Create pipeline.config
     ############################################################################
     fill_num_classes = str(len(labels))
     fill_label_map = label_map_path
     fill_train_record = train_output_path + "-?????-of-{:05}".format(train_shards)
     fill_val_record = val_output_path + "-?????-of-{:05}".format(val_shards)
-    fill_checkpoint = os.path.join(checkpoint_dir, "model.ckpt")
+    # TODO: don't hard code this...
+    fill_checkpoint = os.path.join("checkpoints", "ckpt-0")
 
     skeleton_path = "pipeline_skeleton.config"
     pipeline_path = "pipeline.config"

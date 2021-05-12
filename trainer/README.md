@@ -1,3 +1,9 @@
+https://github.com/s3fs-fuse/s3fs-fuse
+```
+brew cask install osxfuse
+brew install s3fs
+```
+
 Build the docker image:
 ```
 docker build -t trainer .

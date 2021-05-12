@@ -1,17 +1,11 @@
 #!/bin/bash
 
-TYPE=$1
-
-pip install --user Cython contextlib2 matplotlib
-pip install --user --no-deps -r requirements.txt
-
-python -m convert.convert \
-  --model-type=$TYPE \
+python -m convert \
   --coreml --tflite --tfjs \
-  --saved-model=/result_dir/model \
-  --mlmodel-path=model_ios \
-  --tflite-path=model_android \
-  --tfjs-path=model_web
+  --saved-model=/home/iris/trainer/result_dir/model \
+  --mlmodel-path=/home/iris/trainer/result_dir/model_ios \
+  --tflite-path=/home/iris/trainer/result_dir/model_android \
+  --tfjs-path=/home/iris/trainer/result_dir/model_web
 
 
 FILE=model_ios/Model.mlmodel

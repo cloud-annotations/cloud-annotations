@@ -162,25 +162,3 @@ def convert_localization(frozen_model, labels_path, output_path, anchors):
 
     final_model = coremltools.models.MLModel(pipeline.spec)
     final_model.save(os.path.join(output_path, "Model.mlmodel"))
-
-
-def convert_classification(frozen_model, labels_path, output_path):
-    os.makedirs(output_path, exist_ok=True)
-
-    tfcoreml.convert(
-        tf_model_path=frozen_model,
-        mlmodel_path=os.path.join(output_path, "Model.mlmodel"),
-        input_name_shape_dict={
-            "Placeholder": [1, 224, 224, 3],
-            "input/BottleneckInputPlaceholder": [-1, 1024],
-        },
-        image_input_names=["Placeholder"],
-        output_feature_names=["final_result"],
-        class_labels=labels_path,
-        is_bgr=False,
-        red_bias=-1.0,
-        green_bias=-1.0,
-        blue_bias=-1.0,
-        image_scale=2.0 / 255,
-        minimum_ios_deployment_target="13",
-    )

@@ -1,7 +1,7 @@
 include .env
 
 CLASSIFCATION_BUCKET=coffee-donut-v2
-LOCALIZATION_BUCKET=thumbs-up-down-v2
+LOCALIZATION_BUCKET=altconf-water
 STEPS=10
 
 
@@ -28,9 +28,12 @@ setup_classification:
 
 .PHONY: setup_object_detection
 setup_object_detection:
-	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection
-	svn export -r 11689 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim
-	cd src && protoc object_detection/protos/*.proto --python_out=. && cd ..
+	# Return successfully by blocking returncode behind a pipe with the true command, which always returns 0 (success)
+	git clone https://github.com/cloud-annotations/models.git src/models | true
+	protoc src/models/research/object_detection/protos/*.proto --python_out=.
+	# svn export -r 11689 https://github.com/tensorflow/models/trunk/research/object_detection src/object_detection
+	# svn export -r 11689 https://github.com/tensorflow/models/trunk/research/slim src/object_detection/slim
+	# cd src && protoc object_detection/protos/*.proto --python_out=. && cd ..
 
 
 ################################################################################
@@ -93,6 +96,20 @@ test_object_detection: build
 	rm -rf tmp
 	@docker run -v `pwd`/tmp:/result_dir -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
 	./test/ensure_models_exist.sh `pwd`/tmp
+
+.PHONY: bloop
+bloop: build
+	@docker run --rm --device /dev/fuse --cap-add SYS_ADMIN trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
+	# @docker run -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
+
+.PHONY: bloopout
+bloopout: build
+	@docker run -v `pwd`/tmp:/home/iris/trainer/result_dir --rm --device /dev/fuse --cap-add SYS_ADMIN trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
+	# @docker run -a stdin -a stdout -a stderr -i -t --privileged trainer ./cache.sh $(S3_ID) $(S3_KEY) $(LOCALIZATION_BUCKET) $(STEPS)
+
+.PHONY: lala
+lala: build
+	@docker run -v `pwd`/tmp:/home/iris/trainer/result_dir --rm trainer ./convert2.sh
 
 ################################################################################
 # Convert
