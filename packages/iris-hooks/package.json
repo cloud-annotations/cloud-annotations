@@ -1,0 +1,14 @@
+{
+  "name": "@iris/hooks",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "tsc -w",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.53",
+    "@types/uuid": "^8.3.0"
+  }
+}

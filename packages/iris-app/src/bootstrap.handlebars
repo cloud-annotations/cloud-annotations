@@ -1,0 +1,15 @@
+import initIris from "./initIris"
+import initReactApp from "./initReactApp"
+
+initIris()
+
+{{#each extensions}}
+try {
+  const {{clean this}} = require("{{this}}")
+  {{clean this}}.activate(window.IRIS)
+} catch (e) {
+  console.log(e)
+}
+{{/each}}
+
+initReactApp()

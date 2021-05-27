@@ -1,0 +1,17 @@
+{
+  "name": "@iris/cli",
+  "version": "0.0.12",
+  "bin": {
+    "iris": "./bin/index.js"
+  },
+  "scripts": {
+    "install": "rm -rf /usr/local/lib/iris && git clone https://github.com/cloud-annotations/iris.git /usr/local/lib/iris",
+    "uninstall": "rm -rf /usr/local/lib/iris"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "commander": "^7.1.0"
+  }
+}

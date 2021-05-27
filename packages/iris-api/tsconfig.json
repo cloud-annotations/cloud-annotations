@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "declarationMap": true,
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "dist",
+
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "jsx": "react"
+  },
+  "include": ["src"]
+}

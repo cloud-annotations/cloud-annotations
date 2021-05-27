@@ -1,0 +1,17 @@
+.wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: var(--secondaryBg);
+  display: flex;
+  align-items: center;
+  padding-left: 47px; /* account for divider margin */
+}
+
+.divider {
+  margin: 0px 4px;
+  border-left: 1px solid var(--toolBarSpacer);
+  height: 20px;
+}

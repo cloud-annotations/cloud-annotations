@@ -1,0 +1,136 @@
+{
+  "name": "@iris/app",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js --env=jsdom"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jest-environment-jsdom-fourteen",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "modulePaths": [],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
+      "^src/(.*)$": "<rootDir>/src/$1"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "dependencies": {
+    "@iris/api": "^0.0.1",
+    "@iris/components": "^0.0.1",
+    "@iris/core": "^0.0.1",
+    "@iris/hooks": "^0.0.1",
+    "@iris/icons": "^0.0.1",
+    "@iris/plugin-box-tool": "^0.0.1",
+    "@iris/theme": "^0.0.1",
+    "@material-ui/core": "^4.11.0",
+    "@reduxjs/toolkit": "^1.4.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-redux": "^7.1.9",
+    "@types/react-router-dom": "^5.1.6",
+    "@types/uuid": "^8.3.0",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-named-asset-import": "^0.3.7",
+    "babel-preset-react-app": "^10.0.0",
+    "case-sensitive-paths-webpack-plugin": "^2.3.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^5.0.0",
+    "eslint": "^7.12.0",
+    "eslint-loader": "^4.0.2",
+    "file-loader": "^6.1.1",
+    "framer-motion": "^2.9.4",
+    "handlebars": "^4.7.6",
+    "html-webpack-plugin": "^4.5.0",
+    "http-proxy-middleware": "^1.0.6",
+    "mini-css-extract-plugin": "^1.2.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "pnp-webpack-plugin": "^1.6.4",
+    "postcss-flexbugs-fixes": "^4.2.1",
+    "postcss-loader": "^4.0.4",
+    "postcss-normalize": "^9.0.0",
+    "postcss-preset-env": "^6.7.0",
+    "postcss-safe-parser": "^5.0.2",
+    "react": "^17.0.1",
+    "react-dev-utils": "^11.0.0",
+    "react-dom": "^17.0.1",
+    "react-dropzone": "^11.2.4",
+    "react-redux": "^7.2.1",
+    "react-router-dom": "^5.2.0",
+    "resolve-url-loader": "^3.1.2",
+    "sass-loader": "^10.0.4",
+    "socket.io-client": "^3.1.2",
+    "start-server-webpack-plugin": "^2.2.5",
+    "style-loader": "^2.0.0",
+    "swr": "^0.3.6",
+    "ts-loader": "^8.0.6",
+    "tsconfig-paths-webpack-plugin": "^3.3.0",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.2.0",
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-merge": "^5.2.0",
+    "webpack-node-externals": "^2.5.2",
+    "workbox-webpack-plugin": "^5.1.4"
+  },
+  "iris": {
+    "extensions": [
+      "@iris/plugin-box-tool"
+    ]
+  }
+}

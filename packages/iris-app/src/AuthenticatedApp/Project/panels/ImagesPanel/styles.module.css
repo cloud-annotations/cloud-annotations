@@ -1,0 +1,152 @@
+.wrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+  background: var(--secondaryBg);
+}
+
+.labelFilterWrapper {
+  position: absolute;
+  top: 0;
+  right: 272px;
+  left: 50px;
+  height: 28px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--toolBarSpacer);
+  user-select: none;
+
+  font-family: "ibm-plex-sans", Helvetica Neue, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--brightText);
+}
+
+.filter {
+  position: relative; /* must be this */
+  background: transparent;
+  border: none;
+  outline: none;
+  margin-left: 6px;
+  width: 130px;
+  font-family: "ibm-plex-sans", Helvetica Neue, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--brightText);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 10px;
+  /* -webkit-appearance: none; */
+}
+
+.filterNotSelected {
+  composes: filter;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex-shrink: 0;
+  margin-left: 0;
+  margin-right: -10px;
+  width: 156px;
+  padding: 0 0 0 14px;
+  opacity: 0.53;
+}
+
+.filterNotSelected:hover {
+  background: var(--highlight);
+}
+
+.labelCount {
+  position: absolute;
+  top: 0;
+  width: 130px;
+  height: 28px;
+  display: flex;
+  z-index: 1;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: "ibm-plex-sans", Helvetica Neue, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--detailText);
+  padding-right: 10px;
+  pointer-events: none;
+}
+
+.labelList {
+  display: flex;
+  overflow: auto;
+  height: 100%;
+}
+
+.labelList::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+.labelList::-webkit-scrollbar-thumb {
+  transition: 0.3s ease all;
+  border-color: transparent;
+  background-color: rgba(255, 255, 255, 0.1);
+  z-index: 40;
+}
+
+.labelItem {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  height: 100%;
+  flex-shrink: 0;
+  opacity: 0.53;
+  padding: 0 10px 0 20px;
+}
+
+.selectedLabelItem {
+  composes: labelItem;
+  opacity: 1;
+  background: var(--highlight);
+}
+
+.labelItem:hover {
+  background: var(--highlight);
+}
+
+.labelItem:first-child {
+  margin-left: 10px;
+}
+
+.labelItemCount {
+  margin-left: 12px;
+  color: var(--detailText);
+}
+
+.imageList {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 113px;
+}
+
+.labelItem:hover .icon {
+  visibility: visible;
+}
+
+.icon {
+  flex-shrink: 0;
+  height: 12px;
+  visibility: hidden;
+  margin-left: 15px;
+  fill: var(--detailText);
+}
+
+.icon:hover {
+  fill: var(--brightText);
+}
+
+.deleteIcon {
+  composes: icon;
+}

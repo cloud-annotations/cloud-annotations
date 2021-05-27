@@ -1,0 +1,548 @@
+.options {
+  display: flex;
+  font-size: 14px;
+  color: var(--secondaryText);
+  align-items: center;
+}
+
+.baseOption {
+  position: relative;
+  margin-top: 2px;
+  border: 1px solid transparent;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.option {
+  composes: baseOption;
+}
+
+.option:hover {
+  background-color: var(--highlight);
+  border-radius: 4px;
+}
+
+.optionOpen {
+  composes: baseOption;
+  background-color: var(--highlight);
+  border-radius: 4px 4px 0 0;
+}
+
+.optionCardBase {
+  position: absolute;
+  color: black;
+  z-index: 10;
+  top: calc(100% + 1px);
+  left: -1px;
+
+  padding: 6px 0;
+
+  color: var(--secondaryText);
+  background-color: var(--secondaryBg);
+  max-height: calc(80vh - 174px);
+  min-width: 185px;
+  max-width: 314px;
+  border-radius: 0 4px 4px 4px;
+  /* TODO overflow: auto; */
+  /* This won't let us scroll, but should be okay HERE ONLY */
+  overflow: visible;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23), 0 4px 8px 3px rgba(0, 0, 0, 0.11);
+  border: 1px solid var(--dropDownBorder);
+}
+
+.listDivider {
+  margin: 6px 0;
+  height: 1px;
+  background: var(--listDivider);
+}
+
+.optionCard {
+  composes: optionCardBase;
+  visibility: hidden;
+}
+
+.optionCardOpen {
+  composes: optionCardBase;
+  visibility: visible;
+}
+
+.tooltipper {
+  position: relative;
+  padding: 8px 14px;
+}
+
+.listItem {
+  position: relative;
+  /* padding: 8px 14px; */
+  padding: 8px 42px 8px 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.listItem:hover {
+  background-color: var(--highlight);
+}
+
+.disabled {
+  cursor: default;
+  pointer-events: none;
+  position: relative;
+  padding: 8px 42px 8px 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--disabledText);
+}
+
+.disabled .chevronRightIcon {
+  fill: var(--disabledText);
+}
+
+.popwrapperOpen {
+  position: relative;
+  background-color: var(--highlight);
+}
+
+.popwrapper {
+  position: relative;
+}
+
+.popout {
+  composes: optionCardBase;
+  visibility: hidden;
+  overflow: auto;
+  left: calc(100% - 2px);
+  top: 0px;
+  border-radius: 4px;
+}
+
+.popoutOpen {
+  composes: optionCardBase;
+  visibility: visible;
+  overflow: auto;
+  left: calc(100% - 2px);
+  top: 0px;
+  border-radius: 4px;
+}
+
+.popoutOpenTooltip {
+  composes: popoutOpen;
+  min-width: 288px;
+  top: -10px;
+}
+
+.tooltipH6 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.125rem;
+  letter-spacing: 0.16px;
+}
+
+.tooltipP {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.125rem;
+  letter-spacing: 0.16px;
+}
+
+.tooltipLink {
+  color: #78a9ff;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.125rem;
+  letter-spacing: 0.16px;
+  text-decoration: none;
+  outline: none;
+}
+
+.tooltipLink:hover {
+  text-decoration: underline;
+}
+
+.tooltipFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.chevronRightIcon {
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  right: 14px;
+  fill: var(--secondaryText);
+}
+
+.saved {
+  composes: baseOption;
+  margin-left: 14px;
+  color: var(--detailText);
+}
+
+.toggle {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.trainBase {
+  cursor: pointer;
+  margin-right: 20px;
+  display: flex;
+  height: 48px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.train {
+  composes: trainBase;
+  cursor: pointer;
+  background-color: #24a148;
+  color: white;
+}
+
+.trainDisabled {
+  composes: trainBase;
+  cursor: default;
+  background-color: var(--dissabledButton);
+  color: var(--dissabledButtonText);
+  pointer-events: none;
+}
+
+.train:hover {
+  background-color: #208a43;
+}
+
+.trainText {
+  margin: 0 60px 0 18px;
+}
+
+.notification {
+  margin-right: 20px;
+  display: flex;
+  height: 48px;
+  background-color: #393939;
+  border-left: 3px solid #f1c21b;
+  align-items: center;
+  font-size: 14px;
+}
+
+.notificationTitle {
+  font-weight: 600;
+  letter-spacing: 0.16px;
+  color: white;
+  margin: 0 16px;
+}
+
+.notificationAction {
+  color: #78a9ff;
+  padding: 6px 19px;
+  cursor: pointer;
+  margin-left: 25px;
+  text-decoration: none;
+}
+
+.notificationAction:hover {
+  text-decoration: underline;
+}
+
+.profile {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 -1px 0 0 #fff, 1px 0 0 0 #fff, -1px 0 0 0 #fff, 0 1px 0 0 #fff;
+}
+
+.profileWrapper {
+  margin: 0 16px 0 8px;
+}
+
+.upload {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+}
+
+.popupWrapperBase {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popupWrapperHidden {
+  composes: popupWrapperBase;
+  z-index: -1;
+  visibility: hidden;
+  opacity: 0;
+  background-color: transparent;
+
+  transition: background-color 0.72s cubic-bezier(0.4, 0.14, 1, 1),
+    opacity 0.24s cubic-bezier(0.4, 0.14, 1, 1),
+    z-index 0.72s cubic-bezier(0.4, 0.14, 1, 1),
+    visibility 0.24s cubic-bezier(0.4, 0.14, 1, 1);
+}
+
+.popupWrapper {
+  composes: popupWrapperBase;
+  z-index: 10000;
+  visibility: visible;
+  opacity: 1;
+  background-color: var(--popup-overlay);
+
+  transition: background-color 0.72s cubic-bezier(0, 0, 0.3, 1),
+    opacity 0.24s cubic-bezier(0, 0, 0.3, 1),
+    z-index 0.72s cubic-bezier(0, 0, 0.3, 1),
+    visibility 0.24s cubic-bezier(0, 0, 0.3, 1);
+}
+
+.popup {
+  background-color: var(--popup-bg);
+
+  width: 50%;
+  max-width: 768px;
+  max-height: 90%;
+  height: auto;
+
+  /* for small modal */
+  width: 42%;
+  max-height: 72%;
+}
+
+.popupWrapper .popup {
+  transition: transform 0.24s cubic-bezier(0, 0, 0.3, 1);
+  transform: translateZ(0);
+  transform-origin: top center;
+}
+
+.popupWrapperHidden .popup {
+  transform-origin: top center;
+  transform: translate3d(0, -24px, 0);
+  transition: transform 0.24s cubic-bezier(0.4, 0.14, 1, 1);
+}
+
+.contentWrapper {
+  margin: 16px 16px 48px 16px;
+  max-width: 75%;
+}
+
+.popupTitle {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 16px;
+  line-height: 26px;
+  letter-spacing: 0px;
+}
+
+.popupBody {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+}
+
+.popupWarning {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0.16px;
+  border: 1px solid #f1c21b;
+  margin-top: 16px;
+  display: flex;
+  /* align-items: center; */
+  padding: 6px 16px;
+  /* padding-left: 14px;
+  padding-right: 30px; */
+}
+
+.popupWarningBody {
+  /* margin: 16px 0;
+  padding: 8px 0; */
+
+  padding: 8px 0;
+  color: var(--secondaryText);
+}
+
+.popupWarningTitle {
+  font-weight: 600;
+  margin-top: -2px;
+  margin-bottom: 5.6px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--brightText);
+}
+
+.popupWarning svg {
+  fill: #f1c21b;
+  padding: 7px 0;
+  margin-right: 12px;
+  height: 20px;
+  box-sizing: content-box;
+  flex-shrink: 0;
+}
+
+.popupButtons {
+  height: 64px;
+  display: flex;
+}
+
+.popupButtonSecondary {
+  width: 50%;
+  color: white;
+  background-color: var(--secondaryButton);
+  padding: 16px;
+  cursor: pointer;
+}
+
+.popupButtonSecondary:hover {
+  background-color: var(--secondaryButtonHover);
+}
+
+.popupButtonSecondary:active {
+  box-shadow: inset 0 0 0 2px #fff;
+  transition: all 0.2s cubic-bezier(0.2, 0.2, 0.38, 0.9);
+}
+
+.popupButtonPrimary {
+  width: 50%;
+  color: white;
+  background-color: var(--blue);
+  padding: 16px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.popupButtonPrimaryDissabled {
+  composes: popupButtonPrimary;
+  color: var(--dissabledButtonText);
+  background-color: var(--dissabledButton);
+  pointer-events: none;
+}
+
+.popupButtonPrimary:hover {
+  background-color: var(--blue-hover);
+}
+
+.popupButtonPrimary:active {
+  box-shadow: inset 0 0 0 2px #fff;
+  transition: all 0.2s cubic-bezier(0.2, 0.2, 0.38, 0.9);
+}
+
+.popupFormItem {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.popupSelectLabelWrapper {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: initial;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.popupSelectLabel {
+  padding: 0;
+  border: 0;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.32px;
+  color: var(--form-text);
+  font-weight: 400;
+  display: inline-block;
+  vertical-align: initial;
+  margin: 0 0 8px;
+  line-height: 16px;
+}
+
+.popupSelectWrapper {
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.popupSelect {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.16px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  height: 40px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 0 16px 0 16px;
+  color: var(--form-text);
+  background-color: var(--form-bg);
+  border: none;
+  border-bottom: 1px solid #8d8d8d;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.popupSelectIcon {
+  fill: var(--select-icon);
+  position: absolute;
+  right: 16px;
+  pointer-events: none;
+}
+
+.downloaderHidden {
+  position: fixed;
+  z-index: -1;
+  visibility: hidden;
+  opacity: 0;
+  background-color: transparent;
+}
+
+.downloader {
+  z-index: 10000;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 245px;
+  height: 48px;
+
+  background-color: var(--secondaryBg);
+
+  border-radius: 4px;
+  overflow: auto;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23), 0 4px 8px 3px rgba(0, 0, 0, 0.11);
+  border: 1px solid var(--dropDownBorder);
+}
+
+.downloaderContentWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.downloaderText {
+  font-size: 14px;
+  color: var(--secondaryText);
+}
