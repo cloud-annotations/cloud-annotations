@@ -7,7 +7,7 @@ description: Drag & Drop examples of what you can do with Cloud Annotations.
 {% include titlebar.liquid active="demos" %}
 
 <main class="content markdown-body">
-  <h2 style="padding-top: 80px;">Classification demos</h2>
+  <h2 style="padding-top: 80px">Classification demos</h2>
   <ul>
     <li>
       <a
