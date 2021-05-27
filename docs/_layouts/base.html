@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: " en " }}">
+<html lang="en">
+  {%- include head.html -%}
 
-{%- include head.html -%}
-
-<body>
-  {{ content }}
-  <!-- Stops weird animation when loading...? -->
-  <script>$('body')</script>
-</body>
-
+  <body>
+    {{ content }}
+    <!-- Stops weird animation when loading...? -->
+    <script>
+      $("body");
+    </script>
+  </body>
 </html>

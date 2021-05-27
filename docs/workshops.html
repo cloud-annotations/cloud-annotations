@@ -13,7 +13,15 @@ description: Real-time object detection in the browser with TensorFlow.js - Clas
         <a class="tile_link" href="/workshops/object-detection">
           <div
             class="tile_image"
-            style="background: transparent url(/docs-assets/generated_images/object-thumb.png) no-repeat 0 0 / cover;  background: transparent -webkit-image-set(url(/docs-assets/generated_images/object-thumb.png) 1x, url(/docs-assets/generated_images@1x/object-thumb.png) 2x) no-repeat 0 0 / cover;"
+            style="
+              background: transparent
+                url(/docs-assets/generated_images/object-thumb.png) no-repeat 0
+                0 / cover;
+              background: transparent -webkit-image-set(
+                  url(/docs-assets/generated_images/object-thumb.png) 1x,
+                  url(/docs-assets/generated_images@1x/object-thumb.png) 2x
+                ) no-repeat 0 0 / cover;
+            "
           ></div>
           <h5 class="tile_type">Workshop</h5>
           <div class="tile_body">
@@ -50,7 +58,15 @@ description: Real-time object detection in the browser with TensorFlow.js - Clas
         <a class="tile_link" href="/workshops/classification">
           <div
             class="tile_image"
-            style="background: transparent url(/docs-assets/generated_images/class-thumb.png) no-repeat 0 0 / cover;  background: transparent -webkit-image-set(url(/docs-assets/generated_images/class-thumb.png) 1x, url(/docs-assets/generated_images@1x/class-thumb.png) 2x) no-repeat 0 0 / cover;"
+            style="
+              background: transparent
+                url(/docs-assets/generated_images/class-thumb.png) no-repeat 0 0 /
+                cover;
+              background: transparent -webkit-image-set(
+                  url(/docs-assets/generated_images/class-thumb.png) 1x,
+                  url(/docs-assets/generated_images@1x/class-thumb.png) 2x
+                ) no-repeat 0 0 / cover;
+            "
           ></div>
           <h5 class="tile_type">Workshop</h5>
           <div class="tile_body">

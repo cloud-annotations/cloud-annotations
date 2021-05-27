@@ -2638,7 +2638,7 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 body {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 16px;
   line-height: 1.5;
   background: #ffffff;
@@ -7978,7 +7978,6 @@ address {
   margin-left: 40px !important;
 }
 
-
 /* Custom CSS */
 #lesson p {
   max-width: 730px !important;
@@ -7994,29 +7993,29 @@ address {
 }
 
 .ok_column {
-    float: left;
-    width: 50%;
+  float: left;
+  width: 50%;
 }
 
 /* Clear floats after the columns */
 .ok_row:after {
-    content: "";
-    display: table;
-    clear: both;
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .card {
-    /* Add shadows to create the "card" effect */
-    margin: 1rem;
-    /* border-radius: 5px;
+  /* Add shadows to create the "card" effect */
+  margin: 1rem;
+  /* border-radius: 5px;
     border: 1px solid rgb(0,0,0,0.2); */
 }
 
 /* Add some padding inside the card container */
 .card_container {
-    padding: 2px 16px;
+  padding: 2px 16px;
 }
 
 .card_container p {
-  color: rgb(0,0,0,0.55)
+  color: rgb(0, 0, 0, 0.55);
 }
