@@ -1,0 +1,22 @@
+{
+  "name": "@iris/components",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "start": "tsc -w",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@iris/core": "^0.0.1",
+    "@iris/hooks": "^0.0.1",
+    "@iris/theme": "^0.0.1",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@storybook/addon-essentials": "6.0.27",
+    "@storybook/react": "6.0.27",
+    "@types/uuid": "^8.3.0"
+  }
+}

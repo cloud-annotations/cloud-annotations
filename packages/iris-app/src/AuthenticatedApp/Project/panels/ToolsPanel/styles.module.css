@@ -1,0 +1,35 @@
+.wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: var(--secondaryBg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toolBase {
+  margin: 4px;
+  height: 26px;
+  width: 34px;
+  border-radius: 4px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool {
+  composes: toolBase;
+}
+
+.toolActive {
+  composes: toolBase;
+  background-color: var(--blue);
+}
+
+.tool:hover {
+  background-color: var(--highlight);
+}

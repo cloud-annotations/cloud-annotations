@@ -1,0 +1,140 @@
+.wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: var(--secondaryBg);
+  overflow: auto;
+}
+
+.listItemBase {
+  display: flex;
+  align-items: center;
+  margin: 3px 0;
+  height: 44px;
+  width: 100%;
+  border-left: 2px solid transparent;
+}
+
+.listItemWrapper {
+  composes: listItemBase;
+}
+
+.listItemWrapper:hover {
+  background-color: var(--highlight);
+  border-left: 2px solid var(--blue);
+}
+
+.editing {
+  composes: listItemBase;
+  /* background-color: var(--activeHighlight); */
+}
+
+.editTextBase {
+  font-family: "ibm-plex-sans", Helvetica Neue, Arial, sans-serif;
+  font-weight: var(--default-font-weight);
+  font-size: var(--font-size-14);
+  color: var(--brightText);
+  height: 19px;
+  width: 100%;
+  min-width: 0px;
+  max-width: 160px;
+  padding-left: 4px;
+  border: none;
+  outline: none;
+}
+
+.editTextWrapper {
+  composes: editTextBase;
+  background-color: transparent;
+}
+
+.editing .editTextWrapper {
+  background-color: var(--textInput);
+  box-shadow: 0 0 0 2px var(--blue);
+}
+
+.thumbnailWrapper {
+  display: flex;
+  flex-shrink: 0;
+  margin: 0 14px 0 22px;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background-color: var(--highlight);
+  border-radius: 4px;
+}
+
+.editing .thumbnailWrapper {
+  background-color: transparent;
+}
+
+.listItemWrapper:hover .icon {
+  visibility: visible;
+}
+
+.icon {
+  flex-shrink: 0;
+  visibility: hidden;
+  fill: var(--detailText);
+}
+
+.icon:hover {
+  fill: var(--brightText);
+}
+
+.editIcon {
+  composes: icon;
+  margin-left: auto;
+  margin-right: 5px;
+}
+
+.deleteIcon {
+  composes: icon;
+  margin-left: auto;
+  margin-right: 17px;
+}
+
+.dropDownWrapper {
+  position: relative;
+  font-weight: var(--default-font-weight);
+  font-size: var(--font-size-14);
+}
+
+.cardBase {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: -2px;
+  z-index: 10;
+  position: absolute;
+  background-color: var(--secondaryBg);
+  max-height: 40vh;
+  width: 185px;
+  border-radius: 0 4px 4px 4px;
+  overflow: auto;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.23), 0 4px 8px 3px rgba(0, 0, 0, 0.11);
+  border: 1px solid var(--dropDownBorder);
+}
+
+.card {
+  composes: cardBase;
+  visibility: hidden;
+  display: none;
+}
+
+.cardOpen {
+  composes: cardBase;
+}
+
+.listItem {
+  padding: 10px 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.listItem:hover {
+  background-color: var(--highlight);
+}

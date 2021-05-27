@@ -1,3 +1,14 @@
 {
-  "python.pythonPath": "trainer/env/bin/python"
+  "python.pythonPath": "trainer/env/bin/python",
+  "workbench.editor.labelFormat": "short",
+  "[typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+  },
+  "[typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+  }
 }
