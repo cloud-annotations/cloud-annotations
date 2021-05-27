@@ -1,18 +1,24 @@
-// Taken from create-react-app and modified for webpack 5
+/*
+ * Copyright (c) 2020 International Business Machines
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-const address = require("address");
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
+
+const address = require("address");
 const chalk = require("chalk");
 const detect = require("detect-port-alt");
-const isRoot = require("is-root");
 const inquirer = require("inquirer");
+const isRoot = require("is-root");
 // const clearConsole = require("react-dev-utils/clearConsole");
+const forkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin");
 const formatWebpackMessages = require("react-dev-utils/formatWebpackMessages");
 const getProcessForPort = require("react-dev-utils/getProcessForPort");
 const typescriptFormatter = require("react-dev-utils/typescriptFormatter");
-const forkTsCheckerWebpackPlugin = require("react-dev-utils/ForkTsCheckerWebpackPlugin");
 
 const isInteractive = process.stdout.isTTY;
 
