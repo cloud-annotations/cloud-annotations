@@ -17,6 +17,11 @@ module.exports = {
     "plugin:jest-dom/recommended",
   ],
   plugins: ["import", "header"],
+  ignorePatterns: [
+    // CRA
+    "packages/iris-app/config/**/*.js",
+    "packages/iris-app/scripts/**/*.js",
+  ],
   rules: {
     "testing-library/prefer-screen-queries": ["warn"],
     "jest/no-large-snapshots": ["warn", { maxSize: 20 }],
@@ -84,7 +89,7 @@ module.exports = {
       },
     },
     {
-      files: ["stories/**"],
+      files: ["*.stories.{ts,tsx}"],
       rules: {
         "import/no-anonymous-default-export": ["off"],
         "import/no-extraneous-dependencies": "off",

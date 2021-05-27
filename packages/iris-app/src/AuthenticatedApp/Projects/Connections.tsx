@@ -21,33 +21,33 @@ import { mutate } from "swr";
 import { api, endpoint } from "@iris/api";
 import { showInputDialog } from "@iris/components";
 
-function CreateIcon(props: SvgIconProps) {
-  return (
-    <SvgIcon {...props} viewBox="0 0 32 32">
-      <polygon points="17,15 17,8 15,8 15,15 8,15 8,17 15,17 15,24 17,24 17,17 24,17 24,15 " />
-    </SvgIcon>
-  );
-}
+// function CreateIcon(props: SvgIconProps) {
+//   return (
+//     <SvgIcon {...props} viewBox="0 0 32 32">
+//       <polygon points="17,15 17,8 15,8 15,15 8,15 8,17 15,17 15,24 17,24 17,17 24,17 24,15 " />
+//     </SvgIcon>
+//   );
+// }
 
-function COSIcon(props: SvgIconProps) {
-  return (
-    <SvgIcon {...props} viewBox="0 0 32 32">
-      <path d="M28,20H26v2h2v6H4V22H14V20H4a2.0023,2.0023,0,0,0-2,2v6a2.0023,2.0023,0,0,0,2,2H28a2.0023,2.0023,0,0,0,2-2V22A2.0023,2.0023,0,0,0,28,20Z" />
-      <circle cx="7" cy="25" r="1" />
-      <path d="M30,8H22v6H16v8h8V16h6ZM22,20H18V16h4Zm6-6H24V10h4Z" />
-      <path d="M18,10H10V2h8ZM12,8h4V4H12Z" />
-    </SvgIcon>
-  );
-}
+// function COSIcon(props: SvgIconProps) {
+//   return (
+//     <SvgIcon {...props} viewBox="0 0 32 32">
+//       <path d="M28,20H26v2h2v6H4V22H14V20H4a2.0023,2.0023,0,0,0-2,2v6a2.0023,2.0023,0,0,0,2,2H28a2.0023,2.0023,0,0,0,2-2V22A2.0023,2.0023,0,0,0,28,20Z" />
+//       <circle cx="7" cy="25" r="1" />
+//       <path d="M30,8H22v6H16v8h8V16h6ZM22,20H18V16h4Zm6-6H24V10h4Z" />
+//       <path d="M18,10H10V2h8ZM12,8h4V4H12Z" />
+//     </SvgIcon>
+//   );
+// }
 
-function FileSystemIcon(props: SvgIconProps) {
-  return (
-    <SvgIcon {...props} viewBox="0 0 32 32">
-      <rect x="14" y="19" width="4" height="2" />
-      <path d="M6,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V2ZM24,28H8V16H24Zm0-14H8V10H24ZM8,8V4H24V8Z" />
-    </SvgIcon>
-  );
-}
+// function FileSystemIcon(props: SvgIconProps) {
+//   return (
+//     <SvgIcon {...props} viewBox="0 0 32 32">
+//       <rect x="14" y="19" width="4" height="2" />
+//       <path d="M6,2V28a2,2,0,0,0,2,2H24a2,2,0,0,0,2-2V2ZM24,28H8V16H24Zm0-14H8V10H24ZM8,8V4H24V8Z" />
+//     </SvgIcon>
+//   );
+// }
 
 function ConnectionIcon(props: SvgIconProps) {
   return (
