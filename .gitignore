@@ -26,6 +26,11 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-.jekyll-cache
+# Docs
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+vendor
 
 .env

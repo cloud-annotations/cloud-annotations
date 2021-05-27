@@ -138,14 +138,8 @@ function ListItem({ box, labels, imageID, image, imageDims }: ListItemProps) {
     // dispatch(highlightBox(undefined));
   }, []);
 
-  const {
-    cropWidth,
-    cropHeight,
-    xOffset,
-    yOffset,
-    fullWidth,
-    fullHeight,
-  } = calculateCrop(box.targets ?? [], imageDims);
+  const { cropWidth, cropHeight, xOffset, yOffset, fullWidth, fullHeight } =
+    calculateCrop(box.targets ?? [], imageDims);
 
   return (
     <div

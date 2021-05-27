@@ -3491,10 +3491,8 @@ select::-ms-expand {
   display: none;
 }
 select {
-  background-image: url(
-    data:image/svg+xml;base64,
-    PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM2MDc1ODAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNMjQsNSwxMiwxN2wyLjgzLDIuODNMMjQsMTAuNjZsOS4xNyw5LjE3TDM2LDE3WiIvPjxwYXRoIGQ9Ik0zMy4xNywyOC4xNywyNCwzNy4zNGwtOS4xNy05LjE3TDEyLDMxLDI0LDQzLDM2LDMxWiIvPjwvc3ZnPgo=
-  );
+  background-image: url(data:image/svg+xml;base64,
+    PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM2MDc1ODAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNMjQsNSwxMiwxN2wyLjgzLDIuODNMMjQsMTAuNjZsOS4xNyw5LjE3TDM2LDE3WiIvPjxwYXRoIGQ9Ik0zMy4xNywyOC4xNywyNCwzNy4zNGwtOS4xNy05LjE3TDEyLDMxLDI0LDQzLDM2LDMxWiIvPjwvc3ZnPgo=);
   background-size: 18px 18px;
   background-position: right 6px bottom 6px;
   background-repeat: no-repeat;

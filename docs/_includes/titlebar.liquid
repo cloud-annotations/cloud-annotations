@@ -6,22 +6,63 @@
 
   <nav class="titlebar_mainlinks">
     <a
-      class="Home_link__3O3aj {% if include.active == 'guides' %}activeLink{% endif %}"
+      class="
+        Home_link__3O3aj
+        {%
+        if
+        include.active
+        ==
+        'guides'
+        %}activeLink{%
+        endif
+        %}
+      "
       href="{{ '/docs' | relative_url }}"
       >Docs</a
     >
     <a
-      class="Home_link__3O3aj {% if include.active == 'workshops' %}activeLink{% endif %}"
+      class="
+        Home_link__3O3aj
+        {%
+        if
+        include.active
+        ==
+        'workshops'
+        %}activeLink{%
+        endif
+        %}
+      "
       href="{{ '/workshops' | relative_url }}"
       >Workshops</a
     >
     <a
-      class="Home_link__3O3aj {% if include.active == 'demos' %}activeLink{% endif %}"
+      class="
+        Home_link__3O3aj
+        {%
+        if
+        include.active
+        ==
+        'demos'
+        %}activeLink{%
+        endif
+        %}
+      "
       href="{{ '/demos' | relative_url }}"
       >Demos</a
     >
     <a
-      class="Home_link__3O3aj {% if include.active == 'sdks' %}activeLink{% endif %} lastLink"
+      class="
+        Home_link__3O3aj
+        {%
+        if
+        include.active
+        ==
+        'sdks'
+        %}activeLink{%
+        endif
+        %}
+        lastLink
+      "
       href="{{ '/sdks' | relative_url }}"
       >SDKs</a
     >
@@ -43,7 +84,7 @@
       height="20"
       viewBox="0 0 32 32"
       role="img"
-      style="will-change: transform;"
+      style="will-change: transform"
     >
       <path
         d="M26 28H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9v2H6v20h20v-9h2v9a2 2 0 0 1-2 2z"
@@ -67,7 +108,7 @@
       height="20"
       viewBox="0 0 32 32"
       role="img"
-      style="will-change: transform;"
+      style="will-change: transform"
     >
       <path
         d="M26 28H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9v2H6v20h20v-9h2v9a2 2 0 0 1-2 2z"

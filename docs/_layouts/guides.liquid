@@ -2,7 +2,7 @@
 layout: base-guides
 ---
 
-{% include titlebar.html active="guides" %}
+{% include titlebar.liquid active="guides" %}
 
 <main class="wrapper-stuff">
   <!--Nav Bar -->
@@ -25,9 +25,7 @@ layout: base-guides
     <h1 id="{{ item.title_overide | default: item.title | slugify }}">
       {{ item.title_overide | default: item.title }}
     </h1>
-    <section class="guide-section">
-      {{ item.content }}
-    </section>
+    <section class="guide-section">{{ item.content }}</section>
     {% endfor %}
   </article>
 </main>
