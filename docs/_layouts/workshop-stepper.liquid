@@ -49,20 +49,17 @@ layout: base
   {{page.collection}}
   <nav class="sidebar">
     <ol class="stepper">
-      {% for item in page_list %}
-        {% assign itemx = item | split: "&&" %}
-        {% assign url = itemx[0] %}
-        {% assign title = itemx[1] %}
-        {% if url == page.url %}
-          <li class="stepper-item active">
-            <a href="{{ url }}">{{ title }}</a>
-          </li>
-        {% else %}
-          <li class="stepper-item">
-            <a href="{{ url }}">{{ title }}</a>
-          </li>
-        {% endif %}
-      {% endfor %}
+      {% for item in page_list %} {% assign itemx = item | split: "&&" %} {%
+      assign url = itemx[0] %} {% assign title = itemx[1] %} {% if url ==
+      page.url %}
+      <li class="stepper-item active">
+        <a href="{{ url }}">{{ title }}</a>
+      </li>
+      {% else %}
+      <li class="stepper-item">
+        <a href="{{ url }}">{{ title }}</a>
+      </li>
+      {% endif %} {% endfor %}
     </ol>
   </nav>
 

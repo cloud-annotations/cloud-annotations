@@ -7,7 +7,7 @@ description: Download the Tools & Libraries to Get Started with Cloud Annotation
 {% include titlebar.liquid active="sdks" %}
 
 <main class="content markdown-body">
-  <ul style="padding-top: 80px">
+  <ul style="padding-top: 80px;">
     <li>
       <a href="https://github.com/cloud-annotations/object-detection-js"
         >JavaScript</a
