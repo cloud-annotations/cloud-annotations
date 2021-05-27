@@ -46,10 +46,11 @@ function ProjectController() {
 }
 
 function Project() {
-  const { projectID } = useParams<{
-    connectionID: string;
-    projectID: string;
-  }>();
+  const { projectID } =
+    useParams<{
+      connectionID: string;
+      projectID: string;
+    }>();
 
   useEffect(() => {
     store.dispatch(load(projectID));

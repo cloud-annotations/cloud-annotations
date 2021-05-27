@@ -29,6 +29,5 @@ const Template: Story<any> = (args) => <ImageTile {...args} />;
 export const Primary = Template.bind({});
 Primary.args = {
   state: "normal",
-  url:
-    "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg",
+  url: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg",
 };

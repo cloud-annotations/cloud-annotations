@@ -148,9 +148,8 @@ function LabelSelect({
   const classes = useStyles();
 
   const [labelOpen, setLabelOpen] = useState(false);
-  const [labelEditingValue, setEditingLabelValue] = useState<
-    string | undefined
-  >(undefined);
+  const [labelEditingValue, setEditingLabelValue] =
+    useState<string | undefined>(undefined);
 
   const inputRef = useRef<HTMLInputElement>(null);
 

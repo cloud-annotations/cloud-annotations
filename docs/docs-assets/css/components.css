@@ -2638,7 +2638,7 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 body {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
   font-size: 16px;
   line-height: 1.5;
   background: #ffffff;
@@ -3491,10 +3491,8 @@ select::-ms-expand {
   display: none;
 }
 select {
-  background-image: url(
-    data:image/svg+xml;base64,
-    PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM2MDc1ODAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNMjQsNSwxMiwxN2wyLjgzLDIuODNMMjQsMTAuNjZsOS4xNyw5LjE3TDM2LDE3WiIvPjxwYXRoIGQ9Ik0zMy4xNywyOC4xNywyNCwzNy4zNGwtOS4xNy05LjE3TDEyLDMxLDI0LDQzLDM2LDMxWiIvPjwvc3ZnPgo=
-  );
+  background-image: url(data:image/svg+xml;base64,
+    PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9IiM2MDc1ODAiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48cGF0aCBkPSJNMjQsNSwxMiwxN2wyLjgzLDIuODNMMjQsMTAuNjZsOS4xNyw5LjE3TDM2LDE3WiIvPjxwYXRoIGQ9Ik0zMy4xNywyOC4xNywyNCwzNy4zNGwtOS4xNy05LjE3TDEyLDMxLDI0LDQzLDM2LDMxWiIvPjwvc3ZnPgo=);
   background-size: 18px 18px;
   background-position: right 6px bottom 6px;
   background-repeat: no-repeat;
@@ -7978,7 +7976,6 @@ address {
   margin-left: 40px !important;
 }
 
-
 /* Custom CSS */
 #lesson p {
   max-width: 730px !important;
@@ -7994,29 +7991,29 @@ address {
 }
 
 .ok_column {
-    float: left;
-    width: 50%;
+  float: left;
+  width: 50%;
 }
 
 /* Clear floats after the columns */
 .ok_row:after {
-    content: "";
-    display: table;
-    clear: both;
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .card {
-    /* Add shadows to create the "card" effect */
-    margin: 1rem;
-    /* border-radius: 5px;
+  /* Add shadows to create the "card" effect */
+  margin: 1rem;
+  /* border-radius: 5px;
     border: 1px solid rgb(0,0,0,0.2); */
 }
 
 /* Add some padding inside the card container */
 .card_container {
-    padding: 2px 16px;
+  padding: 2px 16px;
 }
 
 .card_container p {
-  color: rgb(0,0,0,0.55)
+  color: rgb(0, 0, 0, 0.55);
 }

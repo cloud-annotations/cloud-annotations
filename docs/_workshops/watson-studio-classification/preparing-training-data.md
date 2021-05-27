@@ -48,13 +48,13 @@ However, before you start snapping, there's a few limitations to consider.
   <li>
     <p>
       <strong>Image Dimensions</strong> The model resizes the image to 300x300 pixels, so keep that in mind when training the model with images where one dimension is much longer than the other.
-      {% include responsive.html image="shrink_image.png" %}
+      {% include responsive.liquid image="shrink_image.png" %}
     </p>
   </li>
   <li>
     <p>
       <strong>Object Size</strong> The object of interests size should be at least ~5% of the image area to be detected. For example, on the resized 300x300 pixel image the object should cover ~60x60 pixels.
-      {% include responsive.html image="small_image.png" %}
+      {% include responsive.liquid image="small_image.png" %}
     </p>
   </li>
 </ul>
@@ -63,46 +63,46 @@ However, before you start snapping, there's a few limitations to consider.
 
 To use Cloud Annotations just navigate to [cloud.annotations.ai](https://cloud.annotations.ai) and click **Continue with IBM Cloud**.
 
-{% include responsive.html image="0a.CA_login.png" %}
+{% include responsive.liquid image="0a.CA_login.png" %}
 
 Once logged, if you don't have an object storage instance, it will prompt you to create one. Click **Get started** to be directed to IBM Cloud, where you can create a free object storage instance.
 
-{% include responsive.html image="1a.CA_no-object-storage.png" %}
+{% include responsive.liquid image="1a.CA_no-object-storage.png" %}
 
 You might need to re-login to IBM Cloud to create a resource.
 
-{% include responsive.html image="2a.IBM_login-to-create-resource.png" %}
+{% include responsive.liquid image="2a.IBM_login-to-create-resource.png" %}
 
 Choose a pricing plan and click **Create**, then **Confirm** on the following popup.
 
-{% include responsive.html image="3a.IBM_create-object-storage.png" %}
+{% include responsive.liquid image="3a.IBM_create-object-storage.png" %}
 
 Once your object storage instance has been provisioned, navigate back to [cloud.annotations.ai](https://cloud.annotations.ai) and refresh the page.
 
 The files and annotations will be stored in a **bucket**, You can create one by clicking **Start a new project**.
 
-{% include responsive.html image="4a.CA_create-bucket.png" %}
+{% include responsive.liquid image="4a.CA_create-bucket.png" %}
 
 Give the bucket a unique name.
 
-{% include responsive.html image="5.CA_name-bucket.png" %}
+{% include responsive.liquid image="5.CA_name-bucket.png" %}
 
 After your bucket is created and named, it will prompt you to choose an annotation type. Choose `Classification`.
 
-{% include responsive.html image="6a.CA_set-type-classification.png" %}
+{% include responsive.liquid image="6a.CA_set-type-classification.png" %}
 
 ## Labeling the data
 
 <!-- markdown list doesn't support include -->
 <ol>
   <li>Create the desired labels
-  {% include responsive.html image="create-label-button.png" %}
+  {% include responsive.liquid image="create-label-button.png" %}
   </li>
   <li>Upload a video or some images
-  {% include responsive.html image="upload-media-classification.png" %}
+  {% include responsive.liquid image="upload-media-classification.png" %}
   </li>
   <li>Select images then choose <code class="highlighter-rouge">Label</code> > <code class="highlighter-rouge">DESIRED_LABEL</code>
-  {% include responsive.html image="label-donuts.png" %}
+  {% include responsive.liquid image="label-donuts.png" %}
   </li>
 </ol>
 

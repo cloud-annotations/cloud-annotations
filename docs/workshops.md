@@ -4,7 +4,7 @@ title: Workshops
 description: Real-time object detection in the browser with TensorFlow.js - Classify images in an iOS app with Apple's Core ML
 ---
 
-{% include titlebar.html active="workshops" %}
+{% include titlebar.liquid active="workshops" %}
 
 <main>
   <div class="gridWrapper">
