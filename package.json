@@ -1,10 +1,10 @@
 {
-  "name": "iris",
+  "name": "cloud-annotations",
   "private": true,
   "workspaces": {
     "packages": [
       "packages/*",
-      "iris"
+      "server"
     ]
   },
   "scripts": {

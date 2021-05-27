@@ -13,8 +13,6 @@
     "alwaysStrict": true,
 
     /* Additional Checks */
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,

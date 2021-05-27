@@ -15,15 +15,13 @@ If something doesn’t work, please [file an issue](https://github.com/cloud-ann
 
 
 
-# Iris
-
 ## Development
 
 ### Setup
 
 ```sh
-git clone git@github.com:cloud-annotations/iris.git
-cd iris
+git clone git@github.com:cloud-annotations/cloud-annotations.git
+cd cloud-annotations
 
 make install
 ```

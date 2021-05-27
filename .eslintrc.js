@@ -2,20 +2,42 @@ const allExtensions = [".ts", ".tsx", ".d.ts", ".js", ".jsx"];
 
 module.exports = {
   root: true,
-  extends: "react-app",
-  plugins: ["import"],
+  extends: [
+    "react-app",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+    "plugin:testing-library/react",
+    "plugin:jest-dom/recommended",
+  ],
+  plugins: ["import", "header"],
   rules: {
+    "testing-library/prefer-screen-queries": ["warn"],
+    "jest/no-large-snapshots": ["warn", { maxSize: 20 }],
+    "jest/expect-expect": ["off"],
+    "jest/valid-title": ["off"],
+    "header/header": [
+      "warn",
+      "block",
+      [
+        "",
+        " * Copyright (c) 2020 International Business Machines",
+        " *",
+        " * This source code is licensed under the MIT license found in the",
+        " * LICENSE file in the root directory of this source tree.",
+        " ",
+      ],
+      2,
+    ],
     "import/newline-after-import": ["warn", { count: 1 }],
     "import/no-extraneous-dependencies": [
       "warn",
       {
         devDependencies: false,
         optionalDependencies: false,
-        peerDependencies: false,
+        peerDependencies: true,
         bundledDependencies: true,
       },
     ],
-    // "import/no-relative-parent-imports": "warn",
     "import/order": [
       "warn",
       {
@@ -49,7 +71,25 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["webpack.*.js"],
+      files: ["cypress/**"],
+      rules: {
+        "testing-library/prefer-screen-queries": "off",
+      },
+    },
+    {
+      files: ["stories/**"],
+      rules: {
+        "import/no-anonymous-default-export": ["off"],
+        "import/no-extraneous-dependencies": "off",
+      },
+    },
+    {
+      files: [
+        "webpack.*.js",
+        "*.test.{ts,tsx}",
+        "test-utils.{ts,tsx}",
+        "cypress/**",
+      ],
       rules: {
         "import/no-extraneous-dependencies": [
           "warn",
