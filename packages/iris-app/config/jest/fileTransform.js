@@ -1,7 +1,13 @@
-'use strict';
+/*
+ * Copyright (c) 2020 International Business Machines
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
-const path = require('path');
-const camelcase = require('camelcase');
+const path = require("path");
+
+const camelcase = require("camelcase");
 
 // This is a custom Jest transformer turning file imports into filenames.
 // http://facebook.github.io/jest/docs/en/webpack.html
