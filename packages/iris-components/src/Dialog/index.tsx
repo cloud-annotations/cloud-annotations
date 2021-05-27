@@ -10,6 +10,16 @@ import React from "react";
 export const DIALOG_ROOT_ID = "dialog-root";
 export const FILE_INPUT_ID = "file-input";
 
+// TODO handle thi better...
+declare module "@material-ui/core/styles/createPalette" {
+  interface Palette {
+    danger: Palette["primary"];
+  }
+  interface PaletteOptions {
+    danger: PaletteOptions["primary"];
+  }
+}
+
 function Dialog() {
   return (
     <React.Fragment>

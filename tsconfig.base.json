@@ -24,6 +24,7 @@
     "esModuleInterop": true,
 
     /* Advanced Options */
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "preserveWatchOutput": true
   }
 }
