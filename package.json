@@ -8,6 +8,8 @@
     ]
   },
   "scripts": {
+    "serve": "node server/dist/index.js",
+    "watch": "lerna run build --stream --ignore @iris/app && lerna run start --parallel --stream",
     "test": "is-ci \"test:coverage\" \"test:watch\"",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
