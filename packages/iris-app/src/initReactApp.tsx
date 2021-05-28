@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from "react";
+import React, { Suspense, lazy, useState } from "react";
 import ReactDOM from "react-dom";
 
 import { ThemeProvider, CssBaseline } from "@material-ui/core";
@@ -15,26 +15,47 @@ import { SWRConfig } from "swr";
 import { Dialog } from "@iris/components";
 import theme from "@iris/theme";
 
-import App from "./App";
-
 import "./index.css";
 
-const swrOptions = {
-  errorRetryCount: 3,
-};
+// This will result in `<link rel="prefetch" href="login-modal-chunk.js">` being
+// appended in the head of the page, which will instruct the browser to prefetch
+// in idle time the `authenticated-app-chunk.js` file.
+const AuthenticatedApp = lazy(
+  () => import(/* webpackPrefetch: true */ "./AuthenticatedApp")
+);
+const UnauthenticatedApp = lazy(() => import("./UnauthenticatedApp"));
+
+function App() {
+  const [loggedOut, setLoggedOut] = useState(false);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <SWRConfig
+          value={{
+            errorRetryCount: 3,
+            onError: (error, key) => {
+              if (error.status === 401) {
+                setLoggedOut(true);
+              }
+            },
+          }}
+        >
+          <Suspense fallback={<div>loading...</div>}>
+            {loggedOut ? <UnauthenticatedApp /> : <AuthenticatedApp />}
+          </Suspense>
+          <Dialog />
+        </SWRConfig>
+      </Router>
+    </ThemeProvider>
+  );
+}
 
 function initReactApp() {
   ReactDOM.render(
     <React.StrictMode>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <SWRConfig value={swrOptions}>
-            <App />
-            <Dialog />
-          </SWRConfig>
-        </Router>
-      </ThemeProvider>
+      <App />
     </React.StrictMode>,
     document.getElementById("root")
   );

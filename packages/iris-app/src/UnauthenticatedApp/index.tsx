@@ -8,7 +8,7 @@
 import React from "react";
 
 function UnauthenticatedApp() {
-  return <div>bloop</div>;
+  return <div>unauthenticated</div>;
 }
 
 export default UnauthenticatedApp;

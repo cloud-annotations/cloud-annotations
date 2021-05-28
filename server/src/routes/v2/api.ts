@@ -76,8 +76,8 @@ interface Provider {
 
 // TODO: pull from package.json
 let extensions = [
-  "../../plugins/iris-server-plugin-file-system",
-  // "../../plugins/iris-server-plugin-cos",
+  // "../../plugins/iris-server-plugin-file-system",
+  "../../plugins/iris-server-plugin-cos",
 ];
 let providers: { [key: string]: Provider } = {};
 const iris = {
@@ -98,6 +98,12 @@ for (const extension of extensions) {
 ////////////////////////////////////////////////////////////////////////////////
 
 const router = Router();
+
+router.use((req, res, next) => {
+  console.log("SHOULD DO AUTH HERE");
+  // res.sendStatus(401);
+  next();
+});
 
 function getProjectID(req: Request) {
   const { projectID } = req.query;

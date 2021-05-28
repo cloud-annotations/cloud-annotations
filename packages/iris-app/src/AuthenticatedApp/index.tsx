@@ -16,7 +16,7 @@ import NotFound from "./NotFound";
 import Project from "./Project";
 import Projects from "./Projects";
 
-function ProjectsMode() {
+const ProjectsMode: React.FC = () => {
   const { data: connections, error } = useSWR(
     endpoint("/connections"),
     fetcher
@@ -44,17 +44,17 @@ function ProjectsMode() {
       </Route>
     </Switch>
   );
-}
+};
 
-function SingleDocumentMode() {
+const SingleDocumentMode: React.FC = () => {
   return (
     <Switch>
       <Project />
     </Switch>
   );
-}
+};
 
-function Router() {
+const Router: React.FC = () => {
   const { data: mode, error } = useSWR(endpoint("/mode"), fetcher);
 
   if (mode && mode.singleDocument === false) {
@@ -66,10 +66,10 @@ function Router() {
   }
 
   if (error === undefined) {
-    return "loading...";
+    return <div>loading...</div>;
   }
 
-  return error;
-}
+  return null;
+};
 
 export default Router;
