@@ -13,10 +13,18 @@ To train a model you should already have labeled images in the [Cloud Annotation
 
 If something doesn’t work, please [file an issue][issues].
 
+<!-- Site -->
+
 [0]: https://cloud.annotations.ai
 [1]: https://cloud.annotations.ai/workshops/classification/
 [2]: https://cloud.annotations.ai/workshops/object-detection/
+
+<!-- GitHub -->
+
 [logo]: https://github.com/cloud-annotations/cloud-annotations/raw/master/docs/_workshops/object-detection/assets/main.png
 [actions]: https://github.com/cloud-annotations/cloud-annotations/actions/workflows/validate.yaml?query=branch%3Amaster
 [issues]: https://github.com/cloud-annotations/cloud-annotations/issues/new
+
+<!-- Badges -->
+
 [actions-badge]: https://img.shields.io/github/workflow/status/cloud-annotations/cloud-annotations/Validate?logo=github
