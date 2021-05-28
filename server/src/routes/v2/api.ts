@@ -9,6 +9,8 @@ import Busboy from "busboy";
 import { Request, Router } from "express";
 import fs from "fs-extra";
 
+import { authenticate } from "../../plugins/iris-server-plugin-ibm-auth";
+
 ////////////////////////////////////////////////////////////////////////////////
 interface IImage {
   id: string;
@@ -99,11 +101,7 @@ for (const extension of extensions) {
 
 const router = Router();
 
-router.use((req, res, next) => {
-  console.log("SHOULD DO AUTH HERE");
-  // res.sendStatus(401);
-  next();
-});
+router.use(authenticate);
 
 function getProjectID(req: Request) {
   const { projectID } = req.query;

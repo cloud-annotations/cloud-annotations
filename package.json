@@ -9,7 +9,7 @@
   },
   "scripts": {
     "docs": "cd docs && bundle exec jekyll serve",
-    "serve": "node server/dist/index.js",
+    "serve": "cd server && yarn serve",
     "watch": "lerna run build --stream --ignore @iris/app && lerna run start --parallel --stream",
     "test": "is-ci \"test:coverage\" \"test:watch\"",
     "test:coverage": "jest --coverage",
