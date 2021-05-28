@@ -21,7 +21,7 @@ If something doesn’t work, please [file an issue][issues].
 
 <!-- GitHub -->
 
-[logo]: https://github.com/cloud-annotations/cloud-annotations/raw/master/docs/_workshops/object-detection/assets/main.png
+[logo]: ./docs/docs-assets/_images/logo.png
 [actions]: https://github.com/cloud-annotations/cloud-annotations/actions/workflows/validate.yaml?query=branch%3Amaster
 [issues]: https://github.com/cloud-annotations/cloud-annotations/issues/new
 
