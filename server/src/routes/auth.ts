@@ -7,14 +7,17 @@
 
 import { Router } from "express";
 
+import {
+  authHandler,
+  authDoneHandler,
+} from "../plugins/iris-server-plugin-ibm-auth";
+
 const router = Router();
 
-router.get("/", (_req, res) => {
-  res.end();
-});
+router.get("/", authHandler);
 
-router.get("/done", (_req, res) => {
-  res.end();
-});
+// TODO: I need to register /done with IBM Cloud
+router.get("/done", authDoneHandler);
+router.get("/callback", authDoneHandler);
 
 export default router;

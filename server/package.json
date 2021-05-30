@@ -28,6 +28,7 @@
     "fs-extra": "^9.0.1",
     "helmet": "^4.1.1",
     "ibm-cos-sdk": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
     "pino-colada": "^2.1.0",
     "pino-http": "^5.3.0",
     "proper-lockfile": "^4.1.1",
@@ -42,5 +43,8 @@
     "webpack-cli": "^4.1.0",
     "webpack-merge": "^5.2.0",
     "webpack-node-externals": "^2.5.2"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.1"
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import express from "express";
+import jwt from "jsonwebtoken";
 
 interface OAuthSettings {
   authURL: string;
@@ -15,23 +16,12 @@ interface OAuthSettings {
   redirectURI: string;
 }
 
-console.log(process.env);
-
-const oauthSettings = {
-  github_app: {
-    authURL: "https://github.com/login/oauth/authorize",
-    tokenURL: "https://github.com/login/oauth/access_token",
-    // clientID:     os.Getenv("GH_APP_CLIENT_ID"),
-    // clientSecret: os.Getenv("GH_APP_CLIENT_SECRET"),
-    redirectURI: "https://appstatic.dev/auth/done",
-  },
-  ibm: {
-    authURL: "https://iam.cloud.ibm.com/identity/authorize",
-    tokenURL: "https://iam.cloud.ibm.com/identity/token",
-    clientID: process.env.IBM_LOGIN_CLIENT_ID,
-    clientSecret: process.env.IBM_LOGIN_CLIENT_SECRET,
-    redirectURI: process.env.IBM_REDIRECT_URI, // "https://appstatic.dev/auth/callback",
-  },
+const oauthSettings: OAuthSettings = {
+  authURL: "https://iam.cloud.ibm.com/identity/authorize",
+  tokenURL: "https://iam.cloud.ibm.com/identity/token",
+  clientID: process.env.IBM_LOGIN_CLIENT_ID ?? "",
+  clientSecret: process.env.IBM_LOGIN_CLIENT_SECRET ?? "",
+  redirectURI: process.env.IBM_REDIRECT_URI ?? "",
 };
 
 export function authenticate(
@@ -170,45 +160,28 @@ function refreshToken(refreshToken: string) {
   // return &authToken, nil
 }
 
-function buildRedirect(
-  provider: string,
-  login: boolean,
-  settings: OAuthSettings
-) {
-  // redirectURL, err := url.Parse(settings.authURL)
-  // if err != nil {
-  // 	return "", err
-  // }
-  // token, err := token.New(token.Claims{Provider: provider, Login: login})
-  // if err != nil {
-  // 	return "", err
-  // }
-  // query := redirectURL.Query()
-  // query.Set("client_id", settings.clientID)
-  // query.Set("redirect_uri", settings.redirectURI)
-  // query.Set("state", token)
-  // redirectURL.RawQuery = query.Encode()
-  // return redirectURL.String(), nil
+function buildRedirect({ authURL, clientID, redirectURI }: OAuthSettings) {
+  const token = jwt.sign({}, "TODO-real-secret", { expiresIn: "3m" });
+
+  return `${authURL}?client_id=${clientID}&redirect_uri=${redirectURI}&state=${token}`;
 }
 
-function authHandler(c: any) {
-  // provider := c.QueryParam("provider")
-  // // We don't need to crash for bad bool parsing.
-  // login, _ := strconv.ParseBool(c.QueryParam("login"))
-  // settings, ok := oauthSettings[provider]
-  // if !ok {
-  // 	return errors.New("Invalid provider")
-  // }
-  // redirectURL, err := buildRedirect(provider, login, settings)
-  // if err != nil {
-  // 	return err
-  // }
-  // return c.Redirect(http.StatusFound, redirectURL)
+export function authHandler(_req: express.Request, res: express.Response) {
+  const redirectURL = buildRedirect(oauthSettings);
+  return res.redirect(302, redirectURL);
 }
 
-function authDoneHandler(c: any) {
+export function authDoneHandler(req: express.Request, res: express.Response) {
+  const { code, state } = req.query;
+  console.log("code", code);
+  console.log("state", state);
   // code := c.QueryParam("code")
   // state := c.QueryParam("state")
+  // try {
+  //   var decoded = jwt.verify(token, 'wrong-secret');
+  // } catch(err) {
+  //   // err
+  // }
   // claims, err := token.Verify(state)
   // if err != nil {
   // 	return err
