@@ -79,7 +79,7 @@ function Header() {
       </div>
 
       <div className={classes.project}>
-        <div className={classes.projectName}>Iris</div>
+        <div className={classes.projectName}>Cloud Annotations</div>
       </div>
     </div>
   );

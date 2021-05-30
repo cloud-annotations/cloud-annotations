@@ -5,8 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import "dotenv/config";
+
 import http from "http";
 
+import cookieParser from "cookie-parser";
 import express from "express";
 
 import errorHandler from "./handlers/error";
@@ -15,6 +18,8 @@ import gzip from "./middleware/gzip";
 import logger from "./middleware/logger";
 import security from "./middleware/security";
 import multiuser from "./multiuser";
+import { authenticate } from "./plugins/iris-server-plugin-ibm-auth";
+import authRouter from "./routes/auth";
 import spaRouter from "./routes/spa";
 import v2Router from "./routes/v2";
 
@@ -30,8 +35,11 @@ multiuser(server);
 app.use(gzip());
 app.use(security());
 app.use(logger());
+app.use(cookieParser());
 app.use(express.json());
 
+app.use("/auth", authRouter);
+app.use("/api/v2", authenticate);
 app.use("/api/v2", v2Router);
 app.use("/", spaRouter);
 

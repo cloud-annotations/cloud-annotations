@@ -76,8 +76,8 @@ interface Provider {
 
 // TODO: pull from package.json
 let extensions = [
-  "../../plugins/iris-server-plugin-file-system",
-  // "../../plugins/iris-server-plugin-cos",
+  // "../plugins/iris-server-plugin-file-system",
+  "../plugins/iris-server-plugin-cos",
 ];
 let providers: { [key: string]: Provider } = {};
 const iris = {

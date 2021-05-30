@@ -7,12 +7,15 @@
 
 import { Router } from "express";
 
-import apiRouter from "./api";
-import authRouter from "./auth";
+import {
+  authHandler,
+  authCallbackHandler,
+} from "../plugins/iris-server-plugin-ibm-auth";
 
 const router = Router();
 
-router.use("/auth", authRouter);
-router.use("/", apiRouter);
+router.get("/", authHandler);
+
+router.get("/callback", authCallbackHandler);
 
 export default router;
