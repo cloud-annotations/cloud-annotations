@@ -5,24 +5,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { URLSearchParams } from "url";
+
+import axios from "axios";
 import express from "express";
 import jwt from "jsonwebtoken";
 
-interface OAuthSettings {
-  authURL: string;
-  tokenURL: string;
-  clientID: string;
-  clientSecret: string;
-  redirectURI: string;
+if (
+  process.env.IBM_LOGIN_CLIENT_ID === undefined ||
+  process.env.IBM_LOGIN_CLIENT_SECRET === undefined ||
+  process.env.IBM_REDIRECT_URI === undefined ||
+  process.env.JWT_SECRET === undefined
+) {
+  throw new Error("Missing env vars");
 }
 
-const oauthSettings: OAuthSettings = {
+const OAUTH_SETTINGS = {
   authURL: "https://iam.cloud.ibm.com/identity/authorize",
   tokenURL: "https://iam.cloud.ibm.com/identity/token",
-  clientID: process.env.IBM_LOGIN_CLIENT_ID ?? "",
-  clientSecret: process.env.IBM_LOGIN_CLIENT_SECRET ?? "",
-  redirectURI: process.env.IBM_REDIRECT_URI ?? "",
+  clientID: process.env.IBM_LOGIN_CLIENT_ID,
+  clientSecret: process.env.IBM_LOGIN_CLIENT_SECRET,
+  redirectURI: process.env.IBM_REDIRECT_URI,
 };
+
+const SECRET = process.env.JWT_SECRET;
 
 export function authenticate(
   req: express.Request,
@@ -33,6 +39,7 @@ export function authenticate(
 
   console.log("session middleware");
 
+  console.log(req.headers.cookie);
   // 		sess, err := session.Get("as-z3zs10n", c)
   // 		if err != nil {
   // 			return err
@@ -160,105 +167,70 @@ function refreshToken(refreshToken: string) {
   // return &authToken, nil
 }
 
-function buildRedirect({ authURL, clientID, redirectURI }: OAuthSettings) {
-  const token = jwt.sign({}, "TODO-real-secret", { expiresIn: "3m" });
-
-  return `${authURL}?client_id=${clientID}&redirect_uri=${redirectURI}&state=${token}`;
-}
-
 export function authHandler(_req: express.Request, res: express.Response) {
-  const redirectURL = buildRedirect(oauthSettings);
+  const { authURL, clientID, redirectURI } = OAUTH_SETTINGS;
+
+  const state = jwt.sign({}, SECRET, { expiresIn: "3m" });
+
+  const query = new URLSearchParams();
+  query.append("client_id", clientID);
+  query.append("redirect_uri", redirectURI);
+  query.append("state", state);
+
+  const redirectURL = `${authURL}?${query.toString()}`;
+
   return res.redirect(302, redirectURL);
 }
 
-export function authDoneHandler(req: express.Request, res: express.Response) {
+export async function authDoneHandler(
+  req: express.Request,
+  res: express.Response
+) {
   const { code, state } = req.query;
-  console.log("code", code);
-  console.log("state", state);
-  // code := c.QueryParam("code")
-  // state := c.QueryParam("state")
-  // try {
-  //   var decoded = jwt.verify(token, 'wrong-secret');
-  // } catch(err) {
-  //   // err
-  // }
-  // claims, err := token.Verify(state)
-  // if err != nil {
-  // 	return err
-  // }
-  // settings, ok := oauthSettings[claims.Provider]
-  // if !ok {
-  // 	return errors.New("Invalid provider")
-  // }
-  // form := url.Values{}
-  // form.Set("client_id", settings.clientID)
-  // form.Set("client_secret", settings.clientSecret)
-  // form.Set("grant_type", "authorization_code")
-  // form.Set("redirect_uri", settings.redirectURI)
-  // form.Set("state", state)
-  // form.Set("code", code)
-  // client := &http.Client{}
-  // req, err := http.NewRequest("POST", settings.tokenURL, bytes.NewBufferString(form.Encode()))
-  // req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-  // req.Header.Set("Accept", "application/json")
-  // if err != nil {
-  // 	return err
-  // }
-  // res, err := client.Do(req)
-  // if err != nil {
-  // 	return err
-  // }
-  // defer res.Body.Close()
-  // data, _ := ioutil.ReadAll(res.Body)
-  // fmt.Println(string(data))
-  // authToken := AuthToken{}
-  // err = json.Unmarshal(data, &authToken)
-  // if err != nil {
-  // 	return err
-  // }
-  // if claims.Login {
-  // 	sess, err := session.Get("as-z3zs10n", c)
-  // 	if err != nil {
-  // 		return err
-  // 	}
-  // 	sess.Options = &sessions.Options{
-  // 		Path:     "/",
-  // 		MaxAge:   3600, // 1 hour.
-  // 		HttpOnly: true,
-  // 		Secure:   os.Getenv("PRODUCTION") == "true",
-  // 		SameSite: http.SameSiteStrictMode,
-  // 	}
-  // 	sess.Values["expiration"] = authToken.Expiration
-  // 	sess.Values["access_token"] = authToken.AccessToken
-  // 	err = sess.Save(c.Request(), c.Response())
-  // 	if err != nil {
-  // 		return err
-  // 	}
-  // 	sess2, err := session.Get("as-rs3rf3r", c)
-  // 	if err != nil {
-  // 		return err
-  // 	}
-  // 	sess2.Options = &sessions.Options{
-  // 		Path:     "/",
-  // 		MaxAge:   86400 * 7, // 7 days.
-  // 		HttpOnly: true,
-  // 		Secure:   os.Getenv("PRODUCTION") == "true",
-  // 		SameSite: http.SameSiteStrictMode,
-  // 	}
-  // 	sess2.Values["refresh_token"] = authToken.RefreshToken
-  // 	err = sess2.Save(c.Request(), c.Response())
-  // 	if err != nil {
-  // 		return err
-  // 	}
-  // 	return c.Redirect(http.StatusFound, "/")
-  // }
-  // responseData := &Response{
-  // 	Token:    authToken.AccessToken,
-  // 	Provider: claims.Provider,
-  // }
-  // responseJSON, err := json.Marshal(responseData)
-  // if err != nil {
-  // 	return err
-  // }
-  // return c.Render(http.StatusOK, "authorized.html", string(responseJSON))
+  const { clientID, clientSecret, tokenURL, redirectURI } = OAUTH_SETTINGS;
+
+  if (typeof state !== "string" || typeof code !== "string") {
+    throw new Error("Missing query param");
+  }
+
+  jwt.verify(state, SECRET);
+
+  const form = new URLSearchParams();
+  form.append("client_id", clientID);
+  form.append("client_secret", clientSecret);
+  form.append("grant_type", "authorization_code");
+  form.append("redirect_uri", redirectURI);
+  form.append("state", state);
+  form.append("code", code);
+
+  const { data } = await axios.post(tokenURL, form, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json",
+    },
+  });
+
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const month = 30 * day;
+
+  const defaultCookieSettings: express.CookieOptions = {
+    path: "/",
+    httpOnly: true,
+    secure: true, // NOTE: This might not work for localhost on all browsers
+    sameSite: "strict",
+  };
+
+  res.cookie("access_token", data.access_token, {
+    maxAge: hour,
+    ...defaultCookieSettings,
+  });
+
+  res.cookie("refresh_token", data.refresh_token, {
+    maxAge: month,
+    ...defaultCookieSettings,
+  });
+
+  return res.redirect(302, "/");
 }
