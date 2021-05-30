@@ -30,141 +30,70 @@ const OAUTH_SETTINGS = {
 
 const SECRET = process.env.JWT_SECRET;
 
-export function authenticate(
+function setCookies(
+  res: express.Response,
+  {
+    access_token,
+    refresh_token,
+  }: { access_token: string; refresh_token: string }
+) {
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const month = 30 * day;
+
+  const defaultCookieSettings: express.CookieOptions = {
+    path: "/",
+    httpOnly: true,
+    secure: true, // NOTE: This might not work for localhost on all browsers
+    sameSite: "strict",
+  };
+
+  res.cookie("access_token", access_token, {
+    maxAge: hour,
+    ...defaultCookieSettings,
+  });
+
+  res.cookie("refresh_token", refresh_token, {
+    maxAge: month,
+    ...defaultCookieSettings,
+  });
+}
+
+export async function authenticate(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) {
-  // res.sendStatus(401);
+  // authorized
+  if (typeof req.cookies.access_token === "string") {
+    return next();
+  }
 
-  console.log("session middleware");
+  // refreshable
+  if (typeof req.cookies.refresh_token === "string") {
+    const { tokenURL, clientID, clientSecret } = OAUTH_SETTINGS;
 
-  console.log(req.headers.cookie);
-  // 		sess, err := session.Get("as-z3zs10n", c)
-  // 		if err != nil {
-  // 			return err
-  // 		}
-  // 		fmt.Println(sess.Values["expiration"])
-  // 		fmt.Println(sess.Values["access_token"])
+    const form = new URLSearchParams();
+    form.append("client_id", clientID);
+    form.append("client_secret", clientSecret);
+    form.append("grant_type", "refresh_token");
+    form.append("refresh_token", req.cookies.refresh_token);
 
-  // 		expiration, ok := sess.Values["expiration"].(int64)
-  // 		if !ok {
-  // 			return res.sendStatus(401);
-  // 		}
+    const { data } = await axios.post(tokenURL, form, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
+    });
 
-  // 		t1 := time.Unix(expiration, 0)
-  // 		diff := time.Until(t1)
-  // 		fmt.Println(diff)
+    setCookies(res, data);
 
-  // 		if diff.Minutes() < 5 {
-  // 			sess2, err := session.Get("as-rs3rf3r", c)
-  // 			if err != nil {
-  // 				return err
-  // 			}
-  // 			refreshToken, ok := sess2.Values["refresh_token"].(string)
-  // 			if !ok {
-  // 				return c.NoContent(http.StatusUnauthorized)
-  // 			}
+    return next();
+  }
 
-  // 			authToken, err := server.RefreshToken(refreshToken)
-  // 			if err != nil {
-  // 				return err
-  // 			}
-
-  // 			sess.Values["expiration"] = authToken.Expiration
-  // 			sess.Values["access_token"] = authToken.AccessToken
-  // 			err = sess.Save(c.Request(), c.Response())
-  // 			if err != nil {
-  // 				return err
-  // 			}
-
-  // 			sess2.Values["refresh_token"] = authToken.RefreshToken
-  // 			err = sess2.Save(c.Request(), c.Response())
-  // 			if err != nil {
-  // 				return err
-  // 			}
-  // 		}
-
-  next();
-}
-
-// func HandleTokens(next echo.HandlerFunc) echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		fmt.Println("session middleware")
-// 		sess, err := session.Get("as-z3zs10n", c)
-// 		if err != nil {
-// 			return err
-// 		}
-// 		fmt.Println(sess.Values["expiration"])
-// 		fmt.Println(sess.Values["access_token"])
-
-// 		expiration, ok := sess.Values["expiration"].(int64)
-// 		if !ok {
-// 			return c.NoContent(http.StatusUnauthorized)
-// 		}
-
-// 		t1 := time.Unix(expiration, 0)
-// 		diff := time.Until(t1)
-// 		fmt.Println(diff)
-
-// 		if diff.Minutes() < 5 {
-// 			sess2, err := session.Get("as-rs3rf3r", c)
-// 			if err != nil {
-// 				return err
-// 			}
-// 			refreshToken, ok := sess2.Values["refresh_token"].(string)
-// 			if !ok {
-// 				return c.NoContent(http.StatusUnauthorized)
-// 			}
-
-// 			authToken, err := server.RefreshToken(refreshToken)
-// 			if err != nil {
-// 				return err
-// 			}
-
-// 			sess.Values["expiration"] = authToken.Expiration
-// 			sess.Values["access_token"] = authToken.AccessToken
-// 			err = sess.Save(c.Request(), c.Response())
-// 			if err != nil {
-// 				return err
-// 			}
-
-// 			sess2.Values["refresh_token"] = authToken.RefreshToken
-// 			err = sess2.Save(c.Request(), c.Response())
-// 			if err != nil {
-// 				return err
-// 			}
-// 		}
-
-// 		return next(c)
-// 	}
-// }
-
-function refreshToken(refreshToken: string) {
-  // form := url.Values{}
-  // form.Set("client_id", oauthSettings["ibm"].clientID)
-  // form.Set("client_secret", oauthSettings["ibm"].clientSecret)
-  // form.Set("grant_type", "refresh_token")
-  // form.Set("refresh_token", refreshToken)
-  // client := &http.Client{}
-  // req, err := http.NewRequest("POST", oauthSettings["ibm"].tokenURL, bytes.NewBufferString(form.Encode()))
-  // req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-  // req.Header.Set("Accept", "application/json")
-  // if err != nil {
-  // 	return nil, err
-  // }
-  // res, err := client.Do(req)
-  // if err != nil {
-  // 	return nil, err
-  // }
-  // defer res.Body.Close()
-  // data, _ := ioutil.ReadAll(res.Body)
-  // authToken := AuthToken{}
-  // err = json.Unmarshal(data, &authToken)
-  // if err != nil {
-  // 	return nil, err
-  // }
-  // return &authToken, nil
+  // unauthorized
+  return res.sendStatus(401);
 }
 
 export function authHandler(_req: express.Request, res: express.Response) {
@@ -182,7 +111,7 @@ export function authHandler(_req: express.Request, res: express.Response) {
   return res.redirect(302, redirectURL);
 }
 
-export async function authDoneHandler(
+export async function authCallbackHandler(
   req: express.Request,
   res: express.Response
 ) {
@@ -210,27 +139,7 @@ export async function authDoneHandler(
     },
   });
 
-  const minute = 60 * 1000;
-  const hour = 60 * minute;
-  const day = 24 * hour;
-  const month = 30 * day;
-
-  const defaultCookieSettings: express.CookieOptions = {
-    path: "/",
-    httpOnly: true,
-    secure: true, // NOTE: This might not work for localhost on all browsers
-    sameSite: "strict",
-  };
-
-  res.cookie("access_token", data.access_token, {
-    maxAge: hour,
-    ...defaultCookieSettings,
-  });
-
-  res.cookie("refresh_token", data.refresh_token, {
-    maxAge: month,
-    ...defaultCookieSettings,
-  });
+  setCookies(res, data);
 
   return res.redirect(302, "/");
 }

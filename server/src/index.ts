@@ -9,6 +9,7 @@ import "dotenv/config";
 
 import http from "http";
 
+import cookieParser from "cookie-parser";
 import express from "express";
 
 import errorHandler from "./handlers/error";
@@ -34,6 +35,7 @@ multiuser(server);
 app.use(gzip());
 app.use(security());
 app.use(logger());
+app.use(cookieParser());
 app.use(express.json());
 
 app.use("/auth", authRouter);
