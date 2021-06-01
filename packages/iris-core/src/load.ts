@@ -9,8 +9,17 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { api } from "@iris/api";
 
-export const load = createAsyncThunk("load", async (projectID: string) => {
-  return await api.get("/project", {
-    query: { projectID },
-  });
-});
+interface Options {
+  projectID: string;
+  connectionID: string;
+  providerID: string;
+}
+
+export const load = createAsyncThunk(
+  "load",
+  async ({ projectID, connectionID, providerID }: Options) => {
+    return await api.get("/project", {
+      query: { projectID, connectionID, providerID },
+    });
+  }
+);

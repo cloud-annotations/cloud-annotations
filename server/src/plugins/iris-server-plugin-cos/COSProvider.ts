@@ -7,9 +7,14 @@
 
 import COS from "ibm-cos-sdk";
 
-interface IOptions {
+interface Options {
+  projectID: string;
+  connectionID: string;
+  accessToken: string;
+}
+
+interface SaveImageOptions {
   name: string;
-  projectID?: string;
 }
 
 const connections = [
@@ -33,26 +38,30 @@ const connections = [
   },
 ];
 
+function createClient({
+  connectionID,
+  accessToken,
+}: {
+  connectionID: string;
+  accessToken: string;
+}) {
+  const connection = connections.find((c) => c.id === connectionID);
+
+  return new COS.S3({
+    endpoint: "https://s3.us.cloud-object-storage.appdomain.cloud",
+    serviceInstanceId: connection?.credentials.resource_instance_id,
+    // @ts-ignore - undocumented api
+    tokenManager: { getToken: () => ({ accessToken }) },
+  });
+}
+
 class COSProvider {
   async getConnections() {
     return Promise.resolve(connections);
   }
 
-  async getProjects({
-    connectionID,
-    accessToken,
-  }: {
-    connectionID: string;
-    accessToken: string;
-  }) {
-    const connection = connections.find((c) => c.id === connectionID);
-
-    const cosClient = new COS.S3({
-      endpoint: "https://s3.us.cloud-object-storage.appdomain.cloud",
-      serviceInstanceId: connection?.credentials.resource_instance_id,
-      // @ts-ignore - undocumented api
-      tokenManager: { getToken: () => ({ accessToken }) },
-    });
+  async getProjects({ connectionID, accessToken }: Omit<Options, "projectID">) {
+    const cosClient = createClient({ connectionID, accessToken });
 
     const list = await cosClient.listBucketsExtended().promise();
 
@@ -63,15 +72,67 @@ class COSProvider {
     }));
   }
 
-  async getProject(options: Pick<IOptions, "projectID">) {}
+  async getProject({ projectID, connectionID, accessToken }: Options) {
+    const cosClient = createClient({ connectionID, accessToken });
 
-  async persist(annotations: any, options: Pick<IOptions, "projectID">) {}
+    await cosClient.listBucketsExtended().promise();
 
-  async getImage(imageID: string, options: Pick<IOptions, "projectID">) {}
+    const project = {
+      id: projectID,
+      name: projectID,
+      created: new Date(),
+      version: "v2",
+      labels: {},
+      annotations: {},
+      images: {},
+    };
 
-  async deleteImage(imageID: string, options: Pick<IOptions, "projectID">) {}
+    try {
+      const annotationsString = await cosClient
+        .getObject({ Bucket: projectID, Key: "_annotations.json" })
+        .promise();
 
-  async saveImage(file: NodeJS.ReadableStream, options: IOptions) {}
+      console.log(annotationsString);
+
+      // TODO: check version
+      // const { labels, annotations, images } = JSON.parse(annotationsString);
+      // project.labels = labels;
+      // project.annotations = annotations;
+      // project.images = images;
+    } catch {
+      // we don't care if there's no annotations file.
+    }
+
+    return project;
+  }
+
+  async persist(
+    annotations: any,
+    { projectID, connectionID, accessToken }: Options
+  ) {
+    const cosClient = createClient({ connectionID, accessToken });
+  }
+
+  async getImage(
+    imageID: string,
+    { projectID, connectionID, accessToken }: Options
+  ) {
+    const cosClient = createClient({ connectionID, accessToken });
+  }
+
+  async deleteImage(
+    imageID: string,
+    { projectID, connectionID, accessToken }: Options
+  ) {
+    const cosClient = createClient({ connectionID, accessToken });
+  }
+
+  async saveImage(
+    file: NodeJS.ReadableStream,
+    { name, projectID, connectionID, accessToken }: Options & SaveImageOptions
+  ) {
+    const cosClient = createClient({ connectionID, accessToken });
+  }
 }
 
 export default COSProvider;

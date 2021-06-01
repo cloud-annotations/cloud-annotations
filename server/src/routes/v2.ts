@@ -64,9 +64,11 @@ interface Provider {
     connectionID: string;
     name: string;
   }) => any;
-  getProject: (
-    options: Pick<IOptions, "projectID">
-  ) => Promise<IProjectDetails>;
+  getProject: (options: {
+    projectID?: string;
+    connectionID: string;
+    accessToken: string;
+  }) => Promise<IProjectDetails>;
   persist: (annotations: any, options: Pick<IOptions, "projectID">) => any;
   getImage: (
     imageID: string,
@@ -199,8 +201,16 @@ router.post("/projects", async (req, res, next) => {
  */
 router.get("/project", async (req, res, next) => {
   try {
+    const providerID = requiredQuery(req, "providerID");
     const projectID = getProjectID(req);
-    const project = await providers["file-system"].getProject({ projectID });
+    const connectionID = requiredQuery(req, "connectionID");
+
+    const project = await providers[providerID].getProject({
+      projectID,
+      connectionID,
+      accessToken: req.cookies.access_token,
+    });
+
     res.json(project);
   } catch (e) {
     next(e);
