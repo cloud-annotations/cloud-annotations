@@ -9726,15 +9726,14 @@ hyphenate-style-name@^1.0.3:
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"
   integrity sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==
 
-ibm-cos-sdk@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/ibm-cos-sdk/-/ibm-cos-sdk-1.8.0.tgz#ed324fd1a0dea5e94bf29ea396ed5df3e9d7b24f"
-  integrity sha512-1RTs4iuOiJ0zGDG7jiizzH8CJzLXsHimW5sITFIGDKBQJ2L0O850dWUR0NiMX4qJe97hLSMULinG/2Uf5U05bw==
+ibm-cos-sdk@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/ibm-cos-sdk/-/ibm-cos-sdk-1.10.0.tgz#81b9805b9305d4af9614590da532fb1980433307"
+  integrity sha512-KfkrAZZlaXcLV0eTQopySG9TdcM4J+h87I/mLJSY2uySTgG4DEJKDV86l8JFauya9T/E1tonDrX4BBr661VzMw==
   dependencies:
     buffer "^4.9.1"
     crypto-browserify "^3.12.0"
     jmespath "^0.15.0"
-    lodash "^4.17.15"
     url "^0.10.3"
     uuid "^3.3.2"
     xml2js "^0.4.19"

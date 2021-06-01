@@ -52,8 +52,10 @@ interface Provider {
   getConnections: () => Promise<IConnection[]>;
   getProjects: ({
     connectionID,
+    accessToken,
   }: {
     connectionID: string;
+    accessToken: string;
   }) => Promise<IProject[]>;
   createProject: ({
     connectionID,
@@ -165,7 +167,10 @@ router.get("/projects", async (req, res, next) => {
     ensureProjectMode();
     const providerID = requiredQuery(req, "providerID");
     const connectionID = requiredQuery(req, "connectionID");
-    const projects = await providers[providerID].getProjects({ connectionID });
+    const projects = await providers[providerID].getProjects({
+      connectionID,
+      accessToken: req.cookies.access_token,
+    });
     res.json(projects);
   } catch (e) {
     next(e);
