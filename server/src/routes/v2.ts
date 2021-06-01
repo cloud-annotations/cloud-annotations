@@ -7,83 +7,17 @@
 
 import Busboy from "busboy";
 import { Request, Router } from "express";
-import fs from "fs-extra";
+
+import { Connection, ProjectProvider } from "../plugins/project-provider";
 
 ////////////////////////////////////////////////////////////////////////////////
-interface IImage {
-  id: string;
-  date: string;
-}
-
-interface IProject {
-  id: string;
-  name: string;
-  created?: Date;
-  modified?: Date;
-  opened?: Date;
-  labels?: string[];
-  images?: number;
-}
-
-interface IProjectDetails {
-  id?: string;
-  name: string;
-  created: Date;
-  annotations: {
-    version: string;
-    labels: string[];
-    annotations: {}; // TODO
-    images: IImage[];
-  };
-}
-
-interface IOptions {
-  name: string;
-  projectID?: string;
-}
-
-interface IConnection {
-  id: string;
-  name: string;
-  icon?: string;
-}
-
-interface Provider {
-  getConnections: () => Promise<IConnection[]>;
-  getProjects: ({
-    connectionID,
-    accessToken,
-  }: {
-    connectionID: string;
-    accessToken: string;
-  }) => Promise<IProject[]>;
-  createProject: ({
-    connectionID,
-    name,
-  }: {
-    connectionID: string;
-    name: string;
-  }) => any;
-  getProject: (options: {
-    projectID?: string;
-    connectionID: string;
-    accessToken: string;
-  }) => Promise<IProjectDetails>;
-  persist: (annotations: any, options: Pick<IOptions, "projectID">) => any;
-  getImage: (
-    imageID: string,
-    options: Pick<IOptions, "projectID">
-  ) => Promise<fs.ReadStream>;
-  deleteImage: (imageID: string, options: Pick<IOptions, "projectID">) => any;
-  saveImage: (file: NodeJS.ReadableStream, options: IOptions) => any;
-}
-
-// TODO: pull from package.json
+// Bootstrap plugins - TODO: pull from package.json
+////////////////////////////////////////////////////////////////////////////////
 let extensions = [
   // "../plugins/iris-server-plugin-file-system",
   "../plugins/iris-server-plugin-cos",
 ];
-let providers: { [key: string]: Provider } = {};
+let providers: { [key: string]: ProjectProvider } = {};
 const iris = {
   providers: {
     register: ({ id, provider }: any) => {
@@ -150,7 +84,7 @@ router.get("/mode", async (_req, res) => {
 router.get("/connections", async (_req, res, next) => {
   try {
     ensureProjectMode();
-    let connections: IConnection[] = [];
+    let connections: Connection[] = [];
     for (const provider of Object.values(providers)) {
       const c = await provider.getConnections();
       connections.push(...c);
@@ -188,6 +122,7 @@ router.post("/projects", async (req, res, next) => {
     const providerID = requiredQuery(req, "providerID");
     const connectionID = requiredQuery(req, "connectionID");
     const name = requiredQuery(req, "name");
+
     await providers[providerID].createProject({ connectionID, name });
     res.sendStatus(200);
   } catch (e) {

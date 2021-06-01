@@ -10,6 +10,8 @@ import path from "path";
 import fs from "fs-extra";
 import lockfile from "proper-lockfile";
 
+import { ProjectProvider } from "../project-provider";
+
 interface Label {
   id: string;
   name: string;
@@ -50,7 +52,7 @@ interface IOptions {
 
 const ignoreRegex = /^lost\+found$/;
 
-class FileSystemProvider {
+class FileSystemProvider implements ProjectProvider {
   private _dir(projectID: string | undefined) {
     if (projectID) {
       return path.join(process.cwd(), projectID);

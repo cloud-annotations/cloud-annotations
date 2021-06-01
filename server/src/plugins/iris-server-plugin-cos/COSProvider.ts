@@ -7,6 +7,8 @@
 
 import COS from "ibm-cos-sdk";
 
+import { ProjectProvider } from "../project-provider";
+
 interface Options {
   projectID: string;
   connectionID: string;
@@ -22,7 +24,7 @@ const connections = [
     id: "718b4cc1-1c5d-400b-b056-08244db75225",
     providerID: "cos",
     name: "bee-travels",
-    credentials: {
+    extra: {
       resource_instance_id:
         "crn:v1:bluemix:public:cloud-object-storage:global:a/9b13b857a32341b7167255de717172f5:718b4cc1-1c5d-400b-b056-08244db75225::",
     },
@@ -31,7 +33,7 @@ const connections = [
     id: "48b970b2-c8c8-4b4e-bb0c-85b6338cd295",
     providerID: "cos",
     name: "Cloud Object Storage-nick",
-    credentials: {
+    extra: {
       resource_instance_id:
         "crn:v1:bluemix:public:cloud-object-storage:global:a/9b13b857a32341b7167255de717172f5:48b970b2-c8c8-4b4e-bb0c-85b6338cd295::",
     },
@@ -49,13 +51,13 @@ function createClient({
 
   return new COS.S3({
     endpoint: "https://s3.us.cloud-object-storage.appdomain.cloud",
-    serviceInstanceId: connection?.credentials.resource_instance_id,
+    serviceInstanceId: connection?.extra.resource_instance_id,
     // @ts-ignore - undocumented api
     tokenManager: { getToken: () => ({ accessToken }) },
   });
 }
 
-class COSProvider {
+class COSProvider implements ProjectProvider {
   async getConnections() {
     return Promise.resolve(connections);
   }
@@ -65,8 +67,13 @@ class COSProvider {
 
     const list = await cosClient.listBucketsExtended().promise();
 
+    if (list.Buckets === undefined) {
+      return [];
+    }
+
     return list.Buckets?.map((b) => ({
-      name: b.Name,
+      id: b.Name!,
+      name: b.Name!,
       modified: b.CreationDate,
       labels: [],
     }));
