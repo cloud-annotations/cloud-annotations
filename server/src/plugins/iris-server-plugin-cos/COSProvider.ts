@@ -5,19 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+import { Readable } from "stream";
+
 import COS from "ibm-cos-sdk";
 
-import { ProjectProvider } from "../project-provider";
-
-interface Options {
-  projectID: string;
-  connectionID: string;
-  accessToken: string;
-}
-
-interface SaveImageOptions {
-  name: string;
-}
+import { ProjectProvider, Options } from "../project-provider";
 
 const connections = [
   {
@@ -62,7 +54,9 @@ class COSProvider implements ProjectProvider {
     return Promise.resolve(connections);
   }
 
-  async getProjects({ connectionID, accessToken }: Omit<Options, "projectID">) {
+  async createProject(name: string, { connectionID, accessToken }: Options) {}
+
+  async getProjects({ connectionID, accessToken }: Options) {
     const cosClient = createClient({ connectionID, accessToken });
 
     const list = await cosClient.listBucketsExtended().promise();
@@ -79,7 +73,7 @@ class COSProvider implements ProjectProvider {
     }));
   }
 
-  async getProject({ projectID, connectionID, accessToken }: Options) {
+  async getProject(projectID: string, { connectionID, accessToken }: Options) {
     const cosClient = createClient({ connectionID, accessToken });
 
     await cosClient.listBucketsExtended().promise();
@@ -114,32 +108,32 @@ class COSProvider implements ProjectProvider {
   }
 
   async persist(
+    projectID: string,
     annotations: any,
-    { projectID, connectionID, accessToken }: Options
-  ) {
-    const cosClient = createClient({ connectionID, accessToken });
-  }
+    { connectionID, accessToken }: Options
+  ) {}
 
   async getImage(
+    projectID: string,
     imageID: string,
-    { projectID, connectionID, accessToken }: Options
+    { connectionID, accessToken }: Options
   ) {
-    const cosClient = createClient({ connectionID, accessToken });
+    return new Readable({
+      read() {},
+    });
   }
 
   async deleteImage(
+    projectID: string,
     imageID: string,
-    { projectID, connectionID, accessToken }: Options
-  ) {
-    const cosClient = createClient({ connectionID, accessToken });
-  }
+    { connectionID, accessToken }: Options
+  ) {}
 
   async saveImage(
-    file: NodeJS.ReadableStream,
-    { name, projectID, connectionID, accessToken }: Options & SaveImageOptions
-  ) {
-    const cosClient = createClient({ connectionID, accessToken });
-  }
+    projectID: string,
+    file: { name: string; stream: NodeJS.ReadableStream },
+    { connectionID, accessToken }: Options
+  ) {}
 }
 
 export default COSProvider;

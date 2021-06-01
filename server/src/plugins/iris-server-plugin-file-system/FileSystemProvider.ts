@@ -10,45 +10,7 @@ import path from "path";
 import fs from "fs-extra";
 import lockfile from "proper-lockfile";
 
-import { ProjectProvider } from "../project-provider";
-
-interface Label {
-  id: string;
-  name: string;
-}
-
-interface Image {
-  id: string;
-  date: string;
-  annotations: string[];
-}
-
-interface Annotation {
-  id: string;
-  label: string;
-  tool?: string;
-  targets?: {
-    id: string;
-    x: number;
-    y: number;
-  }[];
-  [key: string]: any; // plugins can specify extra keys.
-}
-
-interface IProject {
-  id?: string;
-  name: string;
-  created: Date;
-  version: string;
-  labels: { [key: string]: Label };
-  annotations: { [key: string]: Annotation };
-  images: { [key: string]: Image };
-}
-
-interface IOptions {
-  name: string;
-  projectID?: string;
-}
+import { ProjectDetails, ProjectProvider } from "../project-provider";
 
 const ignoreRegex = /^lost\+found$/;
 
@@ -128,10 +90,8 @@ class FileSystemProvider implements ProjectProvider {
     );
   }
 
-  async getProject(options: Pick<IOptions, "projectID">) {
-    const { projectID } = options;
-
-    const project: IProject = {
+  async getProject(projectID: string) {
+    const project: ProjectDetails = {
       id: projectID,
       name: projectID ?? path.basename(process.cwd()),
       created: new Date(),
@@ -173,9 +133,7 @@ class FileSystemProvider implements ProjectProvider {
     return project;
   }
 
-  async persist(annotations: any, options: Pick<IOptions, "projectID">) {
-    const { projectID } = options;
-
+  async persist(projectID: string, annotations: any) {
     const output = path.join(this._dir(projectID), "_annotations.json");
 
     // TODO: This probably isn't safe:
@@ -184,9 +142,7 @@ class FileSystemProvider implements ProjectProvider {
     await fs.writeFile(output, JSON.stringify(annotations), "utf-8");
   }
 
-  async getImage(imageID: string, options: Pick<IOptions, "projectID">) {
-    const { projectID } = options;
-
+  async getImage(projectID: string, imageID: string) {
     const output = path.join(this._dir(projectID), imageID);
 
     const isLocked = await lockfile.check(output);
@@ -197,20 +153,21 @@ class FileSystemProvider implements ProjectProvider {
     throw new Error("file is locked");
   }
 
-  async deleteImage(imageID: string, options: Pick<IOptions, "projectID">) {
-    const { projectID } = options;
+  async deleteImage(projectID: string, imageID: string) {
     const output = path.join(this._dir(projectID), imageID);
     await fs.unlink(output);
   }
 
-  async saveImage(file: NodeJS.ReadableStream, options: IOptions) {
-    const { projectID, name } = options;
-    const output = path.join(this._dir(projectID), name);
+  async saveImage(
+    projectID: string,
+    file: { name: string; stream: NodeJS.ReadableStream }
+  ) {
+    const output = path.join(this._dir(projectID), file.name);
 
     await fs.ensureFile(output);
     const release = await lockfile.lock(output);
     const writeStream = fs.createWriteStream(output);
-    file.pipe(writeStream);
+    file.stream.pipe(writeStream);
     return new Promise<void>((resolve, reject) => {
       writeStream.on("error", async (e) => {
         await release();

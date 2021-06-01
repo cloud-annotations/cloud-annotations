@@ -6,7 +6,6 @@
  */
 
 export interface Options {
-  projectID: string;
   connectionID: string;
   accessToken: string;
 }
@@ -33,34 +32,57 @@ export interface ProjectDetails {
   id?: string;
   name: string;
   created: Date;
-  annotations: {
-    version: string;
-    labels: string[];
-    annotations: {}; // TODO
-    images: Image[];
-  };
+  version: string;
+  labels: { [key: string]: Label };
+  annotations: { [key: string]: Annotation };
+  images: { [key: string]: Image };
+}
+
+interface Label {
+  id: string;
+  name: string;
+}
+
+interface Annotation {
+  id: string;
+  label: string;
+  tool?: string;
+  targets?: {
+    id: string;
+    x: number;
+    y: number;
+  }[];
+  [key: string]: any; // plugins can specify extra keys.
 }
 
 interface Image {
   id: string;
   date: string;
+  annotations: string[];
 }
 
 export interface ProjectProvider {
   getConnections(): Promise<Connection[]>;
 
-  getProjects(o: Omit<Options, "projectID">): Promise<Project[]>;
+  getProjects(o: Options): Promise<Project[]>;
 
-  getProject(o: Options): Promise<void>;
+  createProject(name: string, o: Options): Promise<void>;
 
-  persist(annotations: any, o: Options): Promise<void>;
+  getProject(projectID: string, o: Options): Promise<ProjectDetails>;
 
-  getImage(imageID: string, o: Options): Promise<void>;
+  persist(projectID: string, annotations: any, o: Options): Promise<void>;
 
-  deleteImage(imageID: string, o: Options): Promise<void>;
+  getImage(
+    projectID: string,
+    imageID: string,
+    o: Options
+  ): Promise<NodeJS.ReadableStream>;
+
+  deleteImage(projectID: string, imageID: string, o: Options): Promise<void>;
 
   saveImage(
-    file: NodeJS.ReadableStream,
-    o: { name: string } & Options
+    projectID: string,
+    file: { stream: NodeJS.ReadableStream; name: string },
+    o: Options
   ): Promise<void>;
 }
