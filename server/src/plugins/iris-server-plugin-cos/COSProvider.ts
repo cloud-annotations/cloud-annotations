@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { Readable } from "stream";
-
 import COS from "ibm-cos-sdk";
 
 import { ProjectProvider, Options, ProjectDetails } from "../project-provider";
@@ -85,15 +83,12 @@ class COSProvider implements ProjectProvider {
     };
 
     try {
-      const res = await cosClient
-        .getObject({ Bucket: projectID, Key: "_annotations.json" })
-        .promise();
-
-      const annotationsString = res.Body?.toString() ?? "";
-
+      // const res = await cosClient
+      //   .getObject({ Bucket: projectID, Key: "_annotations.json" })
+      //   .promise();
+      // const annotationsString = res.Body?.toString() ?? "";
       // TODO: check version
-      const { labels, annotations, images } = JSON.parse(annotationsString);
-      // this would crash stuff because we don't have
+      // const { labels, annotations, images } = JSON.parse(annotationsString);
       // project.labels = labels;
       // project.annotations = annotations;
       // project.images = images;

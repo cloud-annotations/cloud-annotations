@@ -8,7 +8,6 @@
 import React, { useCallback } from "react";
 
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 
 import { endpoint } from "@iris/api";
 import {
