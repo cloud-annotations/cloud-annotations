@@ -15,9 +15,9 @@ jobs:
         with:
           path: |
             node_modules
-            */*/node_modules
-            /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+            packages/*/node_modules
+            server/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Install
         run: yarn install --frozen-lockfile
 
@@ -34,8 +34,9 @@ jobs:
         with:
           path: |
             node_modules
-            */*/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+            packages/*/node_modules
+            server/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Install
         run: yarn install
       - name: Check format
