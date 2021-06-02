@@ -16,12 +16,12 @@ import {
   useActiveImageID,
   useActiveLabel,
   useLabels,
-  useProjectID,
   useActiveTool,
   useShapes,
   useHeadCount,
 } from "@iris/core";
 
+import { useProjectParams } from "../..";
 import { uniqueColor } from "./color-utils";
 import styles from "./styles.module.css";
 
@@ -65,14 +65,15 @@ function CanvasWrapper({
   status,
   activeColor,
   selectedTool,
-  projectID,
   shapes,
 }: any) {
   const classes = useStyles();
 
+  const { projectID, connectionID, providerID } = useProjectParams();
+
   const imageUrl = endpoint("/images/:imageID", {
     path: { imageID: image },
-    query: { projectID: projectID },
+    query: { projectID, connectionID, providerID },
   });
 
   switch (status) {
@@ -134,7 +135,6 @@ function DrawingPanel() {
   const activeImageID = useActiveImageID();
   const activeImageStatus = useActiveImageStatus();
   const shapes = useShapes();
-  const projectID = useProjectID();
   const activeLabel = useActiveLabel();
   const labels = useLabels();
 
@@ -189,7 +189,6 @@ function DrawingPanel() {
         status={activeImageStatus}
         activeColor={activeColor}
         selectedTool={selectedTool}
-        projectID={projectID}
         shapes={modifiedShapes}
       />
     </div>

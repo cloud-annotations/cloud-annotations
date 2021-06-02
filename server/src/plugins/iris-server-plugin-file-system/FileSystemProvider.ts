@@ -92,7 +92,6 @@ class FileSystemProvider implements ProjectProvider {
 
   async getProject(projectID: string) {
     const project: ProjectDetails = {
-      id: projectID,
       name: projectID ?? path.basename(process.cwd()),
       created: new Date(),
       version: "v2",

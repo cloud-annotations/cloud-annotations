@@ -64,10 +64,6 @@ export function useProjectName() {
   return useSelector((project: ProjectState) => project.meta.name);
 }
 
-export function useProjectID() {
-  return useSelector((project: ProjectState) => project.meta.id);
-}
-
 export function useProjectStatus() {
   return useSelector((project: ProjectState) => {
     if (project.meta.status === "success" && project.meta.saving > 0) {

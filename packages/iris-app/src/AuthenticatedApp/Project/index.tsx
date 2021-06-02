@@ -45,13 +45,16 @@ function ProjectController() {
   }
 }
 
+interface ProjectParams {
+  providerID: string;
+  connectionID: string;
+  projectID: string;
+}
+
+export const useProjectParams = () => useParams<ProjectParams>();
+
 function Project() {
-  const { projectID, connectionID, providerID } =
-    useParams<{
-      providerID: string;
-      connectionID: string;
-      projectID: string;
-    }>();
+  const { projectID, connectionID, providerID } = useProjectParams();
 
   useEffect(() => {
     store.dispatch(load({ projectID, connectionID, providerID }));

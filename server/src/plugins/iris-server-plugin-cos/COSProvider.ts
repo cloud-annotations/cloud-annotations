@@ -9,7 +9,7 @@ import { Readable } from "stream";
 
 import COS from "ibm-cos-sdk";
 
-import { ProjectProvider, Options } from "../project-provider";
+import { ProjectProvider, Options, ProjectDetails } from "../project-provider";
 
 const connections = [
   {
@@ -75,8 +75,7 @@ class COSProvider implements ProjectProvider {
   async getProject(projectID: string, { connectionID, accessToken }: Options) {
     const cosClient = createClient({ connectionID, accessToken });
 
-    const project = {
-      id: projectID,
+    const project: ProjectDetails = {
       name: projectID,
       created: new Date(),
       version: "v2",
@@ -86,19 +85,40 @@ class COSProvider implements ProjectProvider {
     };
 
     try {
-      const annotationsString = await cosClient
+      const res = await cosClient
         .getObject({ Bucket: projectID, Key: "_annotations.json" })
         .promise();
 
-      console.log(annotationsString.Body?.toString());
+      const annotationsString = res.Body?.toString() ?? "";
 
       // TODO: check version
-      // const { labels, annotations, images } = JSON.parse(annotationsString);
+      const { labels, annotations, images } = JSON.parse(annotationsString);
+      // this would crash stuff because we don't have
       // project.labels = labels;
       // project.annotations = annotations;
       // project.images = images;
     } catch {
       // we don't care if there's no annotations file.
+    }
+
+    // TODO: paginate
+    const objects = await cosClient
+      .listObjectsV2({ Bucket: projectID })
+      .promise();
+
+    const files = (objects.Contents ?? []).map((o) => o.Key);
+
+    for (const f of files) {
+      if (
+        f !== undefined &&
+        (f.toLowerCase().endsWith(".jpg") || f.toLowerCase().endsWith(".jpeg"))
+      ) {
+        // Only add image if it's not already there.
+        // TODO: We should update the date of the image maybe?
+        if (project.images[f] === undefined) {
+          project.images[f] = { id: f, date: "", annotations: [] };
+        }
+      }
     }
 
     return project;
@@ -115,9 +135,14 @@ class COSProvider implements ProjectProvider {
     imageID: string,
     { connectionID, accessToken }: Options
   ) {
-    return new Readable({
-      read() {},
-    });
+    const cosClient = createClient({ connectionID, accessToken });
+
+    return await cosClient
+      .getObject({
+        Bucket: projectID,
+        Key: imageID,
+      })
+      .createReadStream();
   }
 
   async deleteImage(

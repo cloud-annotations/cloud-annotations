@@ -29,7 +29,6 @@ interface Project {
 }
 
 export interface ProjectDetails {
-  id?: string;
   name: string;
   created: Date;
   version: string;
