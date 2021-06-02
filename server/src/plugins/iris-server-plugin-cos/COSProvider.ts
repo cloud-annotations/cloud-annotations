@@ -68,15 +68,12 @@ class COSProvider implements ProjectProvider {
     return list.Buckets?.map((b) => ({
       id: b.Name!,
       name: b.Name!,
-      modified: b.CreationDate,
-      labels: [],
+      created: b.CreationDate,
     }));
   }
 
   async getProject(projectID: string, { connectionID, accessToken }: Options) {
     const cosClient = createClient({ connectionID, accessToken });
-
-    await cosClient.listBucketsExtended().promise();
 
     const project = {
       id: projectID,
@@ -93,7 +90,7 @@ class COSProvider implements ProjectProvider {
         .getObject({ Bucket: projectID, Key: "_annotations.json" })
         .promise();
 
-      console.log(annotationsString);
+      console.log(annotationsString.Body?.toString());
 
       // TODO: check version
       // const { labels, annotations, images } = JSON.parse(annotationsString);
