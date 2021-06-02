@@ -15,7 +15,6 @@ import { LabelSelect } from "@iris/components";
 import {
   useLabels,
   useActiveImageID,
-  useProjectID,
   useShapes,
   Project,
   DELETE_ANNOTATION,
@@ -23,6 +22,7 @@ import {
   NEW_LABEL,
 } from "@iris/core";
 
+import { useProjectParams } from "../..";
 import classes from "./styles.module.css";
 
 const MAX_HEIGHT = 24;
@@ -190,7 +190,7 @@ function ListItem({ box, labels, imageID, image, imageDims }: ListItemProps) {
 }
 
 function LayersPanel() {
-  const projectID = useProjectID();
+  const { projectID, connectionID, providerID } = useProjectParams();
   const activeImage = useActiveImageID();
   const labels = useLabels();
 
@@ -200,7 +200,7 @@ function LayersPanel() {
 
   const imageUrl = endpoint("/images/:imageID", {
     path: { imageID: activeImage },
-    query: { projectID: projectID },
+    query: { projectID, connectionID, providerID },
   });
 
   useEffect(() => {

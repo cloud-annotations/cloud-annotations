@@ -442,7 +442,7 @@ function Main({ projects, name }: Props) {
       rows={[
         ...projects.map((p) => ({
           name: p.name,
-          labels: Object.values(p.labels).map((l: any) => l.name),
+          labels: Object.values(p.labels ?? []).map((l: any) => l.name),
           images: p.images,
           created: p.created ? new Date(p.created) : undefined,
           modified: p.modified ? new Date(p.modified) : undefined,

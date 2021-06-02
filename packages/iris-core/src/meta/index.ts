@@ -12,7 +12,6 @@ import { load } from "../load";
 export interface MetaState {
   status: "idle" | "pending" | "success" | "error";
   saving: number;
-  id?: string;
   name?: string;
   created?: string;
   error?: SerializedError;
@@ -21,7 +20,6 @@ export interface MetaState {
 const initialState: MetaState = {
   status: "idle",
   saving: 0,
-  id: undefined,
   name: undefined,
   created: undefined,
   error: undefined,
@@ -44,7 +42,6 @@ const slice = createSlice({
     });
     builder.addCase(load.fulfilled, (state, action) => {
       state.status = "success";
-      state.id = action.payload.id;
       state.name = action.payload.name;
       state.created = action.payload.created;
     });

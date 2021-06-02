@@ -29,12 +29,12 @@ import {
   useLabelsWithInfo,
   useLabelFilter,
   useSelectedImages,
-  useProjectID,
   SELECT_IMAGE,
   UPDATE_IMAGE,
 } from "@iris/core";
 import { useBlockSwipeBack } from "@iris/hooks";
 
+import { useProjectParams } from "../..";
 import classes from "./styles.module.css";
 
 const filterMap = {
@@ -47,7 +47,7 @@ const filterMap = {
 function ImagesPanel() {
   const dispatch = useDispatch();
 
-  const projectID = useProjectID();
+  const { projectID, connectionID, providerID } = useProjectParams();
 
   const filterMode = useFilterMode();
   const filter = useLabelFilter();
@@ -67,7 +67,7 @@ function ImagesPanel() {
   const cells = images.map((i) => {
     const e = endpoint("/images/:imageID", {
       path: { imageID: i.id },
-      query: { projectID: projectID },
+      query: { projectID, connectionID, providerID },
     });
     return (
       <ImageTile
