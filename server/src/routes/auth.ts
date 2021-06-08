@@ -10,11 +10,14 @@ import { Router } from "express";
 import {
   authHandler,
   authCallbackHandler,
+  supportedGrantTypeHandler,
 } from "../plugins/iris-server-plugin-ibm-auth";
 
 const router = Router();
 
 router.get("/", authHandler);
+
+router.get("/grant-types", supportedGrantTypeHandler);
 
 router.get("/callback", authCallbackHandler);
 

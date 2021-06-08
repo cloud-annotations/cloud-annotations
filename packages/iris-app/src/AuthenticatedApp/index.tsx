@@ -22,6 +22,12 @@ const ProjectsMode: React.FC = () => {
     fetcher
   );
 
+  const { data: types } = useSWR(
+    endpoint("/auth/grant-types", { baseUrl: "" }),
+    fetcher
+  );
+  console.log(types);
+
   const connection = connections?.[0];
 
   return (

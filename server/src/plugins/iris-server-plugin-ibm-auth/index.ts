@@ -11,15 +11,6 @@ import axios from "axios";
 import express from "express";
 import jwt from "jsonwebtoken";
 
-if (
-  process.env.IBM_LOGIN_CLIENT_ID === undefined ||
-  process.env.IBM_LOGIN_CLIENT_SECRET === undefined ||
-  process.env.IBM_REDIRECT_URI === undefined ||
-  process.env.JWT_SECRET === undefined
-) {
-  throw new Error("Missing env vars");
-}
-
 const OAUTH_SETTINGS = {
   authURL: "https://iam.cloud.ibm.com/identity/authorize",
   tokenURL: "https://iam.cloud.ibm.com/identity/token",
@@ -28,7 +19,7 @@ const OAUTH_SETTINGS = {
   redirectURI: process.env.IBM_REDIRECT_URI,
 };
 
-const SECRET = process.env.JWT_SECRET;
+const SECRET = process.env.JWT_SECRET ?? "secret";
 
 function setCookies(
   res: express.Response,
@@ -75,8 +66,12 @@ export async function authenticate(
     const { tokenURL, clientID, clientSecret } = OAUTH_SETTINGS;
 
     const form = new URLSearchParams();
-    form.append("client_id", clientID);
-    form.append("client_secret", clientSecret);
+    if (clientID !== undefined) {
+      form.append("client_id", clientID);
+    }
+    if (clientSecret !== undefined) {
+      form.append("client_secret", clientSecret);
+    }
     form.append("grant_type", "refresh_token");
     form.append("refresh_token", req.cookies.refresh_token);
 
@@ -96,8 +91,30 @@ export async function authenticate(
   return res.sendStatus(401);
 }
 
+export function supportedGrantTypeHandler(
+  _req: express.Request,
+  res: express.Response
+) {
+  const { authURL, clientID, redirectURI } = OAUTH_SETTINGS;
+
+  let payload = { grant_types: ["passcode"] };
+  if (
+    authURL !== undefined &&
+    clientID !== undefined &&
+    redirectURI !== undefined
+  ) {
+    payload.grant_types.push("authorization_code");
+  }
+
+  return res.send(payload);
+}
+
 export function authHandler(_req: express.Request, res: express.Response) {
   const { authURL, clientID, redirectURI } = OAUTH_SETTINGS;
+
+  if (clientID === undefined || redirectURI === undefined) {
+    throw new Error("Missing env vars");
+  }
 
   const state = jwt.sign({}, SECRET, { expiresIn: "3m" });
 
@@ -117,6 +134,14 @@ export async function authCallbackHandler(
 ) {
   const { code, state } = req.query;
   const { clientID, clientSecret, tokenURL, redirectURI } = OAUTH_SETTINGS;
+
+  if (
+    clientID === undefined ||
+    redirectURI === undefined ||
+    clientSecret === undefined
+  ) {
+    throw new Error("Missing env vars");
+  }
 
   if (typeof state !== "string" || typeof code !== "string") {
     throw new Error("Missing query param");
