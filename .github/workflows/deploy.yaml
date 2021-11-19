@@ -1,0 +1,37 @@
+name: Deployment
+
+concurrency: production
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DEPLOY_TO: production
+  CLUSTER_ID: c6bbmpjw0i2st0vc9gr0
+  IMAGE_NAME: us.icr.io/cloud-annotations/docs:${{ github.sha }}
+  IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
+
+jobs:
+  docs:
+    name: Deploy Documentation
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "*"
+      - name: Install IBM Cloud CLI
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          ibmcloud plugin install container-registry
+          ibmcloud plugin install container-service
+      - name: Install Kubernetes CLI
+        run: |
+          curl --progress-bar -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+      - name: Deploy
+        run: |
+          cd docs
+          ./deploy.sh
