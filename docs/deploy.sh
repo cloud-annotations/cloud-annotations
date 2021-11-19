@@ -2,21 +2,21 @@
 
 trap 'echo "The deployment was aborted. Message -- "; exit 1' ERR
 
-CLUSTER="bso3qn4w0imtmamdicu0"
-IMAGE_NAME="us.icr.io/cloud-annotations/docs:$(git rev-parse HEAD)"
-
 # Log in
 echo "Logging in..."
 ibmcloud config --check-version=false
-ibmcloud login -a cloud.ibm.com -r us-east -g prod
+ibmcloud login -a https://cloud.ibm.com -r us-east -g prod
+ibmcloud cr region-set us-south
+ibmcloud cr login
 
 # Download cluster config
-echo Downloading config for $CLUSTER ...
-ibmcloud ks cluster config --cluster $CLUSTER
+echo Downloading config for $CLUSTER_ID ...
+ibmcloud ks cluster config --cluster $CLUSTER_ID
 
 # Build image
 echo Building $IMAGE_NAME ...
-ibmcloud cr build --no-cache --pull -t $IMAGE_NAME .
+docker build -t $IMAGE_NAME .
+docker push $IMAGE_NAME
 
 # Apply kubernetes yamls
 echo Container build completed, updating $DEPLOYMENT ...
