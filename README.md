@@ -4,6 +4,11 @@
 
 [![Build Status][actions-badge]][actions]
 
+--------------------  
+IMPORTANT NOTE:  
+We've deprecated CloudAnnotations. For educational purposes we recommend to use [CVStudio](https://m.youtube.com/watch?v=6XCy9m24kPE), which is based on CloudAnnotations  - it is available if you take one of our [courses](https://skills.network/lab-tools/cv-studio)
+--------------------
+
 ## Before you begin
 
 To train a model you should already have labeled images in the [Cloud Annotations online tool][0]. For an in-depth guide on this process, check out the following links:
