@@ -1,23 +1,12 @@
 # Cloud Annotations
 
+> **Important Note: Due to unforseen circumstances, the hosted version of Cloud Annotations (cloud.annotations.ai) is no longer available.**
+>
+> For a similar hosted experience, but focused on education/learning, see [Computer Vision Learning Studio](https://vision.skills.network/).
+>
+> For instructions on how to run Cloud Annotations using the local file system, see the experimental [Iris project](https://github.com/cloud-annotations/iris/tree/v2).
+
 ![Logo][logo]
-
-[![Build Status][actions-badge]][actions]
-
-## Before you begin
-
-To train a model you should already have labeled images in the [Cloud Annotations online tool][0]. For an in-depth guide on this process, check out the following links:
-
-- [Training a Classification Model][1] – How to train your own model to label images on IBM Cloud.
-- [Training an Object Detection Model][2] – How to train your own model to find objects in an image on IBM Cloud.
-
-If something doesn’t work, please [file an issue][issues].
-
-<!-- Site -->
-
-[0]: https://cloud.annotations.ai
-[1]: https://cloud.annotations.ai/workshops/classification/
-[2]: https://cloud.annotations.ai/workshops/object-detection/
 
 <!-- GitHub -->
 
